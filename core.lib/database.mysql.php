@@ -453,10 +453,7 @@ class DBConnection
 				$this->WriteQueryLog($query,'GetRow',microtime(true) - $start);
 			}
 
-			if ($result)
-			{
-				return mysql_fetch_object($result);
-			}
+			if ($result) return mysql_fetch_object($result);
 		}
 		return false;
 	}
@@ -470,6 +467,14 @@ class DBConnection
 			$out = substr($out,0,$maxlen);
 		}
 		return $out;
+	}
+
+	//MySQL Escape String
+	public function Escape($string)
+	{
+	    $this->Connect();
+		if($this->IsConnected()) return mysql_real_escape_string($string,$this->conn);
+		else return mysql_escape_string($string);
 	}
 
 	//Close Database Connection

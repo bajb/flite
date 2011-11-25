@@ -1,12 +1,10 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors',true);
-
 class Flite
 {
     private $metrics;
     private $config;
-    private $start_session = true;
+    public $start_session = true;
+    public $tweak_server_value = true;
 
     public function __construct()
     {
@@ -41,7 +39,9 @@ class Flite
                 if(substr($file, ($ext_length * -1)) == $ext){ include_once($directory . $file); }
             }
             closedir($handle);
+            return true;
         }
+        else return false;
     }
 
     public function GetConfig($key)
@@ -58,9 +58,19 @@ class Flite
 
     private function BootFlite()
     {
-        if(isset($_SERVER['HTTP_HOST']) && substr($_SERVER['HTTP_HOST'],-5) == ':8080') $_SERVER['HTTP_HOST'] = substr($_SERVER['HTTP_HOST'],0,-5);
-        if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        if(isset($_SERVER['HTTP_X_REAL_FORWARDED_FOR'])) $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_X_REAL_FORWARDED_FOR'];
+        if($this->tweak_server_value)
+        {
+            if(isset($_SERVER['HTTP_HOST']) && substr($_SERVER['HTTP_HOST'],-5) == ':8080') $_SERVER['HTTP_HOST'] = substr($_SERVER['HTTP_HOST'],0,-5);
+            if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            if(isset($_SERVER['HTTP_X_REAL_FORWARDED_FOR'])) $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_X_REAL_FORWARDED_FOR'];
+            if(!isset($_SERVER['HOSTNAME'])) $_SERVER['HOSTNAME'] = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '';
+            if(!isset($_SERVER['HOSTNAME'])) $_SERVER['HOSTNAME'] = '';
+            if(!isset($_SERVER['SERVER_ADMIN'])) $_SERVER['SERVER_ADMIN'] = '';
+            if(!isset($_SERVER['SERVER_NAME']) && isset($_SERVER['HTTP_HOST'])) $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
+        }
+
+        $this->local_page = $this->page = substr($_SERVER['PHP_SELF'],1,-4);
+        if(isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) $this->local_page = $_SERVER['REQUEST_URI'];
 
         include_once(dirname(__FILE__) . '/config.php');
 
@@ -80,10 +90,7 @@ class Flite
             ini_set('zlib.output_compression_level',0);
         }
 
-        ini_set('zlib.output_compression','Off');
-        ini_set('zlib.output_compression_level',0);
-
-        if($this->start_session && isset($_SERVER['DOCUMENT_ROOT'])) session_start();
+        if($this->start_session && $this->GetConfig('is_web')) session_start();
 
         spl_autoload_register(array($this, 'Loader'));
 
@@ -91,7 +98,6 @@ class Flite
         $this->dbslave    = new DBConnection($this->GetConfig('database_slave'),$this->GetConfig('database_user'),$this->GetConfig('database_pass'),$this->GetConfig('database_name'));
 
         $this->membase = new Membase();
-
         if($this->GetConfig('membase_servers') != false && FC::count($this->GetConfig('membase_servers')) > 0)
         {
             foreach ($this->GetConfig('membase_servers') as $mserv)
@@ -99,20 +105,14 @@ class Flite
                 if(is_array($mserv))
                 {
                     $this->membase->addServer($mserv['host'],
-                    isset($mserv['port']) ? $mserv['port'] : 11211,
-                    isset($mserv['persistent']) ? $mserv['persistent'] : true
+                        isset($mserv['port']) ? $mserv['port'] : 11211,
+                        isset($mserv['persistent']) ? $mserv['persistent'] : true
                     );
                 }
-                else
-                {
-                    $this->membase->addServer($mserv);
-                }
+                else $this->membase->addServer($mserv);
             }
         }
-        else
-        {
-            $this->membase->addServer('localhost');
-        }
+        else $this->membase->addServer('localhost');
 
         if($this->GetConfig('memcache_servers') != false && FC::count($this->GetConfig('memcache_servers')) > 0)
         {
@@ -122,20 +122,16 @@ class Flite
                 if(is_array($mserv))
                 {
                     $this->memcache->addServer($mserv['host'],
-                    isset($mserv['port']) ? $mserv['port'] : 11211,
-                    isset($mserv['persistent']) ? $mserv['persistent'] : true
+                        isset($mserv['port']) ? $mserv['port'] : 11211,
+                        isset($mserv['persistent']) ? $mserv['persistent'] : true
                     );
                 }
-                else
-                {
-                    $this->memcache->addServer($mserv);
-                }
+                else $this->memcache->addServer($mserv);
             }
         }
-        else
-        {
-            $this->memcache = new stdClass();
-        }
+        else $this->memcache = new stdClass();
+
+        $this->LoadFiles($this->GetConfig('site_root') . 'flite/included/');
     }
 
     public function EchoLocation($call)
