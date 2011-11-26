@@ -9,10 +9,9 @@ include_once($this->GetConfig('site_root') . 'flite/config/defaults.php');
 if($this->GetConfig('is_web'))
 {
     $serverparts = explode('.',$_SERVER['SERVER_NAME'],3);
-    $spcount = count($serverparts);
-    $this->sub_domain = $spcount == 3 ? $serverparts[0] : '';
-    $this->domain = $serverparts[$spcount - 2];
-    $this->tld = $serverparts[$spcount - 1];
+    $this->sub_domain = (count($serverparts) === 3 ? current($serverparts) : '');
+    $this->domain = next($serverparts);
+    $this->tld = next($serverparts);
 }
 else
 {
