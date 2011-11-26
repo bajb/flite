@@ -2,7 +2,7 @@
 
 class FC
 {
-    public function count($array)
+    public function count($arr)
     {
         return (is_array($arr) && !empty($arr)) ? count($arr) : 0;
     }

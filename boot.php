@@ -141,7 +141,7 @@ class Flite
             $this->metrics->now = microtime(true);
             $start = $this->metrics->now - $this->metrics->page_execution_start;
             $start = round($start * 1000,3);
-            $last = isset($this->metrics->page_execution_last) ? $current - $this->metrics->page_execution_last : 0;
+            $last = isset($this->metrics->page_execution_last) ? $this->metrics->now - $this->metrics->page_execution_last : 0;
             $last = round($last * 1000,3);
             echo "\n<br /><h2>$call</h2><br>Time Since Start: <strong>$start</strong>ms, Time Since Last Check: <strong>$last</strong>ms\n<br>";
             $this->metrics->page_execution_last = microtime(true);
