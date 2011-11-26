@@ -17,5 +17,6 @@ $this->SetConfig('debug_curl',false);
 $this->SetConfig('show_echo',false);
 
 $this->SetConfig('cassie_servers',array());
+$this->SetConfig('cassandra_cluster',false);
 $this->SetConfig('memcache_servers',array());
 $this->SetConfig('membase_servers',array());

@@ -3,6 +3,7 @@ class Flite
 {
     private $metrics;
     private $config;
+    private $exceptions = array();
     public $start_session = true;
     public $tweak_server_value = true;
 
@@ -44,10 +45,10 @@ class Flite
         else return false;
     }
 
-    public function GetConfig($key)
+    public function GetConfig($key,$default=false)
     {
         $key = strtolower($key);
-        return isset($this->config->$key) ? $this->config->$key : false;
+        return isset($this->config->$key) ? $this->config->$key : $default;
     }
 
     public function SetConfig($key,$value)
@@ -133,6 +134,10 @@ class Flite
         }
         else $this->memcache = new stdClass();
 
+        $cassandra_clustername = $this->GetConfig('cassandra_cluster');
+        if($cassandra_clustername) $this->cassandra = new ConnectionPool($cassandra_clustername,$this->GetConfig('cassie_servers',null));
+        else $this->cassandra = new stdClass();
+
         $this->LoadFiles($this->GetConfig('site_root') . 'flite/included/');
     }
 
@@ -153,6 +158,16 @@ class Flite
     public function SendErrorReport($script,$message,$errorno=0)
     {
         return mail($this->GetConfig('debug_report_email'),'Error Report' . ($errorno > 0 ? ' : Err No ('. $errorno .')' : ''),"Script Name: $script\n\nError:\n\n" . $message);
+    }
+
+    public function Exception($class,$method,$exception)
+    {
+        $e= new stdClass();
+        $e->class = $class;
+        $e->method = $method;
+        $e->exception = $exception;
+        $this->exceptions[] = $e;
+        return true;
     }
 }
 
