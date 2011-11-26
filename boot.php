@@ -15,7 +15,6 @@ class Flite
 
     private function Loader($className)
     {
-        global $_FCONF;
         $b = $this->GetConfig('site_root') . 'flite/dblib/';
 
         $classname = strtolower($classname);
@@ -80,7 +79,7 @@ class Flite
         error_reporting($this->GetConfig('error_reporting'));
         ini_set('display_errors', $this->GetConfig('display_errors'));
 
-        $this->LoadFiles($this->GetConfig('site_root') . 'flite/core.lib/');
+        if(!include_once($this->GetConfig('site_root') . 'flite/cache/core.lib.php')) $this->LoadFiles($this->GetConfig('site_root') . 'flite/core.lib/');
 
         if($this->GetConfig('zlib_enabled'))
         {
@@ -141,7 +140,7 @@ class Flite
         $this->LoadFiles($this->GetConfig('site_root') . 'flite/included/');
     }
 
-    public function EchoLocation($call)
+    public function EchoLocation($call,$force=false)
     {
         if($this->GetConfig('show_echo'))
         {
