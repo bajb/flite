@@ -69,7 +69,9 @@ class Flite
             if(!isset($_SERVER['SERVER_NAME']) && isset($_SERVER['HTTP_HOST'])) $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
         }
 
-        $this->local_page = $this->page = substr($_SERVER['PHP_SELF'],1,-4);
+        if(stristr($_SERVER['PHP_SELF'], '.') !== false) list($this->page,) = explode('.', $_SERVER['PHP_SELF'], 2);
+        else $this->page = $_SERVER['PHP_SELF'];
+        $this->local_page = $this->page;
         if(isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) $this->local_page = $_SERVER['REQUEST_URI'];
 
         include_once(dirname(__FILE__) . '/config.php');
