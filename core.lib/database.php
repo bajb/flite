@@ -6,14 +6,18 @@ class DatabaseObject
     private $dbobject_primary_key_data = array();
     private $dbobject_table_name = '';
     private $dbobject_connection;
+    private $dbobject_slave_append = 'slave';
+    private $dbobject_allow_slave = true;
     private $dbobject_available_columns = array();
     private $dbobject_row_exists = false;
     private $changed_fields;
     private $dbobject_data = array();
 
-    public function __construct($flitedb='db')
+    public function __construct($flitedb='db',$allow_slave=true,$slave_append='slave')
     {
         $this->dbobject_connection = $flitedb;
+        $this->dbobject_allow_slave = $allow_slave;
+        $this->dbobject_slave_append = $slave_append;
     }
 
     public function SetTable($table)
@@ -179,7 +183,8 @@ class DatabaseObject
         if(is_array($columns)) $colsql = '`' . implode('`,`',$columns) . '`';
         else if(!empty($columns)) $colsql = '`' . $columns . '`';
 
-        $row = $_FLITE->{$this->dbobject_connection}->GetRow("SELECT $colsql FROM `$this->dbobject_table_name` " . $this->GetWhere());
+
+        $row = $_FLITE->{$this->dbobject_connection . ($this->dbobject_allow_slave ? $this->dbobject_slave_append : '')}->GetRow("SELECT $colsql FROM `$this->dbobject_table_name` " . $this->GetWhere());
         if($row)
         {
             $this->dbobject_row_exists = true;
