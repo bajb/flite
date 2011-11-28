@@ -66,7 +66,7 @@ class Flite
         $this->local_page = $this->page;
         if(isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) $this->local_page = $_SERVER['REQUEST_URI'];
 
-        include_once(dirname(__FILE__) . '/config.php');
+        if(!include_once(dirname(__FILE__) . '/cache/config.php')) include_once(dirname(__FILE__) . '/config.php');
 
         error_reporting($this->GetConfig('error_reporting'));
         ini_set('display_errors', $this->GetConfig('display_errors'));
