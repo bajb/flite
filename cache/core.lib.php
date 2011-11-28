@@ -1194,6 +1194,80 @@ class DBConnection
 
 
 
+/* database.php Start */
+
+
+class DatabaseObject
+{
+    private $dbobject_primary_keys = array();
+    private $dbobject_table_name = '';
+    private $dbobject_columns = array();
+    private $dbobject_connection = DBConnection;
+    private $changed_fields = array();
+
+    public function __construct()
+    {
+        global $_FLITE;
+        $this->dbobject_connection = $_FLITE->db;
+    }
+
+    public function AddColumn($name,$size,$type,$default_value='')
+    {
+    }
+
+    public function GetChanges()
+    {
+        return $this->changed_fields;
+    }
+
+    public function __set($key,$value)
+    {
+        $this->$key = $value;
+        $this->changed_fields[] = $key;
+        return;
+    }
+
+    public function __get($key)
+    {
+        return $this->$key;
+    }
+
+    public function SaveChanges()
+    {
+        $this->changed_fields = array();
+    }
+
+    public function Delete()
+    {
+        $this->changed_fields = array();
+    }
+
+    public function Load($columns=null)
+    {
+        if($columns == null) $columns = array_keys($this->dbobject_columns);
+        if(!is_array($columns)) $columns = explode(',',$columns);
+
+        $colsql = '*';
+        if(is_array($columns)) $colsql = '`' . implode('`,`',$columns) . '`';
+        else if(!empty($columns)) $colsql = '`' . $columns . '`';
+
+        $row = $this->dbobject_connection->GetRow("SELECT $colsql FROM `$this->dbobject_table_name` WHERE $selectsql");
+        if($row)
+        {
+            foreach ($row as $key => $val)
+            {
+                $this->$key = $val;
+            }
+        }
+
+        $this->changed_fields = array();
+    }
+}
+
+/* database.php End */
+
+
+
 /* membase.php Start */
 
 
