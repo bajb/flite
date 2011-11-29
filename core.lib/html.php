@@ -114,7 +114,11 @@ class Html {
      * @return string The HTML snippet meta tag
      */
     public function charset($charset = 'utf-8'){
-        $meta = "<meta http-equiv='content-type' content='text/html; charset=$charset'".$this->closetag;
+    	if($this->doctype == 'html5'){
+    		$meta = "<meta charset='$charset'".$this->closetag;
+    	}else{
+    		$meta = "<meta http-equiv='content-type' content='text/html; charset=$charset'".$this->closetag;
+    	}
         return $meta;
     }
 
@@ -146,7 +150,7 @@ class Html {
      * @return string The HTML css link snippet
      */
     public function css($path, $ie6 = false){
-        global $_FCONF;
+        global $FLITE;
 
         $link = '';
 
@@ -154,7 +158,7 @@ class Html {
             $link .= "<!--[if IE 6]>";
         }
 
-        $link .= "<link type='text/css' rel='stylesheet' href='{$_FCONF['static_domain']}/css/{$path}{$this->cssVersion}'".$this->closetag;
+        $link .= "<link type='text/css' rel='stylesheet' href='".$FLITE->GetConfig('protocol')."://static.".$FLITE->GetConfig('site_domain')."/css/{$path}{$this->cssVersion}'".$this->closetag;
 
         if($ie6){
             $link .= "<![endif]-->";
@@ -171,8 +175,8 @@ class Html {
      * @return string The JS link snippet
      */
     public function js($path){
-        global $_FCONF;
-        $link = "<script type='text/javascript' src='{$_FCONF['static_domain']}/js/{$path}{$this->jsVersion}'></script>";
+        global $FLITE;
+        $link = "<script type='text/javascript' src='".$FLITE->GetConfig('protocol')."://static.".$FLITE->GetConfig('site_domain')."/js/{$path}{$this->jsVersion}'></script>";
         return $link;
     }
 
@@ -185,8 +189,8 @@ class Html {
      * TODO: Convert this to have an array parameter of frameworks such as array('jquery','jqueryui')
      */
     public function framework($fw){
-    	global $_FCONF;
-    	$proto = isset($_FCONF['PROTOCOL']) ? $_FCONF['PROTOCOL'] : 'http://';
+    	global $FLITE;
+    	$proto = $FLITE->GetConfig('protocol');
         switch ($fw){
             case 'chrome':
                 $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js'></script>";
@@ -284,7 +288,7 @@ class Html {
       * @return <type>
       */
      public function roottag(){
-         if(substr($this->doctype, 0, 5) == 'xhtml'){
+         if(substr($this->doctype, 0, 5) == 'xhtml' || $this->doctype == 'html5'){
              return "<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>";
          }else{
              return "<html>";
