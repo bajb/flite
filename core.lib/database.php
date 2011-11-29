@@ -2,16 +2,16 @@
 
 class DatabaseObject
 {
-    private $dbobject_primary_keys = array();
-    private $dbobject_primary_key_data = array();
-    private $dbobject_table_name = '';
-    private $dbobject_connection;
-    private $dbobject_slave_append = 'slave';
-    private $dbobject_allow_slave = true;
-    private $dbobject_available_columns = array();
-    private $dbobject_row_exists = false;
-    private $changed_fields;
-    private $dbobject_data = array();
+    protected $dbobject_primary_keys = array();
+    protected $dbobject_primary_key_data = array();
+    protected $dbobject_table_name = '';
+    protected $dbobject_connection;
+    protected $dbobject_slave_append = 'slave';
+    protected $dbobject_allow_slave = true;
+    protected $dbobject_available_columns = array();
+    protected $dbobject_row_exists = false;
+    protected $changed_fields;
+    protected $dbobject_data = array();
 
     public function __construct($flitedb='db',$allow_slave=true,$slave_append='slave')
     {
@@ -57,7 +57,7 @@ class DatabaseObject
 
     public function GetPrimaryKeys()
     {
-        return array_keys($this->dbobject_primary_keys);
+        return $this->dbobject_primary_keys;
     }
 
     public function GetWhere()
@@ -82,7 +82,7 @@ class DatabaseObject
     public function GetPrimaryData($pkey)
     {
         global $_FLITE;
-        if(isset($this->$pkey)) return $_FLITE->{$this->dbobject_connection}->Escape($this->GetValue($pkey));
+        if(isset($this->dbobject_data[$pkey])) return $_FLITE->{$this->dbobject_connection}->Escape($this->GetValue($pkey));
         else if(isset($this->dbobject_primary_key_data[$pkey])) return $_FLITE->{$this->dbobject_connection}->Escape($this->dbobject_primary_key_data[$pkey]);
         else if(isset($this->dbobject_primary_keys[$pkey])) return $_FLITE->{$this->dbobject_connection}->Escape($this->dbobject_primary_keys[$pkey]);
         else return "";

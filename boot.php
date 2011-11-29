@@ -38,13 +38,11 @@ class Flite
 
     public function GetConfig($key,$default=false)
     {
-        $key = strtolower($key);
         return isset($this->config->$key) ? $this->config->$key : $default;
     }
 
     public function SetConfig($key,$value)
     {
-        $key = strtolower($key);
         $this->config->$key = $value;
     }
 
@@ -126,7 +124,12 @@ class Flite
         else $this->memcache = new stdClass();
 
         $cassandra_clustername = $this->GetConfig('cassandra_cluster');
-        if($cassandra_clustername) $this->cassandra = new ConnectionPool($cassandra_clustername,$this->GetConfig('cassie_servers',null));
+        if($cassandra_clustername)
+        {
+            require_once($this->GetConfig('site_root') . 'flite/thirdparty/phpcassa/columnfamily.php');
+            require_once($this->GetConfig('site_root') . 'flite/thirdparty/phpcassa/sysmanager.php');
+            $this->cassandra = new ConnectionPool($cassandra_clustername,$this->GetConfig('cassie_servers',null));
+        }
         else $this->cassandra = new stdClass();
 
         $this->LoadFiles($this->GetConfig('site_root') . 'flite/included/');
