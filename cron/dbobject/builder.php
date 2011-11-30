@@ -77,7 +77,7 @@ if($tables = $_FLITE->{$db_connection}->GetRows("SHOW TABLES"))
             $contents .=  "\n\t\t" . '$this->SetPrimaryKeys(array(\''. implode("','",$primary).'\'));';
             $contents .=  "\n\t\t" . '$this->SetAvailableColumns(array(\''. implode("','",$cols).'\'));';
             $contents .=  "\n\t\t" . '$this->SetTable(\''. $tbl .'\');';
-            $contents .=  "\n\t\t" . 'unset($this->'. implode(',$this->',$primary) .');';
+            $contents .=  "\n\t\t" . 'unset($this->'. implode(',$this->',$cols) .');';
 
             foreach ($primary as $pr)
             {

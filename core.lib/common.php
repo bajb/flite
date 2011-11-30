@@ -139,4 +139,9 @@ class FC
         return $size ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2) . $filesizename[$i] : '0 Bytes';
     }
 
+    public function short_string()
+    {
+        return base_convert(rand(10000,9999999),20,36);
+    }
+
 }
