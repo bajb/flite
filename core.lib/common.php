@@ -58,6 +58,16 @@ class FC
         return $array;
     }
 
+    public function object_keys($object)
+    {
+        $keys = array();
+        foreach ($object as $k => $v)
+        {
+            $keys[] = $k;
+        }
+        return $keys;
+    }
+
     public function array_in_array($arr1, $arr2)
     {
         foreach ($arr1 as $a1)

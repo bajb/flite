@@ -274,8 +274,14 @@ class DBConnection
 	}
 
 	//Array of results
-	public function GetRows($query = "")
+	public function GetRows($query = "",$cache_time=false)
 	{
+	    if($cache_time)
+	    {
+            $cache = $this->GetCache($query);
+            if($cache) return $cache;
+	    }
+
 	    $start = microtime(true);
 		$this->Connect();
 		if($this->IsConnected())
@@ -311,6 +317,70 @@ class DBConnection
 					    return $data;
 					}
 				}
+				if($cache_time) $this->SetCache($query,$data,$cache_time);
+				return $data;
+			}
+		}
+		return false;
+	}
+
+	//Array of results
+	public function GetKeyedRows($query = "",$cache_time=false)
+	{
+	    if($cache_time)
+	    {
+            $cache = $this->GetCache($query);
+            if($cache) return $cache;
+	    }
+
+	    $start = microtime(true);
+		$this->Connect();
+		if($this->IsConnected())
+		{
+			$result = @mysql_query($query,$this->conn);
+
+			if(mysql_errno($this->conn) == 2006 || mysql_errno() == 2006)
+			{
+			    $this->attempt_connect = 0;
+			    $this->connected = false;
+			    $this->Connect();
+			    $result = @mysql_query($query,$this->conn);
+			}
+
+			if(@mysql_error($this->conn))
+			{
+				$this->SendError('Query Failed',$query);
+			}
+			else
+			{
+				$this->WriteQueryLog($query,'GetKeyedRows',microtime(true) - $start);
+			}
+
+			if ($result)
+			{
+			    $keyfield = $value_key = null;
+			    $value_as_array = true;
+				$data = array();
+				while($obj = mysql_fetch_assoc($result))
+				{
+				    if($keyfield == null)
+				    {
+				        $keyfield = array_keys($obj);
+				        if(count($keyfield) == 2)
+				        {
+				            $value_as_array = false;
+				            $value_key = $keyfield[1];
+				        }
+				        $keyfield = $keyfield[0];
+				    }
+					$data[$obj[$keyfield]] = !$value_as_array && !empty($value_key) ? $obj[$value_key] : $obj;
+					if(memory_get_usage() > 980217728)
+					{
+					    error_log($query);
+					    return $data;
+					}
+				}
+				if($cache_time) $this->SetCache($query,$data,$cache_time);
 				return $data;
 			}
 		}
@@ -318,8 +388,14 @@ class DBConnection
 	}
 
 	//Array of cols
-	public function GetCols($query = "")
+	public function GetCols($query = "",$cache_time=false)
 	{
+	    if($cache_time)
+	    {
+            $cache = $this->GetCache($query);
+            if($cache) return $cache;
+	    }
+
 	    $start = microtime(true);
 		$this->Connect();
 		if($this->IsConnected())
@@ -350,14 +426,21 @@ class DBConnection
 				{
 					$data[] = $value[0];
 				}
+				if($cache_time) $this->SetCache($query,$data,$cache_time);
 				return $data;
 			}
 		}
 		return false;
 	}
 
-	public function GetField($query = "",$offset=0)
+	public function GetField($query = "",$cache_time=false)
 	{
+	    if($cache_time)
+	    {
+            $cache = $this->GetCache($query);
+            if($cache) return $cache;
+	    }
+
 	    $start = microtime(true);
 		$this->Connect();
 		if($this->IsConnected())
@@ -384,18 +467,22 @@ class DBConnection
 			if ($result)
 			{
 				$row = mysql_fetch_array($result);
-				if($row)
-				{
-					return $row[$offset];
-				}
+				if($cache_time) $this->SetCache($query,$row[0],$cache_time);
+				return $row[0];
 			}
 		}
 		return false;
 	}
 
 	//Gets Number of rows in query
-	public function NumRows($query = "")
+	public function NumRows($query = "",$cache_time=false)
 	{
+	    if($cache_time)
+	    {
+            $cache = $this->GetCache($query);
+            if($cache) return $cache;
+	    }
+
 	    $start = microtime(true);
 		$this->Connect();
 		if($this->IsConnected())
@@ -421,15 +508,23 @@ class DBConnection
 
 			if ($result)
 			{
-				return mysql_num_rows($result);
+				$data = mysql_num_rows($result);
+				if($cache_time) $this->SetCache($query,$data,$cache_time);
+				return $data;
 			}
 		}
 		return 0;
 	}
 
 	//Get single row from database
-	public function GetRow($query = "")
+	public function GetRow($query = "",$cache_time=false)
 	{
+	    if($cache_time)
+	    {
+            $cache = $this->GetCache($query);
+            if($cache) return $cache;
+	    }
+
 	    $start = microtime(true);
 		$this->Connect();
 		if($this->IsConnected())
@@ -453,7 +548,12 @@ class DBConnection
 				$this->WriteQueryLog($query,'GetRow',microtime(true) - $start);
 			}
 
-			if ($result) return mysql_fetch_object($result);
+			if ($result)
+			{
+			    $data = mysql_fetch_object($result);
+			    if($cache_time) $this->SetCache($query,$data,$cache_time);
+			    return $data;
+			}
 		}
 		return false;
 	}
@@ -475,6 +575,26 @@ class DBConnection
 	    $this->Connect();
 		if($this->IsConnected()) return mysql_real_escape_string($string,$this->conn);
 		else return mysql_escape_string($string);
+	}
+
+	public function CacheKey($sql)
+	{
+	    return "SQLCACHE," . md5($sql);
+	}
+
+	private function GetCache($sql)
+	{
+	    global $_FLITE;
+	    $data = $_FLITE->memcache->get($this->CacheKey($sql));
+	    if(empty($data) || !$data) return false;
+	    else return $data;
+	}
+
+	private function SetCache($sql,$value,$timeout=600)
+	{
+	    global $_FLITE;
+	    if(!$value) return false;
+	    $_FLITE->memcache->set($this->CacheKey($sql), $value, MEMCACHE_COMPRESSED,$timeout);
 	}
 
 	//Close Database Connection
