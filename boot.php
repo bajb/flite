@@ -17,7 +17,14 @@ class Flite
     {
         $b = $this->GetConfig('site_root') . 'flite/dblib/';
         $classname = strtolower($classname);
-        if(file_exists($b . $classname . '.php')) include_once($b . $classname . '.php');
+        if(file_exists($b . $classname . '.php'))
+        {
+            include_once($b . $classname . '.php');
+        }
+        elseif(file_exists($this->GetConfig('site_root') .'flite/lib/' . $classname . '.php'))
+        {
+            include_once($this->GetConfig('site_root') .'flite/lib/' . $classname . '.php');
+        }
     }
 
     public function LoadFiles($directory,$ext = '.php')
