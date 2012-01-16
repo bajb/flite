@@ -154,4 +154,17 @@ class FC
         return base_convert(rand(10000,9999999),20,36);
     }
 
+    public function get_user_ip()
+    {
+    	$retip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : (isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1');
+        if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) $retip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        if(isset($_SERVER['HTTP_X_REAL_FORWARDED_FOR'])) $retip = $_SERVER['HTTP_X_REAL_FORWARDED_FOR'];
+        if(isset($retip) && stristr($retip, ','))
+        {
+        	list($retip,) = explode(',', $retip, 2);
+        	$retip = trim($retip);
+        }
+        return $retip;
+    }
+
 }
