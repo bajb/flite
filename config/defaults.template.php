@@ -20,3 +20,6 @@ $this->SetConfig('cassie_servers',array());
 $this->SetConfig('cassandra_cluster',false);
 $this->SetConfig('memcache_servers',array());
 $this->SetConfig('membase_servers',array());
+
+//Security
+$this->SetConfig('cookie_salt', 'J£94@#jhf');
