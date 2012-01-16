@@ -22,7 +22,9 @@ else
 }
 
 $this->SetConfig('site_domain',$this->domain. '.' . $this->tld);
-$this->SetConfig('protocol',(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://');
+$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://');
+$this->SetConfig('protocol',$protocol);
+$this->SetConfig('full_domain',$protocol.$this->sub_domain.'.'.$this->domain.'.'.$this->tld.'/');
 
 if($this->GetConfig('is_dev'))
 {
