@@ -18,7 +18,7 @@ class FCView
     private $frontend_root;
     private $render_files;
     private $page_data = array();
-    private $routes = array();
+    protected $routes = array();
 
 
     /*
