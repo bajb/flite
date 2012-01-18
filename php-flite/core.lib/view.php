@@ -62,7 +62,26 @@ class FCView
 
     public function GetRoute($route)
     {
-        return isset($this->routes[$route]) ? $this->routes[$route] : false;
+        $process_route = false;
+        if(stristr($route,'/'))
+        {
+            $routes = explode('/',$route);
+            if($routes)
+            {
+                $process_route = $this->routes;
+                foreach ($routes as $croute)
+                {
+                    if(isset($process_route[$croute])) $process_route = $process_route[$croute];
+                    else if(isset($process_route['*'])) $process_route = $process_route['*'];
+                    else break;
+                }
+                return $process_route;
+            }
+        }
+        else $process_route = isset($this->routes[$route]) ? $this->routes[$route] : false;
+
+        if(isset($process_route['controller']) || isset($process_route['view'])) return $process_route;
+        else return false;
     }
 
     public function SetRoute($route,$data)
