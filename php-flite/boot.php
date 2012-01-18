@@ -144,7 +144,7 @@ class Flite
 
     public function EchoLocation($call,$force=false)
     {
-        if($this->GetConfig('show_echo'))
+        if($this->GetConfig('show_echo') || $force)
         {
             $this->metrics->now = microtime(true);
             $start = $this->metrics->now - $this->metrics->page_execution_start;
