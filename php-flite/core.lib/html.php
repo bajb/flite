@@ -3,7 +3,7 @@
  * A helper class for generating standard HTML elements and links quicker
  */
 
-class Html {
+class FCHTML {
 
     /**
      * Document type definitions
@@ -22,6 +22,8 @@ class Html {
             'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
             'html5' => '<!DOCTYPE HTML>'
     );
+
+    private $static_domain = 'static';
 
     /**
      * Store the doctype for the whole helper
@@ -43,7 +45,7 @@ class Html {
      *
      * @var string
      */
-    private $cssVersion = '|v=1320855700';
+    private $cssVersion = '|v=488419200';
 
     /**
      * Append to js script tag
@@ -51,14 +53,15 @@ class Html {
      *
      * @var unknown_type
      */
-    private $jsVersion = '|v=1320855700';
+    private $jsVersion = '|v=488419200';
 
     /**
      * Set the default doc type for the html helper
      *
      * @param string $dtd A valid shorthand DTD
      */
-    function  __construct($dtd) {
+    function  __construct($static_domain='static',$dtd='xhtml-strict') {
+        $this->static_domain = $static_domain;
         if(isset($this->docTypes[$dtd])){
             $this->doctype = $dtd;
         }else{
@@ -66,6 +69,16 @@ class Html {
         }
 
         $this->setCloseTag();
+    }
+
+    public function SetCssVersion($version)
+    {
+        $this->cssVersion = $version;
+    }
+
+    public function SetJsVersion($version)
+    {
+        $this->jsVersion = $version;
     }
 
     /**
@@ -115,9 +128,9 @@ class Html {
      */
     public function charset($charset = 'utf-8'){
     	if($this->doctype == 'html5'){
-    		$meta = "<meta charset='$charset'".$this->closetag;
+    		$meta = "    <meta charset='$charset'".$this->closetag;
     	}else{
-    		$meta = "<meta http-equiv='content-type' content='text/html; charset=$charset'".$this->closetag;
+    		$meta = "    <meta http-equiv='content-type' content='text/html; charset=$charset'".$this->closetag;
     	}
         return $meta;
     }
@@ -135,100 +148,48 @@ class Html {
 
         $meta = '';
         foreach($tags as $name => $content){
-            $meta .= "<meta name='$name' content='$content'".$this->closetag." \n";
+            $meta .= "    <meta name='$name' content='$content'".$this->closetag." \n";
         }
 
         return $meta;
     }
 
+    public function StaticDomain()
+    {
+        global $_FLITE;
+        return $_FLITE->GetConfig('protocol') . $this->static_domain . "." . $_FLITE->GetConfig('site_domain');
+    }
+
     /**
      * Create a DTD dependant doctype link
      *
-     * @global array $_FCONF The global config settings array
      * @param string $path The css path from your site root, eg. css/style.css  !Remember no preceeding slash!
-     * @param bool $ie6 True/False to wrap the css in IE6 specific tags
+     * @param bool $cssif True/False to wrap the css in IF specific tags
      * @return string The HTML css link snippet
      */
-    public function css($path, $ie6 = false){
-        global $FLITE;
-
-        $link = '';
-
-        if($ie6){
-            $link .= "<!--[if IE 6]>";
-        }
-
-        $link .= "<link type='text/css' rel='stylesheet' href='".$FLITE->GetConfig('protocol')."://static.".$FLITE->GetConfig('site_domain')."/css/{$path}{$this->cssVersion}'".$this->closetag;
-
-        if($ie6){
-            $link .= "<![endif]-->";
-        }
-
-        return $link;
+    public function css($path, $cssif = false)
+    {
+        global $_FLITE;
+        $link = '    ';
+        if($cssif) $link .= "<!--[if $cssif>";
+        $link .= "<link type='text/css' rel='stylesheet' href='".$this->StaticDomain()."/css/{$path}{$this->cssVersion}'".$this->closetag;
+        if($cssif) $link .= "<![endif]-->";
+        return $link . "\n";
     }
 
     /**
      * Create a valid link to a javascript file
      *
-     * @global array $_FCONF The global config settings array
      * @param string $path The js path from your site root, eg. js/common.js  !Remember no preceeding slash!
      * @return string The JS link snippet
      */
-    public function js($path){
-        global $FLITE;
-        $link = "<script type='text/javascript' src='".$FLITE->GetConfig('protocol')."://static.".$FLITE->GetConfig('site_domain')."/js/{$path}{$this->jsVersion}'></script>";
-        return $link;
+    public function js($path)
+    {
+        global $_FLITE;
+        $link = "<script type='text/javascript' src='".$this->StaticDomain()."/js/{$path}{$this->jsVersion}'></script>";
+        return $link . "\n";
     }
 
-    /**
-     * Return a link to a popular GoogleCode hosted framework
-     *
-     * @param string $fw The name of the framework
-     * @return string The JS link snippet
-     *
-     * TODO: Convert this to have an array parameter of frameworks such as array('jquery','jqueryui')
-     */
-    public function framework($fw){
-    	global $FLITE;
-    	$proto = $FLITE->GetConfig('protocol');
-        switch ($fw){
-            case 'chrome':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js'></script>";
-                break;
-            case 'dojo':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/dojo.xd.js'></script>";
-                break;
-            case 'extcore':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/ext-core/3.1.0/ext-core.js'></script>";
-                break;
-            case 'jquery':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js'></script>";
-                break;
-            case 'jqueryui':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js'></script>";
-                break;
-            case 'mootools':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js'></script>";
-                break;
-            case 'prototype':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js'></script>";
-                break;
-            case 'scriptaculous':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/scriptaculous/1.8.3/scriptaculous.js'></script>";
-                break;
-            case 'swfobject':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'></script>";
-                break;
-            case 'yui':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/yui/2.8.1/build/yuiloader/yuiloader-min.js'></script>";
-                break;
-            case 'webfont':
-                $link = "<script type='text/javascript' src='{$proto}ajax.googleapis.com/ajax/libs/webfont/1.0.4/webfont.js'></script>";
-                break;
-        }
-
-        return $link;
-    }
 
     /**
      * Function for generating float clear div's
@@ -240,7 +201,7 @@ class Html {
         switch ($type){
             case 'both':
             default:
-                $clr = "<div class='clear-div' style='clear:both'><!--blank--></div>";
+                $clr = "<div class='clear' style='clear:both'><!--blank--></div>";
                 break;
             case 'left':
                 $clr = "<div style='clear:left'><!--blank--></div>";

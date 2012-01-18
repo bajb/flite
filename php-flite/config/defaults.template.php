@@ -22,4 +22,6 @@ $this->SetConfig('memcache_servers',array());
 $this->SetConfig('membase_servers',array());
 
 //Security
-$this->SetConfig('cookie_salt', 'J£94@#jhf');
+$this->SetConfig('cookie_salt', 'Jï¿½94@#jhf');
+
+$this->SetConfig('static_sub_domain', 'static');

@@ -15,15 +15,15 @@ class Flite
 
     private function Loader($classname)
     {
-        $b = $this->GetConfig('site_root') . 'flite/dblib/';
+        $b = $this->GetConfig('site_root') . 'php-flite/dblib/';
         $classname = strtolower($classname);
         if(file_exists($b . $classname . '.php'))
         {
             include_once($b . $classname . '.php');
         }
-        elseif(file_exists($this->GetConfig('site_root') .'flite/lib/' . $classname . '.php'))
+        elseif(file_exists($this->GetConfig('site_root') .'php-flite/lib/' . $classname . '.php'))
         {
-            include_once($this->GetConfig('site_root') .'flite/lib/' . $classname . '.php');
+            include_once($this->GetConfig('site_root') .'php-flite/lib/' . $classname . '.php');
         }
     }
 
@@ -76,7 +76,7 @@ class Flite
         error_reporting($this->GetConfig('error_reporting'));
         ini_set('display_errors', $this->GetConfig('display_errors'));
 
-        if(!include_once($this->GetConfig('site_root') . 'flite/cache/core.lib.php')) $this->LoadFiles($this->GetConfig('site_root') . 'flite/core.lib/');
+        if(!include_once($this->GetConfig('site_root') . 'php-flite/cache/core.lib.php')) $this->LoadFiles($this->GetConfig('site_root') . 'php-flite/core.lib/');
 
         if($this->GetConfig('zlib_enabled'))
         {
@@ -133,13 +133,13 @@ class Flite
         $cassandra_clustername = $this->GetConfig('cassandra_cluster');
         if($cassandra_clustername)
         {
-            require_once($this->GetConfig('site_root') . 'flite/thirdparty/phpcassa/columnfamily.php');
-            require_once($this->GetConfig('site_root') . 'flite/thirdparty/phpcassa/sysmanager.php');
+            require_once($this->GetConfig('site_root') . 'php-flite/thirdparty/phpcassa/columnfamily.php');
+            require_once($this->GetConfig('site_root') . 'php-flite/thirdparty/phpcassa/sysmanager.php');
             $this->cassandra = new ConnectionPool($cassandra_clustername,$this->GetConfig('cassie_servers',null));
         }
         else $this->cassandra = new stdClass();
 
-        $this->LoadFiles($this->GetConfig('site_root') . 'flite/included/');
+        $this->LoadFiles($this->GetConfig('site_root') . 'php-flite/included/');
     }
 
     public function EchoLocation($call,$force=false)

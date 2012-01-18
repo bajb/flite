@@ -1,0 +1,3 @@
+RewriteEngine on
+
+RewriteRule ^([^/\.]+)/?$ css.php?$1 [L]

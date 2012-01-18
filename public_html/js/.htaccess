@@ -1,0 +1,3 @@
+RewriteEngine on
+
+RewriteRule ^([^/\.]+)/?$ js.php?$1 [L]

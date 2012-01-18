@@ -1,10 +1,10 @@
 <?php
-$this->SetConfig('site_root',(substr(substr(dirname(__FILE__),0,-6),-5) == 'flite' ? substr(dirname(__FILE__),0,-11) : substr(dirname(__FILE__),0,-6)) . '/'); //With Trailing Slash
+$this->SetConfig('site_root',(substr(substr(dirname(__FILE__),0,-6),-5) == 'flite' ? substr(dirname(__FILE__),0,-9) : substr(dirname(__FILE__),0,-10)) . '/'); //With Trailing Slash
 $this->SetConfig('is_dev',isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'],array('','127.0.0.1')) ?  true : (stristr($_SERVER['SERVER_NAME'], '.dev') ? true : false));
 $this->SetConfig('is_web',(isset($_SERVER['DOCUMENT_ROOT']) && !empty($_SERVER['DOCUMENT_ROOT'])));
 
 /* Include Defaults */
-include_once($this->GetConfig('site_root') . 'flite/config/defaults.php');
+include_once($this->GetConfig('site_root') . 'php-flite/config/defaults.php');
 
 if($this->GetConfig('is_web'))
 {
@@ -28,9 +28,9 @@ $this->SetConfig('full_domain',$protocol.$this->sub_domain.'.'.$this->domain.'.'
 
 if($this->GetConfig('is_dev'))
 {
-    include_once($this->GetConfig('site_root') . 'flite/config/dev.php');
+    include_once($this->GetConfig('site_root') . 'php-flite/config/dev.php');
 }
 else
 {
-    include_once($this->GetConfig('site_root') . 'flite/config/live.php');
+    include_once($this->GetConfig('site_root') . 'php-flite/config/live.php');
 }
