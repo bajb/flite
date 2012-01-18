@@ -203,7 +203,7 @@ class FCView
 
 	/* Run Page */
 
-	public function RunPage($controller=null,$default_view=null)
+	public function RunPage($controller=null,$default_view=null,$render_header_footer=true)
 	{
 	    if(is_null($controller) && isset($_SERVER['REDIRECT_URL']) && strlen($_SERVER['REDIRECT_URL']) > 1) $this->controller = strtolower(substr($_SERVER['REDIRECT_URL'],1));
         if(is_null($controller) && empty($this->controller)) $this->controller = 'default';
@@ -228,7 +228,7 @@ class FCView
 		    include_once($this->frontend_root . 'controllers/' . $this->controller . '.php');
 		}
 
-        $this->RenderHeader();
+        if($render_header_footer) $this->RenderHeader();
         $page_found = $this->Render(empty($this->render_files) ? $this->default_view : $this->render_files);
         if(!$page_found)
         {
@@ -236,7 +236,7 @@ class FCView
             header("Status: 404 Not Found");
             $this->Render('errors/404');
         }
-        $this->RenderFooter();
+        if($render_header_footer) $this->RenderFooter();
 	}
 
 	/* Run Page */
