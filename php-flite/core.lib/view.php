@@ -205,6 +205,7 @@ class FCView
 
 	public function RunPage($controller=null,$default_view=null,$render_header_footer=true)
 	{
+	    global $_FLITE;
 	    $this->render_header_footer = $render_header_footer;
 
 	    if(is_null($controller) && isset($_SERVER['REDIRECT_URL']) && strlen($_SERVER['REDIRECT_URL']) > 1) $this->controller = strtolower(substr($_SERVER['REDIRECT_URL'],1));

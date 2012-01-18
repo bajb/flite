@@ -1,9 +1,7 @@
 <?php
 ini_set('display_errors',false);
-
-$dir = dirname(__FILE__);
+$dir = realpath(dirname(__FILE__));
 $serverparts = explode('.',$_SERVER['HTTP_HOST'],3);
-
 $sub = count($serverparts) == 3 ? $serverparts[0] : '';
 $dom = $serverparts[count($serverparts) - 2];
 $tld = $serverparts[count($serverparts) - 1];
@@ -18,27 +16,23 @@ if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEP
 function compress($buffer)
 {
     global $tld;
-    if($tld == 'dev' ) return $buffer;
+    if($tld == 'dev') return $buffer;
     /* remove comments */
     $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
     /* remove tabs, spaces, newlines, etc. */
-    $buffer = str_replace(array("\t"),' ', $buffer);
-    $buffer = str_replace(array("\r\n", "\r", "\n", '  ', '    ', '    '), '', $buffer);
+    $buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
     return $buffer;
 }
 
 header('Content-type: text/css');
-header('set Cache-Control "max-age=2419200, public"');
+header('Cache-Control: public');
 
 ob_start("compress");
-
 $files = explode('|',urldecode($_SERVER['QUERY_STRING']));
 if(!is_array($files)) $files = array($files);
 
 $already_loaded = array();
-
 foreach ($files as $file) {
-
     if(in_array($file, $already_loaded)) continue;
     $alread_loaded[] = $file;
 
@@ -46,15 +40,14 @@ foreach ($files as $file) {
     {
         $file = str_replace('_','/',$file);
 
-        if( file_exists( $dir . '/'. $dom .'/'. $file .'.full.css') ) $f = @file_get_contents($dir . '/'. $dom .'/'. $file .'.full.css');
+        if(file_exists($dir.'/_'.$dom.'/'.$file.'.full.css')) $f = @file_get_contents($dir.'/'.$dom.'/'.$file.'.full.css');
         else
         {
-            $f = @file_get_contents($dir . '/base/'. $file .'.css');
-            if( file_exists( $dir . '/'. $dom .'/'. $file .'.css') ) $f .= "\n" . @file_get_contents($dir . '/'. $dom .'/'. $file .'.css');
+            $f = @file_get_contents($dir.'/base/'.$file.'.css');
+            if(file_exists($dir.'/'.$dom.'/'.$file.'.css')) $f .= "\n". @file_get_contents($dir.'/'.$dom.'/'.$file.'.css');
         }
 
-		$f = str_replace('##STATIC_URL##', $protocol . 'static.' .$dom .'.'. $tld . '/', $f);
-        $f = str_replace('##DOMAIN##', $dom . '.' . $tld, $f);
+		$f = str_replace('{{URL}}',$protocol.$sub.'.'.$dom.'.'.$tld.'/',$f);
 		echo $f;
     }
 }
