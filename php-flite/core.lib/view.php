@@ -231,16 +231,31 @@ class FCView
 		    include_once($this->frontend_root . 'controllers/' . $this->controller . '.php');
 		}
 
+		ob_start();
         if($this->render_header_footer) $this->RenderHeader();
         $page_found = $this->Render(empty($this->render_files) ? $this->default_view : $this->render_files);
         if(!$page_found)
         {
-            header("HTTP/1.0 404 Not Found");
-            header("Status: 404 Not Found");
-            $this->Render('errors/404');
+            $this->Render404();
         }
         if($this->render_header_footer) $this->RenderFooter();
+        ob_flush();
 	}
 
 	/* Run Page */
+
+
+	/* Render 404 */
+
+	public function Render404()
+	{
+	    ob_end_clean();
+	    global $_FLITE;
+        header("HTTP/1.0 404 Not Found");
+        header("Status: 404 Not Found");
+        @include_once($_FLITE->GetConfig('site_root') . 'php-flite/frontend/_errors/404.php');
+        exit;
+	}
+
+	/* Render 404 */
 }
