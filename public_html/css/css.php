@@ -40,11 +40,11 @@ foreach ($files as $file) {
     {
         $file = str_replace('_','/',$file);
 
-        if(file_exists($dir.'/_'.$dom.'/'.$file.'.full.css')) $f = @file_get_contents($dir.'/'.$dom.'/'.$file.'.full.css');
+        if(file_exists($dir.'/_'.$dom.'/'.$file.'.full.css')) $f = @file_get_contents($dir.'/_'.$dom.'/'.$file.'.full.css');
         else
         {
             $f = @file_get_contents($dir.'/base/'.$file.'.css');
-            if(file_exists($dir.'/'.$dom.'/'.$file.'.css')) $f .= "\n". @file_get_contents($dir.'/'.$dom.'/'.$file.'.css');
+            if(file_exists($dir.'/_'.$dom.'/'.$file.'.css')) $f .= "\n". @file_get_contents($dir.'/_'.$dom.'/'.$file.'.css');
         }
 
 		$f = str_replace('{{URL}}',$protocol.$sub.'.'.$dom.'.'.$tld.'/',$f);

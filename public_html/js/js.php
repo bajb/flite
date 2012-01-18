@@ -46,11 +46,11 @@ foreach ($files as $file) {
     {
         $file = str_replace('_','/',$file);
 
-        if( file_exists( $dir . '/'. $dom .'/'. $file .'.full.js') ) $f = @file_get_contents($dir . '/'. $dom .'/'. $file .'.full.js');
+        if( file_exists( $dir . '/_'. $dom .'/'. $file .'.full.js') ) $f = @file_get_contents($dir . '/_'. $dom .'/'. $file .'.full.js');
         else
         {
             $f = @file_get_contents($dir . '/base/'. $file .'.js');
-            if( file_exists( $dir . '/'. $dom .'/'. $file .'.js') ) $f .= "\n" . @file_get_contents($dir . '/'. $dom .'/'. $file .'.js');
+            if( file_exists( $dir . '/_'. $dom .'/'. $file .'.js') ) $f .= "\n" . @file_get_contents($dir . '/_'. $dom .'/'. $file .'.js');
         }
 
         if($file == 'flite')
