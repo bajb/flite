@@ -467,8 +467,8 @@ class DBConnection
 			if ($result)
 			{
 				$row = mysql_fetch_array($result);
-				if($cache_time) $this->SetCache($query,$row[0],$cache_time);
-				return $row[0];
+				if($row && $cache_time) $this->SetCache($query,$row[0],$cache_time);
+				return $row ? $row[0] : false;
 			}
 		}
 		return false;
