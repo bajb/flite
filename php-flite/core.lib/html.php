@@ -256,4 +256,17 @@ class FCHTML {
          }
      }
 
+     /**
+      * Returns a URL to be used in anchor tags
+      *
+      * @param string $route
+      * @return string
+      */
+     public function anchorUrl($route)
+     {
+         global $_FLITE;
+         if(is_scalar($route)) return $_FLITE->GetConfig('full_domain') . ltrim($route, '/');
+         return $_FLITE->GetConfig('full_domain');
+     }
+
 }
