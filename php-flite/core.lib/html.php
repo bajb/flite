@@ -60,12 +60,12 @@ class FCHTML {
      *
      * @param string $dtd A valid shorthand DTD
      */
-    function  __construct($static_domain='static',$dtd='xhtml-strict') {
+    function  __construct($static_domain='static',$dtd='html5') {
         $this->static_domain = $static_domain;
         if(isset($this->docTypes[$dtd])){
             $this->doctype = $dtd;
         }else{
-            $this->doctype = 'xhtml-strict';
+            $this->doctype = 'html5';
         }
 
         $this->setCloseTag();
