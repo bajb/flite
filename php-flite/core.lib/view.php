@@ -24,7 +24,7 @@ class FCView
     /*
     Set Branding to False to disable attempts to include branding replacements
     */
-    public function __construct($site_view=null, $branding=null, $html_doctype='xhtml-strict')
+    public function __construct($site_view=null, $branding=null, $html_doctype='html5')
     {
         global $_FLITE;
 
