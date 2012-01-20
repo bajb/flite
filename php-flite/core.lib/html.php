@@ -85,7 +85,7 @@ class FCHTML {
      * Read the DTD set in the class and set the correct closing tag
      */
     private function setCloseTag(){
-        if(substr($this->doctype, 0, 5) == 'xhtml'){
+        if(substr($this->doctype, 0, 5) == 'xhtml' || substr($this->doctype, 0, 5) == 'html5'){
             $this->closetag = " />";
         }else{
             $this->closetag = ">";
@@ -171,7 +171,7 @@ class FCHTML {
     {
         global $_FLITE;
         $link = '    ';
-        if($cssif) $link .= "<!--[if $cssif>";
+        if($cssif) $link .= "<!--[if $cssif]>";
         $link .= "<link type='text/css' rel='stylesheet' href='".$this->StaticDomain()."/css/{$path}{$this->cssVersion}'".$this->closetag;
         if($cssif) $link .= "<![endif]-->";
         return $link . "\n";
@@ -249,7 +249,7 @@ class FCHTML {
       * @return <type>
       */
      public function roottag(){
-         if(substr($this->doctype, 0, 5) == 'xhtml' || $this->doctype == 'html5'){
+         if(substr($this->doctype, 0, 5) == 'xhtml'){
              return "<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>";
          }else{
              return "<html>";
