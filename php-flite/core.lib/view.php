@@ -32,7 +32,7 @@ class FCView
         if(empty($site_view)) $site_view = 'www';
 
         $this->site_view = $site_view;
-        $this->branding_enabled = !($branding == false);
+        $this->branding_enabled = !($branding === false);
         $this->template = is_null($branding) ? $_FLITE->domain : $branding;
         $this->frontend_root = $_FLITE->GetConfig('site_root') . 'php-flite/frontend/' . $this->site_view . '/';
 
