@@ -25,3 +25,8 @@ $this->SetConfig('membase_servers',array());
 $this->SetConfig('cookie_salt', 'J�94@#jhf');
 
 $this->SetConfig('static_sub_domain', 'static');
+
+//Database Configuration
+$this->SetConfig('databases', array(
+    array('flite_name' => 'db', 'hostname' => 'localhost','username' => 'default_username', 'password' => 'default_password', 'database' => 'databasename')
+));

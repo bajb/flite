@@ -93,8 +93,19 @@ class Flite
 
         spl_autoload_register(array($this, 'Loader'));
 
-        $this->db         = new DBConnection($this->GetConfig('database_host'), $this->GetConfig('database_user'),$this->GetConfig('database_pass'),$this->GetConfig('database_name'));
-        $this->dbslave    = new DBConnection($this->GetConfig('database_slave'),$this->GetConfig('database_user'),$this->GetConfig('database_pass'),$this->GetConfig('database_name'));
+        if(is_array($this->GetConfig('databases')))
+        {
+            $dbs = $this->GetConfig('databases');
+            foreach ($dbs as $db_conf)
+            {
+                $this->$db_conf['flite_name'] = new DBConnection($db_conf['hostname'], $db_conf['username'],$db_conf['password'],$db_conf['database']);
+            }
+        }
+        else
+        {
+            $this->db         = new DBConnection($this->GetConfig('database_host'), $this->GetConfig('database_user'),$this->GetConfig('database_pass'),$this->GetConfig('database_name'));
+            $this->dbslave    = new DBConnection($this->GetConfig('database_slave'),$this->GetConfig('database_user'),$this->GetConfig('database_pass'),$this->GetConfig('database_name'));
+        }
 
         $this->membase = new Membase();
         if($this->GetConfig('membase_servers') != false && FC::count($this->GetConfig('membase_servers')) > 0)
