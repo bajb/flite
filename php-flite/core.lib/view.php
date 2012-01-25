@@ -241,6 +241,15 @@ class FCView
             else $this->default_view = $this->controller;
         }
 
+        if($this->branding_enabled && file_exists($this->frontend_root . 'controllers/_' . $this->template . '/precontrol.php'))
+		{
+		    include_once($this->frontend_root . 'controllers/_' . $this->template . '/precontrol.php');
+		}
+		else if(file_exists($this->frontend_root . 'controllers/precontrol.php'))
+		{
+		    include_once($this->frontend_root . 'controllers/precontrol.php');
+		}
+
         if($this->branding_enabled && file_exists($this->frontend_root . 'controllers/_' . $this->template . '/' . $this->controller . '.php'))
 		{
 		    include_once($this->frontend_root . 'controllers/_' . $this->template . '/' . $this->controller . '.php');
@@ -248,6 +257,15 @@ class FCView
 		else if(file_exists($this->frontend_root . 'controllers/' . $this->controller . '.php'))
 		{
 		    include_once($this->frontend_root . 'controllers/' . $this->controller . '.php');
+		}
+
+		if($this->branding_enabled && file_exists($this->frontend_root . 'controllers/_' . $this->template . '/postcontrol.php'))
+		{
+		    include_once($this->frontend_root . 'controllers/_' . $this->template . '/postcontrol.php');
+		}
+		else if(file_exists($this->frontend_root . 'controllers/postcontrol.php'))
+		{
+		    include_once($this->frontend_root . 'controllers/postcontrol.php');
 		}
 
 		ob_start();
