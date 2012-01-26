@@ -3,7 +3,7 @@ require_once($this->GetConfig('site_root') .'php-flite/thirdparty/encryption/cla
 
 class Cookies
 {
-    public function SetCookie($name,$variable,$expires=864000,$secure=false)
+    public static function SetCookie($name,$variable,$expires=864000,$secure=false)
     {
         global $_FLITE;
         $cookie_name = Cookies::GetCookieName($name);
@@ -18,7 +18,7 @@ class Cookies
         return setcookie($cookie_name, urlencode($data),$expires,'/','.' . $_FLITE->domain . '.' . $_FLITE->tld);
     }
 
-    public function ReadCookie($name,$secure=false)
+    public static function ReadCookie($name,$secure=false)
     {
         global $_FLITE;
         $cookie_name = Cookies::GetCookieName($name);
@@ -35,14 +35,14 @@ class Cookies
         return false;
     }
 
-    public function RemoveCookie($name)
+    public static function RemoveCookie($name)
     {
         global $_FLITE;
         $cookie_name = Cookies::GetCookieName($name);
         return setcookie($cookie_name, '', time() - strtotime('-1 hour'),'/','.' . $_FLITE->domain . '.' . $_FLITE->tld);
     }
 
-    public function GetCookieName($plain_name)
+    public static function GetCookieName($plain_name)
     {
         global $_FLITE;
         if($_FLITE->GetConfig('is_dev')) return $plain_name;
