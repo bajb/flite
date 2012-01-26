@@ -19,6 +19,7 @@ class FCView
     private $render_files;
     private $page_data = array();
     protected $routes = array();
+    public $pieces = array();
 
 
     /*
@@ -63,9 +64,10 @@ class FCView
     public function GetRoute($route)
     {
         $process_route = false;
+        $route = rtrim($route, '/');
         if(stristr($route,'/'))
         {
-            $routes = explode('/',$route);
+            $this->pieces = $routes = explode('/',$route);
             if($routes)
             {
                 $process_route = $this->routes;
