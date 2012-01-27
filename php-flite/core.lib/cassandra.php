@@ -36,4 +36,10 @@ class CassandraObject
         catch (Exception $e){ global $_FLITE; $_FLITE->Exception('CassandraObject','SetData',$e); return false; }
         return true;
     }
+
+    public function __call($method, $args)
+    {
+        if(method_exists($this->CFConnection,$method)) return call_user_method_array($method,$this->CFConnection,$args);
+        throw new ErrorException ('Call to Undefined Method/Class Function', 0, E_ERROR);
+    }
 }
