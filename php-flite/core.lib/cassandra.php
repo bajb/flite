@@ -7,7 +7,7 @@ class CassandraObject
     private $cassandra_connection = 'cassandra';
 
     public function __construct($cf,$connection_name='cassandra',$autopack_names=true,$autopack_values=true,$read_consistency_level=cassandra_ConsistencyLevel::QUORUM,
-    $write_consistency_level=cassandra_ConsistencyLevel::QUORUM,$buffer_size=self::DEFAULT_BUFFER_SIZE)
+    $write_consistency_level=cassandra_ConsistencyLevel::QUORUM,$buffer_size=1024)
     {
         global $_FLITE;
         $this->cassandra_connection = $connection_name;
