@@ -51,6 +51,11 @@ class FCView
         return isset($this->config->$key) ? $this->config->$key : $default;
     }
 
+    public function GetConfigAKey($key,$array_key,$default=false,$return_object=true)
+    {
+        return isset($this->config->{$key}[$array_key]) ? ($return_object ? FC::array_to_object($this->config->{$key}[$array_key]) : $this->config->{$key}[$array_key]) : $default;
+    }
+
     public function SetConfig($key,$value)
     {
         $this->config->$key = $value;
