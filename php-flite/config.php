@@ -6,6 +6,11 @@ $this->SetConfig('is_web',(isset($_SERVER['DOCUMENT_ROOT']) && !empty($_SERVER['
 /* Include Defaults */
 include_once($this->GetConfig('site_root') . 'php-flite/config/defaults.php');
 
+if(isset($_SERVER['HOSTNAME']) && $_SERVER['HOSTNAME'] == $this->GetConfig("dev_hostname"))
+{
+    $this->SetConfig('is_dev',true);
+}
+
 if($this->GetConfig('is_web'))
 {
     $serverparts = explode('.',$_SERVER['SERVER_NAME'],3);

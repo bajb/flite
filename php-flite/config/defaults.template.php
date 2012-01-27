@@ -16,6 +16,8 @@ $this->SetConfig('short_date','Y-m-d');
 $this->SetConfig('debug_curl',false);
 $this->SetConfig('show_echo',false);
 
+$this->SetConfig('dev_hostname','dev.example.local'); // Use hostname to detect if running on development platform
+
 $this->SetConfig('cassie_servers',array());
 $this->SetConfig('cassandra_cluster',false);
 //$this->SetConfig('cassandra_cluster',array('Keyspace' => array('flite_name' => 'flite_cassandra_variable', 'keyspace' => 'Keyspace', 'nodes' => array('localhost')))); // Multiple Cassandra Connection Support
