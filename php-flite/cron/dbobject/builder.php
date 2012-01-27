@@ -28,7 +28,7 @@ foreach ($db_connections as $db_connection => $prefix)
             if(substr($cname,strlen($cname) - 2,2) != 'us' && substr($cname,strlen($cname) - 2,2) != 'ss') $cname = rtrim($cname, 's');
 
             $classname = str_replace(' ','',ucwords(strtolower(str_replace('_',' ',$cname))));
-            $filename = 'class.' . strtolower(str_replace('_','',$cname)) . '.php';
+            $filename = strtolower(str_replace('_','',$cname)) . '.php';
             $filename = '../../dblib/' . $filename;
 
             unset($primary1);
