@@ -31,6 +31,13 @@ class FC
         ini_set('display_errors',false);
     }
 
+    public function is_whitelist_ip($dev_override = true)
+    {
+        global $_FLITE;
+        $ips = $_FLITE->GetConfig('whitelist_ips', array());
+        return ($dev_override && $_FLITE->GetConfig('is_dev') ? true : (is_array($ips) ? (in_array(FC::get_user_ip(), $ips)) : false));
+    }
+
     public function inet_aton($ip)
     {
         return sprintf("%u",ip2long($ip));
