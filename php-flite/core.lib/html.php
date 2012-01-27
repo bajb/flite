@@ -262,11 +262,13 @@ class FCHTML {
       * @param string $route
       * @return string
       */
-     public function anchorUrl($route)
+     public function anchorUrl($route, $static = false)
      {
          global $_FLITE;
-         if(is_scalar($route)) return $_FLITE->GetConfig('full_domain') . ltrim($route, '/');
-         return $_FLITE->GetConfig('full_domain');
+         $url = $_FLITE->GetConfig('full_domain');
+         if($static) $url = $_FLITE->GetConfig('static_sub_domain', 'static').'.'.$_FLITE->GetConfig('site_domain').'/';
+         if(is_scalar($route)) return $url . ltrim($route, '/');
+         return $url;
      }
 
 }
