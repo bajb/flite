@@ -58,7 +58,7 @@ class FCView
 
     public function SetConfig($key,$value)
     {
-        $this->config->$key = $value;
+        return $this->config->$key = $value;
     }
 
     /* View Config */
@@ -111,12 +111,12 @@ class FCView
     public function SetFullPD($page_data)
 	{
 	    if(!is_array($page_data)) $page_data = array($page_data);
-	    $this->page_data = array_merge($this->page_data, $page_data);
+	    return $this->page_data = array_merge($this->page_data, $page_data);
 	}
 
 	public function SetPD($key,$value)
 	{
-	    $this->page_data[$key] = $value;
+	    return $this->page_data[$key] = $value;
 	}
 
 	public function GetPD($key,$default=false)

@@ -50,7 +50,7 @@ class Flite
 
     public function SetConfig($key,$value)
     {
-        $this->config->$key = $value;
+        return $this->config->$key = $value;
     }
 
     private function BootFlite()
