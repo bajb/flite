@@ -15,7 +15,9 @@ class DatabaseObject
 
     public function __construct($flitedb='db',$allow_slave=true,$slave_append='slave')
     {
+        global $_FLITE;
         $this->dbobject_connection = $flitedb;
+        if($allow_slave && !empty($slave_append) && !isset($_FLITE->{$flitedb . $slave_append})) $allow_slave = false;
         $this->dbobject_allow_slave = $allow_slave;
         $this->dbobject_slave_append = $slave_append;
     }
