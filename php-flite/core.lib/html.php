@@ -262,7 +262,7 @@ class FCHTML {
       * @param string $route
       * @return string
       */
-     public function anchorUrl($route, $static = false)
+     public static function anchorUrl($route, $static = false)
      {
          global $_FLITE;
          $url = $_FLITE->GetConfig('full_domain');
