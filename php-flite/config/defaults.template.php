@@ -31,5 +31,5 @@ $this->SetConfig('static_sub_domain', 'static');
 
 //Database Configuration
 $this->SetConfig('databases', array(
-    array('flite_name' => 'db', 'hostname' => 'localhost','username' => 'default_username', 'password' => 'default_password', 'database' => 'databasename')
+    array('flite_name' => 'db', 'hostname' => 'localhost','username' => 'default_username', 'password' => 'default_password', 'database' => 'databasename', 'classname_prefix' => '')
 ));
