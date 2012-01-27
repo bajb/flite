@@ -1,6 +1,6 @@
 <?php
 $this->SetConfig('site_root',(substr(substr(dirname(__FILE__),0,-6),-5) == 'flite' ? substr(dirname(__FILE__),0,-9) : substr(dirname(__FILE__),0,-10)) . '/'); //With Trailing Slash
-$this->SetConfig('is_dev',isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'],array('','127.0.0.1')) ?  true : (stristr($_SERVER['SERVER_NAME'], '.dev') ? true : false));
+$this->SetConfig('is_dev',isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'],array('','127.0.0.1')) ?  true : (isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.dev') ? true : false));
 $this->SetConfig('is_web',(isset($_SERVER['DOCUMENT_ROOT']) && !empty($_SERVER['DOCUMENT_ROOT'])));
 
 /* Include Defaults */
