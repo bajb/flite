@@ -198,4 +198,9 @@ class DatabaseObject
 
         $this->ResetChanges();
     }
+
+    public function GetLoadedData()
+    {
+        return $this->dbobject_data;
+    }
 }
