@@ -141,14 +141,33 @@ class Flite
         }
         else $this->memcache = new stdClass();
 
+        $this->cassandra = new stdClass();
         $cassandra_clustername = $this->GetConfig('cassandra_cluster');
         if($cassandra_clustername)
         {
             require_once($this->GetConfig('site_root') . 'php-flite/thirdparty/phpcassa/columnfamily.php');
             require_once($this->GetConfig('site_root') . 'php-flite/thirdparty/phpcassa/sysmanager.php');
-            $this->cassandra = new ConnectionPool($cassandra_clustername,$this->GetConfig('cassie_servers',null));
+
+            if(is_array($cassandra_clustername))
+            {
+                foreach ($cassandra_clustername as $keyspace)
+                {
+                    if(is_array($keyspace))
+                    {
+                        $this->{(isset($keyspace['flite_name']) ? $keyspace['flite_name'] : "cassandra_" . $keyspace)} =
+                            new ConnectionPool($keyspace['keyspace'],(isset($keyspace['nodes']) ? $keyspace['nodes'] : $this->GetConfig('cassie_servers',null)));
+                    }
+                    else
+                    {
+                        $this->{(FC::count($cassandra_clustername) == 1 ? 'cassandra' : "cassandra_" . $keyspace)} = new ConnectionPool($keyspace,$this->GetConfig('cassie_servers',null));
+                    }
+                }
+            }
+            else
+            {
+                $this->cassandra = new ConnectionPool($cassandra_clustername,$this->GetConfig('cassie_servers',null));
+            }
         }
-        else $this->cassandra = new stdClass();
 
         $this->LoadFiles($this->GetConfig('site_root') . 'php-flite/included/');
     }

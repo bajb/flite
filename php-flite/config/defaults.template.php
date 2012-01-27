@@ -18,6 +18,7 @@ $this->SetConfig('show_echo',false);
 
 $this->SetConfig('cassie_servers',array());
 $this->SetConfig('cassandra_cluster',false);
+//$this->SetConfig('cassandra_cluster',array('Keyspace' => array('flite_name' => 'flite_cassandra_variable', 'keyspace' => 'Keyspace', 'nodes' => array('localhost')))); // Multiple Cassandra Connection Support
 $this->SetConfig('memcache_servers',array());
 $this->SetConfig('membase_servers',array());
 

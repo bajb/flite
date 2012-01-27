@@ -4,13 +4,15 @@ class CassandraObject
 {
     private $columnFamily = '';
     private $CFConnection;
+    private $cassandra_connection = 'cassandra';
 
-    public function __construct($cf,$autopack_names=true,$autopack_values=true,$read_consistency_level=cassandra_ConsistencyLevel::QUORUM,
+    public function __construct($cf,$connection_name='cassandra',$autopack_names=true,$autopack_values=true,$read_consistency_level=cassandra_ConsistencyLevel::QUORUM,
     $write_consistency_level=cassandra_ConsistencyLevel::QUORUM,$buffer_size=self::DEFAULT_BUFFER_SIZE)
     {
         global $_FLITE;
+        $this->cassandra_connection = $connection_name;
         $this->columnFamily = $cf;
-        try { $this->CFConnection = new ColumnFamily($_FLITE->cassandra, $this->columnFamily,$autopack_names,$autopack_values,$read_consistency_level,$write_consistency_level,$buffer_size); }
+        try { $this->CFConnection = new ColumnFamily($_FLITE->{$this->cassandra_connection}, $this->columnFamily,$autopack_names,$autopack_values,$read_consistency_level,$write_consistency_level,$buffer_size); }
         catch (Exception $e){ $_FLITE->Exception('CassandraObject','__construct',$e); }
         if(!$this->CFConnection) return false;
     }
