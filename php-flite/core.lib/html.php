@@ -266,7 +266,7 @@ class FCHTML {
      {
          global $_FLITE;
          $url = $_FLITE->GetConfig('full_domain');
-         if($static) $url = $_FLITE->GetConfig('static_sub_domain', 'static').'.'.$_FLITE->GetConfig('site_domain').'/';
+         if($static) $url = $_FLITE->GetConfig('protocol', 'http://').$_FLITE->GetConfig('static_sub_domain', 'static').'.'.$_FLITE->GetConfig('site_domain').'/';
          if(is_scalar($route)) return $url . ltrim($route, '/');
          return $url;
      }
