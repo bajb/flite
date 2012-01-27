@@ -584,6 +584,7 @@ class DBConnection
 
 	private function GetCache($sql)
 	{
+	    if(isset($_GET['rebuild-db-cache'])) return false;
 	    global $_FLITE;
 	    $data = $_FLITE->memcache->get($this->CacheKey($sql));
 	    if(empty($data) || !$data) return false;

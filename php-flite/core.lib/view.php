@@ -119,9 +119,9 @@ class FCView
 	    $this->page_data[$key] = $value;
 	}
 
-	public function GetPD($key)
-	{
-	    return $this->page_data[$key];
+	public function GetPD($key,$default=false)
+    {
+        return isset($this->page_data[$key]) ? $this->page_data[$key] : $default;
 	}
 
 	public function PDIsEmpty($key)
