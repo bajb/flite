@@ -37,10 +37,10 @@ class FCView
         $this->template = is_null($branding) ? $_FLITE->domain : $branding;
         $this->frontend_root = $_FLITE->GetConfig('site_root') . 'php-flite/frontend/' . $this->site_view . '/';
 
+        $this->html = new FCHTML($_FLITE->GetConfig('static_sub_domain',empty($_FLITE->sub_domain) ? 'www' : $_FLITE->sub_domain),$html_doctype);
+
         if(file_exists($this->frontend_root . 'config/base.php')) include_once($this->frontend_root . 'config/base.php');
         if($this->branding_enabled && file_exists($this->frontend_root . 'config/'. $this->template .'.php')) include_once($this->frontend_root . 'config/'. $this->template .'.php');
-
-        $this->html = new FCHTML($_FLITE->GetConfig('static_sub_domain',empty($_FLITE->sub_domain) ? 'www' : $_FLITE->sub_domain),$html_doctype);
     }
 
 
