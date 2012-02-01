@@ -143,7 +143,7 @@ class DatabaseObject
             if(in_array($change,$this->GetAvailableColumns()))
             {
                 $keys[] = $change;
-                $values[] = $this->GetValue($change);
+                $values[] = $_FLITE->{$this->dbobject_connection}->Escape($this->GetValue($change));
                 $sets[] = "`$change` = '". $_FLITE->{$this->dbobject_connection}->Escape($this->GetValue($change)) ."'";
             }
         }
