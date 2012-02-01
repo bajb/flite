@@ -162,7 +162,14 @@ class DatabaseObject
             $sql = "INSERT INTO `$this->dbobject_table_name` (`". implode('`,`',$keys) ."`) VALUES ('". implode("','",$values) ."') ON DUPLICATE KEY UPDATE $set";
         }
 
-        if($_FLITE->{$this->dbobject_connection}->RunQuery($sql))
+        $runquery = $_FLITE->{$this->dbobject_connection}->RunQuery($sql);
+
+        if(!is_bool($runquery) && $runquery > 0 && FC::count($this->dbobject_primary_keys) == 1)
+        {
+            $this->SetValue($this->dbobject_primary_keys[0],$runquery);
+        }
+
+        if($runquery)
         {
             $this->dbobject_row_exists = true;
         }
