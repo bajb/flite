@@ -15,7 +15,7 @@ class Cookies
         }
         $data = base64_encode($data);
         $expires += $expires > time() ? 0 : time();
-        return setcookie($cookie_name, urlencode($data),$expires,'/','.' . $_FLITE->domain . '.' . $_FLITE->tld);
+        return setcookie($cookie_name, urlencode($data),$expires,$_FLITE->GetConfig('cookie_path','/'),$_FLITE->GetConfig('cookie_domain','.'.$_FLITE->domain.'.'.$_FLITE->tld));
     }
 
     public static function ReadCookie($name,$secure=false)
