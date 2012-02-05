@@ -26,6 +26,7 @@ $this->SetConfig('membase_servers',array());
 
 //Security
 $this->SetConfig('cookie_salt', 'J�94@#jhf');
+$this->SetConfig('whitelist_ips', array('81.144.208.5','81.144.208.6','81.144.208.7','81.144.208.8','81.144.208.9','81.144.208.10'));
 
 $this->SetConfig('static_sub_domain', 'static');
 
