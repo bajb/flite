@@ -27,7 +27,7 @@ function compress($buffer)
     return $buffer;
 }
 
-header('Content-type: text/css');
+header('Content-type: text/javascript');
 header('set Cache-Control "max-age=2419200, public"');
 
 ob_start("compress");
