@@ -85,7 +85,7 @@ class FCView
                 return $process_route;
             }
         }
-        else $process_route = isset($this->routes[$route]) ? $this->routes[$route] : false;
+        else $process_route = isset($this->routes[$route]) ? $this->routes[$route] : (isset($this->routes['*']) ? $this->routes['*'] : false);
 
         if(isset($process_route['controller']) || isset($process_route['view'])) return $process_route;
         else return false;
