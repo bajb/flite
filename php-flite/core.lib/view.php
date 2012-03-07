@@ -213,11 +213,12 @@ class FCView
 		return false;
 	}
 
-	public function LoadFileContent($file)
+	public function LoadFileContent($file,$data=false)
 	{
 		ob_start();
 		global $_FLITE;
-		extract($this->page_data);
+		if(!$data) $data = $this->page_data;
+		extract($data);
 		@include_once($this->frontend_root . 'views/' . $file);
 		$contents = ob_get_contents();
 		ob_end_clean();
@@ -275,15 +276,18 @@ class FCView
 		    include_once($this->frontend_root . 'controllers/postcontrol.php');
 		}
 
-		ob_start();
-        if($this->render_header_footer) $this->RenderHeader();
-        $page_found = $this->Render(empty($this->render_files) ? $this->default_view : $this->render_files);
-        if(!$page_found)
-        {
-            $this->Render404();
-        }
-        if($this->render_header_footer) $this->RenderFooter();
-        ob_flush();
+		if(!isset($this->no_render))
+		{
+    		ob_start();
+            if($this->render_header_footer) $this->RenderHeader();
+            $page_found = $this->Render(empty($this->render_files) ? $this->default_view : $this->render_files);
+            if(!$page_found)
+            {
+                $this->Render404();
+            }
+            if($this->render_header_footer) $this->RenderFooter();
+            ob_flush();
+		}
 	}
 
 	/* Run Page */
