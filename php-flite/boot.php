@@ -1,27 +1,37 @@
 <?php
-class Flite
+class FliteBase
 {
     private $metrics;
     private $config;
     private $exceptions = array();
     public $start_session = true;
     public $tweak_server_value = true;
+    private $initiated = false;
 
     public function __construct()
     {
-        $this->metrics->page_execution_start = microtime(true);
-        $this->BootFlite();
+        if(!$this->initiated)
+        {
+            $this->metrics->page_execution_start = microtime(true);
+            $this->BootFlite();
+            $this->initiated = true;
+        }
     }
 
     private function Loader($classname)
     {
         $b = $this->GetConfig('site_root') . 'php-flite/dblib/';
         $classname = strtolower($classname);
-        if(file_exists($b . $classname . '.php'))
+
+        if(file_exists($b . str_replace('_','/',$classname) . '.php'))
+        {
+            include_once($b . str_replace('_','/',$classname) . '.php');
+        }
+        else if(file_exists($b . $classname . '.php'))
         {
             include_once($b . $classname . '.php');
         }
-        elseif(file_exists($this->GetConfig('site_root') .'php-flite/lib/' . $classname . '.php'))
+        else if(file_exists($this->GetConfig('site_root') .'php-flite/lib/' . $classname . '.php'))
         {
             include_once($this->GetConfig('site_root') .'php-flite/lib/' . $classname . '.php');
         }
@@ -172,7 +182,7 @@ class Flite
         $this->LoadFiles($this->GetConfig('site_root') . 'php-flite/included/');
     }
 
-    public function EchoLocation($call,$force=false)
+    public function DebugTime($call,$force=false,$return_time=false)
     {
         if($this->GetConfig('show_echo') || $force)
         {
@@ -181,8 +191,10 @@ class Flite
             $start = round($start * 1000,3);
             $last = isset($this->metrics->page_execution_last) ? $this->metrics->now - $this->metrics->page_execution_last : 0;
             $last = round($last * 1000,3);
-            echo "\n<br /><h2>$call</h2><br>Time Since Start: <strong>$start</strong>ms, Time Since Last Check: <strong>$last</strong>ms\n<br>";
             $this->metrics->page_execution_last = microtime(true);
+
+            if(!$return_time) echo "\n<br /><h2>$call</h2><br>Time Since Start: <strong>$start</strong>ms, Time Since Last Check: <strong>$last</strong>ms\n<br>";
+            else return $start;
         }
     }
 
@@ -202,4 +214,20 @@ class Flite
     }
 }
 
-$_FLITE = new Flite();
+class Flite
+{
+    public static $flite = null;
+    public static $app = null;
+    public function Base()
+    {
+        if (self::$flite === null) self::$flite = new FliteBase();
+        return self::$flite;
+    }
+    public function App($site_view=null, $branding=null, $html_doctype='html5')
+    {
+        if (self::$app === null) self::$app = new FliteApplication($site_view, $branding, $html_doctype);
+        return self::$app;
+    }
+}
+
+$_FLITE = Flite::Base();

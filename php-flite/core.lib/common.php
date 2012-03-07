@@ -33,7 +33,7 @@ class FC
 
     public function is_whitelist_ip($dev_override = true)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $ips = $_FLITE->GetConfig('whitelist_ips', array());
         return ($dev_override && $_FLITE->GetConfig('is_dev') ? true : (is_array($ips) ? (in_array(FC::get_user_ip(), $ips)) : false));
     }
@@ -132,7 +132,7 @@ class FC
 
     public function curl_response($url,$timeout=15,$debug=false)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $debug = $debug || $_FLITE->GetConfig('debug_curl');
         $api_call = curl_init();
         curl_setopt($api_call, CURLOPT_URL, $url);

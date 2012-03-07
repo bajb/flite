@@ -1,5 +1,7 @@
 <?php
-require_once('../../boot.php');
+require_once(substr(dirname(__FILE__),0,-13) . 'boot.php');
+
+$dblib = $_FLITE->GetConfig('site_root') . 'php-flite/dblib/';
 
 $db_connections = array();
 if(is_array($_FLITE->GetConfig('databases')))
@@ -8,6 +10,11 @@ if(is_array($_FLITE->GetConfig('databases')))
     foreach ($dbs as $db_conf)
     {
         $db_connections[$db_conf['flite_name']] = isset($db_conf['classname_prefix']) ? $db_conf['classname_prefix'] : '';
+        if(isset($db_conf['classname_prefix']))
+        {
+            $current_path = strtolower($dblib . str_replace('_','/',$db_conf['classname_prefix']));
+            if(!file_exists($current_path)) mkdir($current_path,0755,true);
+        }
     }
 }
 
@@ -22,14 +29,14 @@ foreach ($db_connections as $db_connection => $prefix)
             $cname = '';
             $tbl = $table->{'Tables_in_' . $_FLITE->{$db_connection}->GetDBName()};
 
-            $cname = $prefix . '_' . $tbl;
+            $cname = str_replace('_','|',$prefix) . '_' . $tbl;
             if(substr($cname,0,4) == 'tbl_') $cname = substr($cname,4);
             if(substr($cname,strlen($cname) - 3,3) == 'ies') $cname = substr($cname,0,strlen($cname) - 3) . 'y';
             if(substr($cname,strlen($cname) - 2,2) != 'us' && substr($cname,strlen($cname) - 2,2) != 'ss') $cname = rtrim($cname, 's');
 
-            $classname = str_replace(' ','',ucwords(strtolower(str_replace('_',' ',$cname))));
+            $classname = str_replace('|','_',str_replace(' ','',ucwords(strtolower(str_replace('_',' ',$cname)))));
             $filename = strtolower(str_replace('_','',$cname)) . '.php';
-            $filename = '../../dblib/' . $filename;
+            $filename = $dblib . str_replace('|','/',$filename);
 
             unset($primary1);
             $contents = $primary = '';
@@ -103,7 +110,7 @@ foreach ($db_connections as $db_connection => $prefix)
 
                 $contents .=  "\n}";
             }else{
-                print 'No Columns Found<br/>';
+                print 'No Columns Found\n';
             }
 
 
@@ -116,27 +123,27 @@ foreach ($db_connections as $db_connection => $prefix)
                     if (is_writable($filename))
                     {
                         if (!$handle = fopen($filename, 'a')) {
-                            echo "Cannot open file ($filename)<br/>";
+                            echo "Cannot open file ($filename)\n";
                             exit;
                         }
 
                         // Write $somecontent to our opened file.
                         if (fwrite($handle, $contents) === FALSE) {
-                            echo "Cannot write to file ($filename)<br/>";
+                            echo "Cannot write to file ($filename)\n";
                             exit;
                         }
 
-                        echo "Success, wrote (".htmlspecialchars($contents).") to file ($filename)<br/>";
+                        echo "Success, wrote ($filename)\n";//(".htmlspecialchars($contents).") to file
 
                         fclose($handle);
 
                     } else {
-                        echo "The file $filename is not writable<br/>";
+                        echo "The file $filename is not writable\n";
                     }
                 }
                 else
                 {
-                    echo 'Only tables with primary keys will be processed.<br/>';
+                    echo 'Only tables with primary keys will be processed.\n';
                 }
             }
             else
@@ -144,7 +151,7 @@ foreach ($db_connections as $db_connection => $prefix)
                 $orig = file_get_contents($filename);
                 if($orig == $contents)
                 {
-                    echo 'Skipping ' . $filename . ' - Same File<br/>';
+                    echo 'Skipping ' . $filename . ' - Same File\n';
                 }
                 else
                 {
@@ -154,14 +161,14 @@ foreach ($db_connections as $db_connection => $prefix)
                     echo  '</pre>';
                     echo '<pre style="border:1px solid #aaa;background:#000;color:#eee;width:500px;height:440px;overflow:auto;">';
                     echo htmlspecialchars($contents);
-                    echo  '</pre><br/><br/>';
+                    echo  '</pre>\n\n';
                 }
 
             }
         }
     }
     else
-    print 'No Tables Found<br/>';
+    print 'No Tables Found\n';
 
 
     $errors = $_FLITE->{$db_connection}->GetErrors();

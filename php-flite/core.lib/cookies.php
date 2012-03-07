@@ -5,7 +5,7 @@ class Cookies
 {
     public static function SetCookie($name,$variable,$expires=864000,$secure=false)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $cookie_name = Cookies::GetCookieName($name);
 
         $data = serialize($variable);
@@ -20,7 +20,7 @@ class Cookies
 
     public static function ReadCookie($name,$secure=false)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $cookie_name = Cookies::GetCookieName($name);
         if(isset($_COOKIE[$cookie_name]))
         {
@@ -37,14 +37,14 @@ class Cookies
 
     public static function RemoveCookie($name)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $cookie_name = Cookies::GetCookieName($name);
         return setcookie($cookie_name, '', time() - strtotime('-1 hour'),'/','.' . $_FLITE->domain . '.' . $_FLITE->tld);
     }
 
     public static function GetCookieName($plain_name)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         if($_FLITE->GetConfig('is_dev')) return $plain_name;
         return md5(FC::get_user_ip() . '-bbcookies' . $plain_name);
     }

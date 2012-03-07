@@ -156,7 +156,7 @@ class FCHTML {
 
     public function StaticDomain()
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         return $_FLITE->GetConfig('protocol') . $this->static_domain . "." . $_FLITE->GetConfig('site_domain');
     }
 
@@ -169,7 +169,7 @@ class FCHTML {
      */
     public function css($path, $cssif = false)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $link = '    ';
         if($cssif) $link .= "<!--[if $cssif]>";
         $link .= "<link type='text/css' rel='stylesheet' href='".$this->StaticDomain()."/css/{$path}{$this->cssVersion}'".$this->closetag;
@@ -185,7 +185,7 @@ class FCHTML {
      */
     public function js($path)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $link = "<script type='text/javascript' src='".$this->StaticDomain()."/js/{$path}{$this->jsVersion}'></script>";
         return $link . "\n";
     }
@@ -264,7 +264,7 @@ class FCHTML {
       */
      public static function anchorUrl($route, $static = false)
      {
-         global $_FLITE;
+         $_FLITE = Flite::Base();
          $url = $_FLITE->GetConfig('full_domain');
          if($static) $url = $_FLITE->GetConfig('protocol', 'http://').$_FLITE->GetConfig('static_sub_domain', 'static').'.'.$_FLITE->GetConfig('site_domain').'/';
          if(is_scalar($route)) return $url . ltrim($route, '/');

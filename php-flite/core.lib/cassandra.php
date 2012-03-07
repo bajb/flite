@@ -9,7 +9,7 @@ class CassandraObject
     public function __construct($cf,$connection_name='cassandra',$autopack_names=true,$autopack_values=true,$read_consistency_level=cassandra_ConsistencyLevel::QUORUM,
     $write_consistency_level=cassandra_ConsistencyLevel::QUORUM,$buffer_size=1024)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $this->cassandra_connection = $connection_name;
         $this->columnFamily = $cf;
         try { $this->CFConnection = new ColumnFamily($_FLITE->{$this->cassandra_connection}, $this->columnFamily,$autopack_names,$autopack_values,$read_consistency_level,$write_consistency_level,$buffer_size); }
@@ -27,13 +27,13 @@ class CassandraObject
             else if($data) return $data;
             else throw new Exception('Key {'.$key.'} Not Found',404);
         }
-        catch (Exception $e){ global $_FLITE; $_FLITE->Exception('CassandraObject','GetData',$e); return false; }
+        catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','GetData',$e); return false; }
     }
 
     public function SetData($key,$data)
     {
         try { $this->CFConnection->insert($key,$data); }
-        catch (Exception $e){ global $_FLITE; $_FLITE->Exception('CassandraObject','SetData',$e); return false; }
+        catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','SetData',$e); return false; }
         return true;
     }
 

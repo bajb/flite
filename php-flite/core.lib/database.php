@@ -15,7 +15,7 @@ class DatabaseObject
 
     public function __construct($flitedb='db',$allow_slave=true,$slave_append='slave')
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $this->dbobject_connection = $flitedb;
         if($allow_slave && !empty($slave_append) && !isset($_FLITE->{$flitedb . $slave_append})) $allow_slave = false;
         $this->dbobject_allow_slave = $allow_slave;
@@ -41,7 +41,7 @@ class DatabaseObject
     {
         if(empty($this->dbobject_available_columns))
         {
-            global $_FLITE;
+            $_FLITE = Flite::Base();
             $columns = $_FLITE->{$this->dbobject_connection}->GetRows("SHOW COLUMNS FROM `$this->dbobject_table_name`");
             foreach ($columns as $col)
             {
@@ -83,7 +83,7 @@ class DatabaseObject
 
     public function GetPrimaryData($pkey)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         if(isset($this->dbobject_data[$pkey])) return $_FLITE->{$this->dbobject_connection}->Escape($this->GetValue($pkey));
         else if(isset($this->dbobject_primary_key_data[$pkey])) return $_FLITE->{$this->dbobject_connection}->Escape($this->dbobject_primary_key_data[$pkey]);
         else if(isset($this->dbobject_primary_keys[$pkey])) return $_FLITE->{$this->dbobject_connection}->Escape($this->dbobject_primary_keys[$pkey]);
@@ -128,7 +128,7 @@ class DatabaseObject
 
     public function SaveChanges()
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $set = "";
         $keys = $sets = $values = array();
 
@@ -179,14 +179,14 @@ class DatabaseObject
 
     public function Delete()
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $_FLITE->{$this->dbobject_connection}->RunQuery("DELETE FROM `$this->dbobject_table_name` " . $this->GetWhere());
         $this->ResetChanges();
     }
 
     public function Load($columns=null)
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
         $colsql = '*';
         if(!is_array($columns) && !is_null($columns)) $columns = explode(',',$columns);
         if(is_array($columns)) $colsql = '`' . implode('`,`',$columns) . '`';

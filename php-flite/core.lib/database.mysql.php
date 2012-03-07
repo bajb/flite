@@ -585,7 +585,7 @@ class DBConnection
 	private function GetCache($sql)
 	{
 	    if(isset($_GET['rebuild-db-cache'])) return false;
-	    global $_FLITE;
+	    $_FLITE = Flite::Base();
 	    $data = $_FLITE->memcache->get($this->CacheKey($sql));
 	    if(empty($data) || !$data) return false;
 	    else return $data;
@@ -593,7 +593,7 @@ class DBConnection
 
 	private function SetCache($sql,$value,$timeout=600)
 	{
-	    global $_FLITE;
+	    $_FLITE = Flite::Base();
 	    if(!$value) return false;
 	    $_FLITE->memcache->set($this->CacheKey($sql), $value, MEMCACHE_COMPRESSED,$timeout);
 	}

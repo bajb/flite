@@ -7,7 +7,7 @@
  *
  */
 
-class FCView
+class FliteApplication
 {
     private $branding_enabled=true;
     private $controller;
@@ -27,7 +27,7 @@ class FCView
     */
     public function __construct($site_view=null, $branding=null, $html_doctype='html5')
     {
-        global $_FLITE;
+        $_FLITE = Flite::Base();
 
         if(is_null($site_view)) $site_view = $_FLITE->sub_domain;
         if(empty($site_view)) $site_view = 'www';
@@ -169,8 +169,8 @@ class FCView
 			return $included;
 		}
 
-		global $_FLITE;
-		extract($this->page_data);
+		$_FLITE = Flite::Base();
+		if(is_array($this->page_data)) extract($this->page_data);
 
 		/* Brand Specific Prepend */
 		if($this->branding_enabled && file_exists($this->frontend_root . 'views/_' . $this->template . '/' . $file . '.pre.' . $ext))
@@ -216,9 +216,9 @@ class FCView
 	public function LoadFileContent($file,$data=false)
 	{
 		ob_start();
-		global $_FLITE;
+		$_FLITE = Flite::Base();
 		if(!$data) $data = $this->page_data;
-		extract($data);
+		if(is_array($data)) extract($data);
 		@include_once($this->frontend_root . 'views/' . $file);
 		$contents = ob_get_contents();
 		ob_end_clean();
@@ -232,7 +232,7 @@ class FCView
 
 	public function RunPage($controller=null,$default_view=null,$render_header_footer=true)
 	{
-	    global $_FLITE;
+	    $_FLITE = Flite::Base();
 	    $this->render_header_footer = $render_header_footer;
 
 	    if(is_null($controller) && isset($_SERVER['REDIRECT_URL']) && strlen($_SERVER['REDIRECT_URL']) > 1) $this->controller = strtolower(substr($_SERVER['REDIRECT_URL'],1));
@@ -298,7 +298,7 @@ class FCView
 	public function Render404()
 	{
 	    ob_end_clean();
-	    global $_FLITE;
+	    $_FLITE = Flite::Base();
         header("HTTP/1.0 404 Not Found");
         header("Status: 404 Not Found");
         @include_once($_FLITE->GetConfig('site_root') . 'php-flite/frontend/_errors/404.php');
