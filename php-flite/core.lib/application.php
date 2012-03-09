@@ -45,6 +45,7 @@ class FliteApplication extends FliteConfig
 
     public function GetRoute($route)
     {
+        $this->route_count = 0;
         $process_route = false;
         $route = rtrim($route, '/');
         if(stristr($route,'/'))
@@ -55,14 +56,26 @@ class FliteApplication extends FliteConfig
                 $process_route = $this->routes;
                 foreach ($routes as $croute)
                 {
-                    if(isset($process_route[$croute])) $process_route = $process_route[$croute];
-                    else if(isset($process_route['*'])) $process_route = $process_route['*'];
+                    if(isset($process_route[$croute]))
+                    {
+                        $process_route = $process_route[$croute];
+                        $this->route_count++;
+                    }
+                    else if(isset($process_route['*']))
+                    {
+                        $this->route_count++;
+                        $process_route = $process_route['*'];
+                    }
                     else break;
                 }
                 return $process_route;
             }
         }
-        else $process_route = isset($this->routes[$route]) ? $this->routes[$route] : (isset($this->routes['*']) ? $this->routes['*'] : false);
+        else
+        {
+            $process_route = isset($this->routes[$route]) ? $this->routes[$route] : (isset($this->routes['*']) ? $this->routes['*'] : false);
+            if($process_route) $this->route_count++;
+        }
 
         if(isset($process_route['controller']) || isset($process_route['view'])) return $process_route;
         else return false;

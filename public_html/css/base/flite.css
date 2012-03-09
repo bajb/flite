@@ -212,17 +212,6 @@ td { vertical-align: top; }
    ========================================================================== */
 
 
-/* Improves nasty margin collapse */
-div, header
-{
-    overflow: auto;
-}
-
-
-
-
-
-
 
 
 
