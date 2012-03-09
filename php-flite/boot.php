@@ -1,8 +1,27 @@
 <?php
-class FliteBase
+class FliteConfig
+{
+    private $config;
+
+    public function GetConfig($key,$default=false)
+    {
+        return isset($this->config->$key) ? $this->config->$key : $default;
+    }
+
+    public function GetConfigAKey($key,$array_key,$default=false,$return_object=true)
+    {
+        return isset($this->config->{$key}[$array_key]) ? ($return_object ? FC::array_to_object($this->config->{$key}[$array_key]) : $this->config->{$key}[$array_key]) : $default;
+    }
+
+    public function SetConfig($key,$value)
+    {
+        return $this->config->$key = $value;
+    }
+}
+
+class FliteBase extends FliteConfig
 {
     private $metrics;
-    private $config;
     private $exceptions = array();
     public $start_session = true;
     public $tweak_server_value = true;
@@ -51,16 +70,6 @@ class FliteBase
             return true;
         }
         else return false;
-    }
-
-    public function GetConfig($key,$default=false)
-    {
-        return isset($this->config->$key) ? $this->config->$key : $default;
-    }
-
-    public function SetConfig($key,$value)
-    {
-        return $this->config->$key = $value;
     }
 
     private function BootFlite()

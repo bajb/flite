@@ -7,12 +7,11 @@
  *
  */
 
-class FliteApplication
+class FliteApplication extends FliteConfig
 {
     private $branding_enabled=true;
     private $controller;
     private $default_view;
-    private $config;
     private $template;
     private $site_view;
     private $frontend_root;
@@ -20,7 +19,6 @@ class FliteApplication
     private $page_data = array();
     protected $routes = array();
     public $pieces = array();
-
 
     /*
     Set Branding to False to disable attempts to include branding replacements
@@ -42,27 +40,6 @@ class FliteApplication
         if(file_exists($this->frontend_root . 'config/base.php')) include_once($this->frontend_root . 'config/base.php');
         if($this->branding_enabled && file_exists($this->frontend_root . 'config/'. $this->template .'.php')) include_once($this->frontend_root . 'config/'. $this->template .'.php');
     }
-
-
-    /* View Config */
-
-    public function GetConfig($key,$default=false)
-    {
-        return isset($this->config->$key) ? $this->config->$key : $default;
-    }
-
-    public function GetConfigAKey($key,$array_key,$default=false,$return_object=true)
-    {
-        return isset($this->config->{$key}[$array_key]) ? ($return_object ? FC::array_to_object($this->config->{$key}[$array_key]) : $this->config->{$key}[$array_key]) : $default;
-    }
-
-    public function SetConfig($key,$value)
-    {
-        return $this->config->$key = $value;
-    }
-
-    /* View Config */
-
 
     /* Basic Routing */
 
