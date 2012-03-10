@@ -163,15 +163,77 @@ class FC
 
     public function get_user_ip()
     {
-    	$retip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : (isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1');
+        $retip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : (isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1');
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) $retip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         if(isset($_SERVER['HTTP_X_REAL_FORWARDED_FOR'])) $retip = $_SERVER['HTTP_X_REAL_FORWARDED_FOR'];
         if(isset($retip) && stristr($retip, ','))
         {
-        	list($retip,) = explode(',', $retip, 2);
-        	$retip = trim($retip);
+            list($retip,) = explode(',', $retip, 2);
+            $retip = trim($retip);
         }
         return $retip;
+    }
+
+    public function baseShifting($num,$base=10)
+    {
+        if(!in_array($base, array(10,1024))) $num = base_convert($num,$base,10);
+        $bases = array(
+        2    => 'bin',
+        8    => 'octal',
+        10   => 'dec',
+        16   => 'hex',
+        1024 => 'byte'
+        );
+        $shiftpost = array(
+        'bin'   => array(
+        1 => 'thous',
+        2 => 'mil',
+        3 => 'bil'
+        ),
+        'octal' => array(
+        1 => 'thous',
+        2 => 'mil',
+        3 => 'bil'
+        ),
+        'dec'   => array(
+        1 => 'thous',
+        2 => 'mil',
+        3 => 'bil'
+        ),
+        'hex'   => array(
+        ),
+        'byte'   => array(
+        1 => 'kb',
+        2 => 'mb',
+        3 => 'gb',
+        4 => 'tb',
+        5 => 'pb'
+        )
+        );
+
+        $num_shifts = 0;
+
+        while($num > 100)
+        {
+            $num_shifts++;
+            $num /= $base == 1024 ? 1024 : 1000;
+        }
+
+        switch($num)
+        {
+            case $num >= 10:
+                $num = round($num,1);
+                break;
+            case $num < 10:
+                $num = round($num,2);
+                break;
+        }
+
+        if(!in_array($base, array(10,1024))) $num = (string)base_convert($num,10,$base);
+        if($num_shifts)
+        {
+            $num = (string)$num.' '.$shiftpost[$bases[$base]][$num_shifts];
+        }
     }
 
 }
