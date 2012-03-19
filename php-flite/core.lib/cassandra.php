@@ -37,6 +37,18 @@ class CassandraObject
         return true;
     }
 
+    public function GetColumns($key,$start_column = "",$end_column = "",$reverse_columns = false,$count=10,$super_columns=null,$return_object=false)
+    {
+        try
+        {
+            $data = $this->CFConnection->get($key,null,$start_column,$end_column,$reverse_columns,$count,$super_columns);
+            if($return_object && $data) return FC::array_to_object($data);
+            else if($data) return $data;
+            else throw new Exception('Key {'.$key.'} Not Found',404);
+        }
+        catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','GetColumns',$e); return false; }
+    }
+
     public function __call($method, $args)
     {
         if(method_exists($this->CFConnection,$method)) return call_user_method_array($method,$this->CFConnection,$args);

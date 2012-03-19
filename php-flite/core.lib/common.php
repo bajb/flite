@@ -174,66 +174,29 @@ class FC
         return $retip;
     }
 
-    public function baseShifting($num,$base=10)
+    public function time_difference($seconds,$string=true,$string_seconds=true)
     {
-        if(!in_array($base, array(10,1024))) $num = base_convert($num,$base,10);
-        $bases = array(
-        2    => 'bin',
-        8    => 'octal',
-        10   => 'dec',
-        16   => 'hex',
-        1024 => 'byte'
-        );
-        $shiftpost = array(
-        'bin'   => array(
-        1 => 'thous',
-        2 => 'mil',
-        3 => 'bil'
-        ),
-        'octal' => array(
-        1 => 'thous',
-        2 => 'mil',
-        3 => 'bil'
-        ),
-        'dec'   => array(
-        1 => 'thous',
-        2 => 'mil',
-        3 => 'bil'
-        ),
-        'hex'   => array(
-        ),
-        'byte'   => array(
-        1 => 'kb',
-        2 => 'mb',
-        3 => 'gb',
-        4 => 'tb',
-        5 => 'pb'
-        )
-        );
+        $days = floor($seconds / 86400);
+        $seconds = $seconds%86400;
 
-        $num_shifts = 0;
+        $hours = floor($seconds/3600);
+        $seconds = $seconds%3600;
 
-        while($num > 100)
+        $minutes = floor($seconds/60);
+        $seconds = $seconds%60;
+
+        if(!$string) return array('days' => $days,'hours' => $hours,'minutes' => $minutes,'seconds' => $seconds);
+        else
         {
-            $num_shifts++;
-            $num /= $base == 1024 ? 1024 : 1000;
-        }
+            $out = array();
+            if($days > 0) $out[] = "$days Days";
+            if($hours > 0) $out[] = "$hours Hrs";
+            if($minutes > 0) $out[] = "$minutes Mins";
+            if($seconds > 0 && $string_seconds) $out[] = "$seconds seconds";
 
-        switch($num)
-        {
-            case $num >= 10:
-                $num = round($num,1);
-                break;
-            case $num < 10:
-                $num = round($num,2);
-                break;
-        }
+            if(!$string_seconds && ($days + $hours + $minutes) == 0) $out = array('&lt;1 min');
 
-        if(!in_array($base, array(10,1024))) $num = (string)base_convert($num,10,$base);
-        if($num_shifts)
-        {
-            $num = (string)$num.' '.$shiftpost[$bases[$base]][$num_shifts];
+            return implode(', ',$out);
         }
     }
-
 }
