@@ -14,6 +14,11 @@ class FC
         return array_merge($array1,$array2);
     }
 
+    public function array_keys($array)
+    {
+        return is_array($array) ? array_keys($array) : array();
+    }
+
     public function array_slice($array,$offset,$length=null,$preserve_keys=false)
     {
         return (is_array($array) && !empty($array)) ? array_slice($array,$offset,$length,$preserve_keys) : array();
