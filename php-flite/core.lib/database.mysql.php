@@ -278,7 +278,7 @@ class DBConnection
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query);
+            $cache = $this->GetCache($query,'GetRows');
             if($cache) return $cache;
 	    }
 
@@ -317,7 +317,7 @@ class DBConnection
 					    return $data;
 					}
 				}
-				if($cache_time) $this->SetCache($query,$data,$cache_time);
+				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetRows');
 				return $data;
 			}
 		}
@@ -329,7 +329,7 @@ class DBConnection
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query);
+            $cache = $this->GetCache($query,'GetKeyedRows');
             if($cache) return $cache;
 	    }
 
@@ -380,7 +380,7 @@ class DBConnection
 					    return $data;
 					}
 				}
-				if($cache_time) $this->SetCache($query,$data,$cache_time);
+				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetKeyedRows');
 				return $data;
 			}
 		}
@@ -392,7 +392,7 @@ class DBConnection
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query);
+            $cache = $this->GetCache($query,'GetCols');
             if($cache) return $cache;
 	    }
 
@@ -426,7 +426,7 @@ class DBConnection
 				{
 					$data[] = $value[0];
 				}
-				if($cache_time) $this->SetCache($query,$data,$cache_time);
+				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetCols');
 				return $data;
 			}
 		}
@@ -437,7 +437,7 @@ class DBConnection
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query);
+            $cache = $this->GetCache($query,'GetField');
             if($cache) return $cache;
 	    }
 
@@ -467,7 +467,7 @@ class DBConnection
 			if ($result)
 			{
 				$row = mysql_fetch_array($result);
-				if($row && $cache_time) $this->SetCache($query,$row[0],$cache_time);
+				if($row && $cache_time) $this->SetCache($query,$row[0],$cache_time,'GetField');
 				return $row ? $row[0] : false;
 			}
 		}
@@ -479,7 +479,7 @@ class DBConnection
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query);
+            $cache = $this->GetCache($query,'NumRows');
             if($cache) return $cache;
 	    }
 
@@ -509,7 +509,7 @@ class DBConnection
 			if ($result)
 			{
 				$data = mysql_num_rows($result);
-				if($cache_time) $this->SetCache($query,$data,$cache_time);
+				if($cache_time) $this->SetCache($query,$data,$cache_time,'NumRows');
 				return $data;
 			}
 		}
@@ -521,7 +521,7 @@ class DBConnection
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query);
+            $cache = $this->GetCache($query,'GetRow');
             if($cache) return $cache;
 	    }
 
@@ -551,7 +551,7 @@ class DBConnection
 			if ($result)
 			{
 			    $data = mysql_fetch_object($result);
-			    if($cache_time) $this->SetCache($query,$data,$cache_time);
+			    if($cache_time) $this->SetCache($query,$data,$cache_time,'GetRow');
 			    return $data;
 			}
 		}
@@ -577,25 +577,25 @@ class DBConnection
 		else return mysql_escape_string($string);
 	}
 
-	public function CacheKey($sql)
+	public function CacheKey($sql,$source='')
 	{
-	    return "SQLCACHE," . md5($sql);
+	    return "SQLCACHE:$source:" . md5($sql);
 	}
 
-	private function GetCache($sql)
+	private function GetCache($sql,$source='')
 	{
 	    if(isset($_GET['rebuild-db-cache'])) return false;
 	    $_FLITE = Flite::Base();
-	    $data = $_FLITE->memcache->get($this->CacheKey($sql));
+	    $data = $_FLITE->memcache->get($this->CacheKey($sql,$source));
 	    if(empty($data) || !$data) return false;
 	    else return $data;
 	}
 
-	private function SetCache($sql,$value,$timeout=600)
+	private function SetCache($sql,$value,$timeout=600,$source='')
 	{
 	    $_FLITE = Flite::Base();
 	    if(!$value) return false;
-	    $_FLITE->memcache->set($this->CacheKey($sql), $value, MEMCACHE_COMPRESSED,$timeout);
+	    $_FLITE->memcache->set($this->CacheKey($sql,$source), $value, MEMCACHE_COMPRESSED,$timeout);
 	}
 
 	//Close Database Connection
