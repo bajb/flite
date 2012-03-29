@@ -143,6 +143,7 @@ class FC
         curl_setopt($api_call, CURLOPT_URL, $url);
         curl_setopt($api_call, CURLOPT_HEADER, 0);
         curl_setopt($api_call, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($api_call, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($api_call, CURLOPT_RETURNTRANSFER, true);
         if ($debug) echo 'Calling URL: ' . $url;
         $response = curl_exec($api_call);
