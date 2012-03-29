@@ -51,7 +51,7 @@ class CassandraObject
 
     public function __call($method, $args)
     {
-        if(method_exists($this->CFConnection,$method)) return call_user_method_array($method,$this->CFConnection,$args);
+        if(method_exists($this->CFConnection,$method)) return call_user_func_array(array($this->CFConnection,$method),$args);
         throw new ErrorException ('Call to Undefined Method/Class Function', 0, E_ERROR);
     }
 }
