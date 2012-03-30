@@ -180,7 +180,7 @@ class FC
         return $retip;
     }
 
-    public function time_difference($seconds,$string=true,$string_seconds=true)
+    public function time_difference($seconds,$string=true,$string_seconds=true,$limit_units=2)
     {
         $days = floor($seconds / 86400);
         $seconds = $seconds%86400;
@@ -196,9 +196,9 @@ class FC
         {
             $out = array();
             if($days > 0) $out[] = "$days Days";
-            if($hours > 0) $out[] = "$hours Hrs";
-            if($minutes > 0) $out[] = "$minutes Mins";
-            if($seconds > 0 && $string_seconds) $out[] = "$seconds seconds";
+            if($hours > 0 && count($out) < $limit_units) $out[] = "$hours Hrs";
+            if($minutes > 0 && count($out) < $limit_units) $out[] = "$minutes Mins";
+            if($seconds > 0 && $string_seconds && count($out) < $limit_units) $out[] = "$seconds seconds";
 
             if(!$string_seconds && ($days + $hours + $minutes) == 0) $out = array('&lt;1 min');
 
