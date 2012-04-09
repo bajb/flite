@@ -37,7 +37,9 @@ class FliteApplication extends FliteConfig
 
         $this->html = new FCHTML($_FLITE->GetConfig('static_sub_domain',empty($_FLITE->sub_domain) ? 'www' : $_FLITE->sub_domain),$html_doctype);
 
+        if(file_exists($_FLITE->GetConfig('site_root') . 'php-flite/config/'. $this->template .'.php')) include_once($_FLITE->GetConfig('site_root') . 'php-flite/config/'. $this->template .'.php');
         if(file_exists($this->frontend_root . 'config/base.php')) include_once($this->frontend_root . 'config/base.php');
+
         if($this->branding_enabled && file_exists($this->frontend_root . 'config/'. $this->template .'.php')) include_once($this->frontend_root . 'config/'. $this->template .'.php');
     }
 
@@ -226,6 +228,7 @@ class FliteApplication extends FliteConfig
 	    $this->render_header_footer = $render_header_footer;
 
 	    if(is_null($controller) && isset($_SERVER['REDIRECT_URL']) && strlen($_SERVER['REDIRECT_URL']) > 1) $this->controller = strtolower(substr($_SERVER['REDIRECT_URL'],1));
+	    if(REL_PATH != '/') $this->controller = str_replace(REL_PATH,'','/' . $this->controller);
         if(is_null($controller) && empty($this->controller)) $this->controller = 'default';
 
         if(is_null($default_view)) $this->default_view = $this->controller;

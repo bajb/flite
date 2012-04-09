@@ -27,11 +27,12 @@ class FliteBase extends FliteConfig
     public $tweak_server_value = true;
     private $initiated = false;
 
-    public function __construct()
+    public function __construct($rel_path='/')
     {
         if(!$this->initiated)
         {
             $this->metrics->page_execution_start = microtime(true);
+            $this->SetConfig('relative_path',$rel_path);
             $this->BootFlite();
             $this->initiated = true;
         }
@@ -87,8 +88,13 @@ class FliteBase extends FliteConfig
 
         if(stristr($_SERVER['PHP_SELF'], '.') !== false) list($this->page,) = explode('.', $_SERVER['PHP_SELF'], 2);
         else $this->page = $_SERVER['PHP_SELF'];
+        $this->page = str_replace($this->GetConfig('relative_path','/'),'/',$this->page);
         $this->local_page = $this->page;
-        if(isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) $this->local_page = $_SERVER['REQUEST_URI'];
+        if(isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI']))
+        {
+            $this->local_page = $_SERVER['REQUEST_URI'];
+            $this->local_page = str_replace($this->GetConfig('relative_path','/'),'/',$this->local_page);
+        }
 
         if(!@include_once(dirname(__FILE__) . '/cache/config.php')) include_once(dirname(__FILE__) . '/config.php');
 
@@ -189,6 +195,17 @@ class FliteBase extends FliteConfig
         }
 
         $this->LoadFiles($this->GetConfig('site_root') . 'php-flite/included/');
+
+        $this->Define();
+
+    }
+
+    public function Define()
+    {
+        define('DOMAIN',$this->domain);
+        define('TLD',$this->tld);
+        define('SUB_DOMAIN',$this->sub_domain);
+        define('REL_PATH',$this->GetConfig('relative_path','/'));
     }
 
     public function DebugTime($call,$force=false,$return_time=false)
@@ -227,9 +244,9 @@ class Flite
 {
     public static $flite = null;
     public static $app = null;
-    public function Base()
+    public function Base($rel_path='/')
     {
-        if (self::$flite === null) self::$flite = new FliteBase();
+        if (self::$flite === null) self::$flite = new FliteBase($rel_path);
         return self::$flite;
     }
     public function App($site_view=null, $branding=null, $html_doctype='html5')
@@ -239,4 +256,4 @@ class Flite
     }
 }
 
-$_FLITE = Flite::Base();
+$_FLITE = Flite::Base(isset($relative_path) ? $relative_path : '/');
