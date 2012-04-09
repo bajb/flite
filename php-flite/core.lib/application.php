@@ -296,4 +296,10 @@ class FliteApplication extends FliteConfig
 	}
 
 	/* Render 404 */
+
+	public function RelativePath()
+    {
+        $_FLITE = Flite::Base();
+        return $_FLITE->GetConfig('relative_path','/');
+    }
 }

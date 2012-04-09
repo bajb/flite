@@ -160,6 +160,12 @@ class FCHTML {
         return $_FLITE->GetConfig('protocol') . $this->static_domain . "." . $_FLITE->GetConfig('site_domain');
     }
 
+    public function RelativePath()
+    {
+        $_FLITE = Flite::Base();
+        return $_FLITE->GetConfig('relative_path','/');
+    }
+
     /**
      * Create a DTD dependant doctype link
      *
