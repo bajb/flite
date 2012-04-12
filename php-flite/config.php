@@ -40,3 +40,8 @@ else
 {
     include_once($this->GetConfig('site_root') . 'php-flite/config/live.php');
 }
+
+if(file_exists($this->GetConfig('site_root') . 'php-flite/config/'. $this->domain .'.php'))
+{
+    include_once($this->GetConfig('site_root') . 'php-flite/config/'. $this->domain .'.php');
+}
