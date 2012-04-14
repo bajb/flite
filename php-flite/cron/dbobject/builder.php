@@ -9,6 +9,7 @@ if(is_array($_FLITE->GetConfig('databases')))
     $dbs = $_FLITE->GetConfig('databases');
     foreach ($dbs as $db_conf)
     {
+        if(isset($db_conf['classname_prefix']) && strtoupper($db_conf['classname_prefix']) == 'NULL') continue;
         $db_connections[$db_conf['flite_name']] = isset($db_conf['classname_prefix']) ? $db_conf['classname_prefix'] : '';
         if(isset($db_conf['classname_prefix']))
         {
