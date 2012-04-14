@@ -225,8 +225,15 @@ td { vertical-align: top; }
    ========================================================================== */
 
 /* For image replacement */
-.ir { display: block; border: 0; text-indent: -999em; overflow: hidden; background-color: transparent; background-repeat: no-repeat; text-align: left; direction: ltr; }
-.ir br { display: none; }
+.text-replace,
+.ir {
+    border:0 !important;
+    font: 0/0 a !important;
+    text-shadow: none !important;
+    color: transparent !important;
+    background-color: transparent !important;
+}
+.ir br,.text-replace br { display: none; }
 
 /* Hide from both screenreaders and browsers: h5bp.com/u */
 .hidden { display: none !important; visibility: hidden; }
@@ -254,7 +261,6 @@ td { vertical-align: top; }
 .text-center{text-align: center;}
 .text-right{text-align: right;}
 .text-left{text-align: left;}
-.text-replace{text-indent:-9999px;font-size:0 !important;line-height:0 !important;}
 
 
 /* mouse pointer on hover */
