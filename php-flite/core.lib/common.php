@@ -94,6 +94,26 @@ class FC
         return preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/", $email);
     }
 
+    public function ascii_encode_email($str_email,$str_display='',$bln_create_link=true) {
+        if(empty($str_display)) $str_display = $str_email;
+        $str_mailto = "&#109;&#097;&#105;&#108;&#116;&#111;&#058;";
+        for ($i=0; $i < strlen($str_email); $i++) {
+            $str_encoded_email .= "&#".ord(substr($str_email,$i)).";";
+        }
+        if(strlen(trim($str_display))>0) {
+            $str_display = $str_display;
+        }
+        else {
+            $str_display = $str_encoded_email;
+        }
+        if($bln_create_link) {
+            return "<a href=\"".$str_mailto.$str_encoded_email."\">". ($str_display == $str_email ? $str_encoded_email : $str_display) ."</a>";
+        }
+        else {
+            return empty($str_display) || $str_display == $str_email ? $str_encoded_email : $str_display;
+        }
+    }
+
     public function remove_empty_elements($array)
     {
         $narr = array();
