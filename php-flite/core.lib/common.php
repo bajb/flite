@@ -97,6 +97,7 @@ class FC
     public function ascii_encode_email($str_email,$str_display='',$bln_create_link=true) {
         if(empty($str_display)) $str_display = $str_email;
         $str_mailto = "&#109;&#097;&#105;&#108;&#116;&#111;&#058;";
+        $str_encoded_email = '';
         for ($i=0; $i < strlen($str_email); $i++) {
             $str_encoded_email .= "&#".ord(substr($str_email,$i)).";";
         }
