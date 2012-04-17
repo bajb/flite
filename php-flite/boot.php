@@ -5,12 +5,26 @@ class FliteConfig
 
     public function GetConfig($key,$default=false)
     {
-        return isset($this->config->$key) ? $this->config->$key : $default;
+        if(isset($this->config->$key)) return $this->config->$key;
+
+        if(get_class($this) == 'FliteApplication')
+        {
+            $_FLITE = FLITE::Base();
+            return $_FLITE->GetConfig($key,$default);
+        }
+        return $default;
     }
 
     public function GetConfigAKey($key,$array_key,$default=false,$return_object=true)
     {
-        return isset($this->config->{$key}[$array_key]) ? ($return_object ? FC::array_to_object($this->config->{$key}[$array_key]) : $this->config->{$key}[$array_key]) : $default;
+        if(isset($this->config->{$key}[$array_key])) return $return_object ? FC::array_to_object($this->config->{$key}[$array_key]) : $this->config->{$key}[$array_key];
+
+        if(get_class($this) == 'FliteApplication')
+        {
+            $_FLITE = FLITE::Base();
+            return $_FLITE->GetConfigAKey($key,$array_key,$default,$return_object);
+        }
+        return $default;
     }
 
     public function SetConfig($key,$value)

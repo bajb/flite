@@ -28,7 +28,7 @@ else
 
 $this->SetConfig('site_domain',$this->domain. '.' . $this->tld);
 
-$this->protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://');
+$this->protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' || (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'],'HTTPS'))) ? 'https://' : 'http://';
 $this->SetConfig('protocol',$this->protocol);
 $this->SetConfig('full_domain',$this->protocol.$this->sub_domain.'.'.$this->domain.'.'.$this->tld.'/');
 
