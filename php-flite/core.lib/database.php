@@ -48,7 +48,7 @@ class DatabaseObject
                 $this->dbobject_available_columns[] = $col->field;
             }
         }
-        return array_keys($this->dbobject_available_columns);
+        return $this->dbobject_available_columns;
     }
 
     //Do not attempt to insert
