@@ -258,6 +258,7 @@ class Flite
 {
     public static $flite = null;
     public static $app = null;
+    public static $cache = null;
     public function Base($rel_path='/')
     {
         if (self::$flite === null) self::$flite = new FliteBase($rel_path);
@@ -267,6 +268,11 @@ class Flite
     {
         if (self::$app === null) self::$app = new FliteApplication($site_view, $branding, $html_doctype);
         return self::$app;
+    }
+    public function Cache()
+    {
+        if (self::$cache === null) self::$cache = new FliteCache();
+        return self::$cache;
     }
 }
 
