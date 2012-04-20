@@ -8,9 +8,9 @@ class FliteCache extends FliteConfig
         if(is_null($cache))
         {
             $_FLITE = Flite::Base();
-            if(file_exists($_FLITE->GetConfig('site_root') .'/php-flite/cache/ubersmith/'.$file))
+            if(file_exists($_FLITE->GetConfig('site_root') .'/php-flite/cache/'.$file))
             {
-                $cache = file_get_contents($_FLITE->GetConfig('site_root') .'/php-flite/cache/ubersmith/'.$file);
+                $cache = file_get_contents($_FLITE->GetConfig('site_root') .'/php-flite/cache/'.$file);
                 $this->SetConfig($key, $cache);
             }
         }
