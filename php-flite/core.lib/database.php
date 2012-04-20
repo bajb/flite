@@ -210,4 +210,9 @@ class DatabaseObject
     {
         return $this->dbobject_data;
     }
+
+    public function RowExists()
+    {
+        return $this->dbobject_row_exists;
+    }
 }
