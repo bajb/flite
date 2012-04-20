@@ -75,6 +75,7 @@ class FliteApplication extends FliteConfig
         }
         else
         {
+            $this->pieces[0] = $route;
             $process_route = isset($this->routes[$route]) ? $this->routes[$route] : (isset($this->routes['*']) ? $this->routes['*'] : false);
             if($process_route) $this->route_count++;
         }
