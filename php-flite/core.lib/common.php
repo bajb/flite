@@ -226,4 +226,16 @@ class FC
             return implode(', ',$out);
         }
     }
+
+    public function day_diff($timestamp1, $timestamp2)
+    {
+        if($timestamp1 < $timestamp2)
+        {
+            $holder = $timestamp1;
+            $timestamp1 = $timestamp2;
+            $timestamp2 = $holder;
+        }
+        $seconds = $timestamp1 - $timestamp2;
+        return ceil($seconds/86400);
+    }
 }
