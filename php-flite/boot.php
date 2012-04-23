@@ -29,6 +29,7 @@ class FliteConfig
 
     public function SetConfig($key,$value)
     {
+        if(!isset($this->config) || is_null($this->config)) $this->config = new stdClass();
         return $this->config->$key = $value;
     }
 }
@@ -45,6 +46,7 @@ class FliteBase extends FliteConfig
     {
         if(!$this->initiated)
         {
+            if(!isset($this->metrics) || is_null($this->metrics)) $this->metrics = new stdClass();
             $this->metrics->page_execution_start = microtime(true);
             $this->SetConfig('relative_path',$rel_path);
             $this->BootFlite();
@@ -269,17 +271,17 @@ class Flite
     public static $flite = null;
     public static $app = null;
     public static $cache = null;
-    public function Base($rel_path='/')
+    public static function Base($rel_path='/')
     {
         if (self::$flite === null) self::$flite = new FliteBase($rel_path);
         return self::$flite;
     }
-    public function App($site_view=null, $branding=null, $html_doctype='html5')
+    public static function App($site_view=null, $branding=null, $html_doctype='html5')
     {
         if (self::$app === null) self::$app = new FliteApplication($site_view, $branding, $html_doctype);
         return self::$app;
     }
-    public function Cache()
+    public static function Cache()
     {
         if (self::$cache === null) self::$cache = new FliteCache();
         return self::$cache;
