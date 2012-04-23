@@ -7,6 +7,10 @@ $this->SetConfig('databases', array(
     array('flite_name' => 'dbslave', 'hostname' => '127.0.0.1','username' => 'root', 'password' => '', 'database' => '')
 ));
 
+$this->SetConfig('message_exchanges',array(
+    array('flite_name' => 'mq', 'hosts' => array('localhost'), 'username' => 'guest', 'password' => 'guest')
+));
+
 $this->SetConfig('cassie_servers',array('localhost'));
 $this->SetConfig('membase_servers',array('localhost'));
 $this->SetConfig('memcache_servers',array('localhost'));

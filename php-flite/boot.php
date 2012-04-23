@@ -208,6 +208,16 @@ class FliteBase extends FliteConfig
             }
         }
 
+
+        if(is_array($this->GetConfig('message_exchanges')))
+        {
+            $mqs = $this->GetConfig('message_exchanges');
+            foreach ($mqs as $mq_conf)
+            {
+                $this->$mq_conf['flite_name'] = new MessageQueue(false,$mq_conf['hosts'],$mq_conf['username'],$mq_conf['password'],isset($mq_conf['port']) ? $mq_conf['port'] : 5672);
+            }
+        }
+
         $this->LoadFiles($this->GetConfig('site_root') . 'php-flite/included/');
 
         $this->Define();

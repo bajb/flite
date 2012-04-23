@@ -37,3 +37,7 @@ $this->SetConfig('static_sub_domain', 'static');
 $this->SetConfig('databases', array(
     array('flite_name' => 'db', 'hostname' => 'localhost','username' => 'default_username', 'password' => 'default_password', 'database' => 'databasename', 'classname_prefix' => '')
 ));
+
+$this->SetConfig('message_exchanges',array(
+    array('flite_name' => 'mq', 'hosts' => array('localhost'), 'username' => 'guest', 'password' => 'guest')
+));
