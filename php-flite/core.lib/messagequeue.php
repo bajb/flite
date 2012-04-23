@@ -95,7 +95,11 @@ class MessageQueue
 
     public function Connect($host=null,$username=null,$password=null,$port=5672,$connect_timeout=0.3)
     {
-        if(!class_exists("AMQPConnection")) return false;
+        if(!class_exists("AMQPConnection"))
+        {
+            error_log("AMQPConnection Not Available");
+            return false;
+        }
 
         if(!is_null($host))
         {

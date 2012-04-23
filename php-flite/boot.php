@@ -67,6 +67,10 @@ class FliteBase extends FliteConfig
         {
             include_once($b . $classname . '.php');
         }
+        else if(file_exists($this->GetConfig('site_root') .'php-flite/lib/' . str_replace('_','/',$classname) . '.php'))
+        {
+            include_once($this->GetConfig('site_root') .'php-flite/lib/' . str_replace('_','/',$classname) . '.php');
+        }
         else if(file_exists($this->GetConfig('site_root') .'php-flite/lib/' . $classname . '.php'))
         {
             include_once($this->GetConfig('site_root') .'php-flite/lib/' . $classname . '.php');
