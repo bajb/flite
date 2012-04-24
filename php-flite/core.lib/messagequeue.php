@@ -188,8 +188,7 @@ class MessageQueue
 
     public function ParseMessage($message,$encoding)
     {
-        if($encoding == 'MQ:json') return json_decode($message);
-        else return $message;
+        return $encoding == 'MQ:json' ? json_decode($message) : $message;
     }
 
     public function ConsumeQueue($queue_name,$class='StandardProcessor',$consumer_config=array(),$sleep_seconds=1)
