@@ -1,4 +1,8 @@
 <?php
+define('PHP_FLITE_START_TIME',microtime(true));
+error_reporting(E_ALL);
+ini_set('display_errors',true);
+
 class FliteConfig
 {
     private $config;
@@ -118,10 +122,10 @@ class FliteBase extends FliteConfig
 
         if(!@include_once(dirname(__FILE__) . '/cache/config.php')) include_once(dirname(__FILE__) . '/config.php');
 
-        error_reporting($this->GetConfig('error_reporting'));
-        ini_set('display_errors', $this->GetConfig('display_errors'));
+        //error_reporting($this->GetConfig('error_reporting'));
+        //ini_set('display_errors', $this->GetConfig('display_errors'));
 
-        if(!include_once($this->GetConfig('site_root') . 'php-flite/cache/core.lib.php')) $this->LoadFiles($this->GetConfig('site_root') . 'php-flite/core.lib/');
+        if(!@include_once($this->GetConfig('site_root') . 'php-flite/cache/core.lib.php')) $this->LoadFiles($this->GetConfig('site_root') . 'php-flite/core.lib/');
 
         if($this->GetConfig('zlib_enabled'))
         {
