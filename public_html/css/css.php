@@ -28,7 +28,7 @@ header('Content-type: text/css');
 header('Cache-Control: public');
 
 ob_start("compress");
-$files = explode('|',urldecode($_SERVER['QUERY_STRING']));
+$files = explode(';',urldecode($_SERVER['QUERY_STRING']));
 if(!is_array($files)) $files = array($files);
 
 $already_loaded = array();

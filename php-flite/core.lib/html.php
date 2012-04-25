@@ -45,7 +45,7 @@ class FCHTML {
      *
      * @var string
      */
-    private $cssVersion = '|v=488419200';
+    private $cssVersion = ';v=488419200';
 
     /**
      * Append to js script tag
@@ -53,7 +53,7 @@ class FCHTML {
      *
      * @var unknown_type
      */
-    private $jsVersion = '|v=488419200';
+    private $jsVersion = ';v=488419200';
 
     /**
      * Set the default doc type for the html helper
@@ -176,6 +176,7 @@ class FCHTML {
     public function css($path, $cssif = false)
     {
         $_FLITE = Flite::Base();
+        $path = str_replace('|',';',$path);
         $link = '    ';
         if($cssif) $link .= "<!--[if $cssif]>";
         $link .= "<link type='text/css' rel='stylesheet' href='".$this->StaticDomain()."/css/{$path}{$this->cssVersion}'".$this->closetag;
@@ -192,6 +193,7 @@ class FCHTML {
     public function js($path)
     {
         $_FLITE = Flite::Base();
+        $path = str_replace('|',';',$path);
         $link = "<script type='text/javascript' src='".$this->StaticDomain()."/js/{$path}{$this->jsVersion}'></script>";
         return $link . "\n";
     }
