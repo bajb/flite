@@ -1,3 +1,8 @@
 RewriteEngine on
-
 RewriteRule ^([^/\.]+)/?$ css.php?$1 [L]
+
+FileETag none
+ExpiresActive On
+ExpiresDefault "access plus 1 day"
+
+Header set Cache-Control "public"
