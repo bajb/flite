@@ -291,7 +291,7 @@ class FliteApplication extends FliteConfig
 
 	public function Render404()
 	{
-	    ob_end_clean();
+	    if(ob_get_level()) while(@ob_end_clean());
 	    $_FLITE = Flite::Base();
         header("HTTP/1.0 404 Not Found");
         header("Status: 404 Not Found");
