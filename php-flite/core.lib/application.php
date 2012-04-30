@@ -212,7 +212,7 @@ class FliteApplication extends FliteConfig
 		$_FLITE = Flite::Base();
 		if(!$data) $data = $this->page_data;
 		if(is_array($data)) extract($data);
-		@include_once($this->frontend_root . 'views/' . $file);
+		@include($this->frontend_root . 'views/' . $file);
 		$contents = ob_get_contents();
 		ob_end_clean();
 		return $contents;
