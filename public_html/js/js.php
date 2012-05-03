@@ -21,6 +21,7 @@ function compress($buffer)
     if($tld == 'dev' ) return $buffer;
     /* remove comments */
     $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+    $buffer = preg_replace('!^([\t ]+)?\/\/.+$!m', '', $buffer);
     /* remove tabs, spaces, newlines, etc. */
     $buffer = str_replace(array("\t"),' ', $buffer);
     $buffer = str_replace(array("\r\n", "\r", "\n", '  ', '    ', '    '), '', $buffer);
