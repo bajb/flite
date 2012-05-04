@@ -36,6 +36,22 @@ class FC
         ini_set('display_errors',false);
     }
 
+    public function error_report($error,$vars)
+    {
+        $_FLITE = Flite::Base();
+        $error_log_emails = $_FLITE->GetConfig('error_log_emails', array());
+        if(FC::count($error_log_emails) > 0)
+        {
+            foreach($error_log_emails as $error_log_email)
+            {
+                @mail($error_log_email,'MPB Error Report',$error .': '. print_r($vars,true));
+            }
+        }
+
+        @error_log("Title: $error\n" . print_r($vars,true));
+        return true;
+    }
+
     public function is_whitelist_ip($dev_override = true)
     {
         $_FLITE = Flite::Base();
