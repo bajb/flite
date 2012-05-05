@@ -51,6 +51,39 @@ class CassandraObject
         catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','GetColumns',$e); return false; }
     }
 
+    public function Delete($key,$columns=null)
+    {
+        try { $this->CFConnection->remove($key,$columns); }
+        catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','Delete',$e); return false; }
+        return true;
+    }
+
+    public function GetMulti($keys,$columns=null,$column_start="",$column_finish="",$reverse_order=false,$column_count=100)
+    {
+        try
+        {
+            $data = $this->CFConnection->multiget($keys,$columns,$column_start,$column_finish,$reverse_order,$column_count);
+            if($data) return $data;
+            else throw new Exception('MultiGet Failed',404);
+        }
+        catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','GetMulti',$e); return false; }
+    }
+
+    public function Increment($key,$column,$increase_by=1)
+    {
+        try { $this->CFConnection->add($key,$column,$increase_by); }
+        catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','Increment',$e); return false; }
+        return true;
+    }
+
+    public function Decrement($key,$column,$reduce_by=1)
+    {
+        if($reduce_by > 0) $reduce_by = -1 * $reduce_by;
+        try { $this->CFConnection->add($key,$column,$increase_by); }
+        catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','Decrement',$e); return false; }
+        return true;
+    }
+
     public function __call($method, $args)
     {
         if(method_exists($this->CFConnection,$method)) return call_user_func_array(array($this->CFConnection,$method),$args);

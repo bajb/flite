@@ -114,7 +114,7 @@ class FliteBase extends FliteConfig
         $this->local_page = $this->page;
         if(isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI']))
         {
-            $this->local_page = $_SERVER['REQUEST_URI'];
+            list($this->local_page,) = explode('?',$_SERVER['REQUEST_URI'],2);
             $this->local_page = str_replace($this->GetConfig('relative_path','/'),'/',$this->local_page);
         }
 
