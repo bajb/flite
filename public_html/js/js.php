@@ -30,40 +30,80 @@ function compress($buffer)
     return $buffer;
 }
 
+$max_cache_hour = 0;
+
+if(stristr($_SERVER['QUERY_STRING'],';v='))
+{
+    list(,$cache_hour) = explode(';v=',$_SERVER['QUERY_STRING']);
+    $cache_hour = intval($cache_hour);
+    if($cache_hour > 0) $max_cache_hour = $cache_hour;
+}
+
 header('Content-type: text/javascript');
 header('set Cache-Control "max-age=2419200, public"');
-
-ob_start("compress");
 
 $files = explode(';',urldecode($_SERVER['QUERY_STRING']));
 if(!is_array($files)) $files = array($files);
 
-$already_loaded = array();
+$already_loaded = $load_files = array();
 
-foreach ($files as $file) {
-
-    if(in_array($file, $already_loaded)) continue;
-    $alread_loaded[] = $file;
-
+foreach ($files as $file)
+{
     if (strpos($file,'/') === false && substr($file, 0, 2) != 'v=' && trim($file) != '')
     {
         $file = str_replace('_','/',$file);
 
-        if( file_exists( $dir . '/_'. $dom .'/'. $file .'.full.js') ) $f = @file_get_contents($dir . '/_'. $dom .'/'. $file .'.full.js');
+        if( file_exists( $dir . '/_'. $dom .'/'. $file .'.full.js') )
+        {
+            $check_time = filemtime($dir . '/_'. $dom .'/'. $file .'.full.js');
+            if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+            $load_files[] = $dir . '/_'. $dom .'/'. $file .'.full.js';
+        }
         else
         {
-            $f = @file_get_contents($dir . '/base/'. $file .'.js');
-            if( file_exists( $dir . '/_'. $dom .'/'. $file .'.js') ) $f .= "\n" . @file_get_contents($dir . '/_'. $dom .'/'. $file .'.js');
-        }
+            if(file_exists($dir . '/base/'. $file .'.js'))
+            {
+                $check_time = filemtime($dir . '/base/'. $file .'.js');
+                if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+                $load_files[] = $dir . '/base/'. $file .'.js';
+            }
 
-        if($file == 'flite')
-        {
-            $f = str_replace('##DOMAIN##', $dom, $f);
-            $f = str_replace('##TLD##', $tld, $f);
-            $f = str_replace('##SUBDOMAIN##', $sub, $f);
-            $f = str_replace('##PROTOCOL##', $protocol, $f);
+            if( file_exists( $dir . '/_'. $dom .'/'. $file .'.js') )
+            {
+                $check_time = filemtime($dir . '/_'. $dom .'/'. $file .'.js');
+                if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+                $load_files[] = $dir . '/_'. $dom .'/'. $file .'.js';
+            }
         }
-		echo $f;
     }
 }
+
+header("Last-Modified: ".gmdate("D, d M Y H:i:s", $max_cache_hour)." GMT");
+
+if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $max_cache_hour)
+{
+       header("HTTP/1.1 304 Not Modified");
+       exit;
+}
+
+ob_start("compress");
+
+foreach ($load_files as $file)
+{
+    if(in_array($file, $already_loaded)) continue;
+    $alread_loaded[] = $file;
+
+    $f = @file_get_contents($file);
+
+    if(substr($file,-8) == 'flite.js')
+    {
+        $f = str_replace('##DOMAIN##', $dom, $f);
+        $f = str_replace('##TLD##', $tld, $f);
+        $f = str_replace('##SUBDOMAIN##', $sub, $f);
+        $f = str_replace('##PROTOCOL##', $protocol, $f);
+    }
+
+    echo $f . ";\n";
+}
+
 ob_end_flush();

@@ -15,6 +15,15 @@ if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEP
     ob_start();
 }
 
+$max_cache_hour = 0;
+
+if(stristr($_SERVER['QUERY_STRING'],';v='))
+{
+    list(,$cache_hour) = explode(';v=',$_SERVER['QUERY_STRING']);
+    $cache_hour = intval($cache_hour);
+    if($cache_hour > 0) $max_cache_hour = $cache_hour;
+}
+
 function compress($buffer)
 {
     global $tld;
@@ -29,28 +38,56 @@ function compress($buffer)
 header('Content-type: text/css');
 header('Cache-Control: public');
 
-ob_start("compress");
 $files = explode(';',urldecode($_SERVER['QUERY_STRING']));
 if(!is_array($files)) $files = array($files);
 
-$already_loaded = array();
+$already_loaded = $load_files = array();
+
 foreach ($files as $file) {
-    if(in_array($file, $already_loaded)) continue;
-    $alread_loaded[] = $file;
 
     if (strpos($file,'/') === false && substr($file, 0, 2) != 'v=' && trim($file) != '')
     {
         $file = str_replace('_','/',$file);
 
-        if(file_exists($dir.'/_'.$dom.'/'.$file.'.full.css')) $f = @file_get_contents($dir.'/_'.$dom.'/'.$file.'.full.css');
+        if(file_exists($dir.'/_'.$dom.'/'.$file.'.full.css'))
+        {
+            $check_time = filemtime($dir.'/_'.$dom.'/'.$file.'.full.css');
+            if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+            $load_files[] = $dir.'/_'.$dom.'/'.$file.'.full.css';
+        }
         else
         {
-            $f = @file_get_contents($dir.'/base/'.$file.'.css');
-            if(file_exists($dir.'/_'.$dom.'/'.$file.'.css')) $f .= "\n". @file_get_contents($dir.'/_'.$dom.'/'.$file.'.css');
-        }
+            if(file_exists($dir.'/base/'.$file.'.css'))
+            {
+                $check_time = filemtime($dir.'/base/'.$file.'.css');
+                if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+                $load_files[] = $dir.'/base/'.$file.'.css';
+            }
 
-		$f = str_replace('{{URL}}',$protocol.$presub.'.'.$predom.'.'.$pretld.'/',$f);
-		echo $f;
+            if(file_exists($dir.'/_'.$dom.'/'.$file.'.css'))
+            {
+                $check_time = filemtime($dir.'/_'.$dom.'/'.$file.'.css');
+                if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+                $load_files[] = $dir.'/_'.$dom.'/'.$file.'.css';
+            }
+        }
     }
 }
+
+header("Last-Modified: ".gmdate("D, d M Y H:i:s", $max_cache_hour)." GMT");
+
+if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $max_cache_hour)
+{
+       header("HTTP/1.1 304 Not Modified");
+       exit;
+}
+
+ob_start("compress");
+
+foreach ($load_files as $file) {
+    if(in_array($file, $already_loaded)) continue;
+    $alread_loaded[] = $file;
+    echo str_replace('{{URL}}',$protocol.$presub.'.'.$predom.'.'.$pretld.'/',@file_get_contents($file));
+}
+
 ob_end_flush();

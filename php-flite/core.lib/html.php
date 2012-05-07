@@ -158,7 +158,7 @@ class FCHTML {
     {
         $_FLITE = Flite::Base();
         $staticdomain = $_FLITE->GetConfig('static_domain', false);
-        if($staticdomain) return $_FLITE->GetConfig('protocol', 'http://').$staticdomain.'/';
+        if($staticdomain) return $_FLITE->GetConfig('protocol', 'http://').$staticdomain;
         return $_FLITE->GetConfig('protocol') . $this->static_domain . "." . $_FLITE->GetConfig('site_domain');
     }
 

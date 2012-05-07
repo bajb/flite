@@ -36,6 +36,9 @@ class FliteApplication extends FliteConfig
         $this->frontend_root = $_FLITE->GetConfig('site_root') . 'php-flite/frontend/' . $this->site_view . '/';
 
         $this->html = new FCHTML($_FLITE->GetConfig('static_sub_domain',empty($_FLITE->sub_domain) ? 'www' : $_FLITE->sub_domain),$html_doctype);
+        $lasthour = mktime(date("H"),0,0);
+        $this->html->SetCssVersion(';v=' . $lasthour);
+        $this->html->SetJsVersion(';v=' . $lasthour);
 
         if(file_exists($_FLITE->GetConfig('site_root') . 'php-flite/config/'. $this->template .'.php')) include_once($_FLITE->GetConfig('site_root') . 'php-flite/config/'. $this->template .'.php');
         if(file_exists($this->frontend_root . 'config/base.php')) include_once($this->frontend_root . 'config/base.php');
