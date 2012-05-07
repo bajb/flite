@@ -33,7 +33,10 @@ class CassandraObject
     public function SetData($key,$data,$ttl=null)
     {
         $insertdata = array();
-        foreach ($data as $k => $v) $insertdata['' . $k] = "" . $v;
+        foreach ($data as $k => $v)
+        {
+            $insertdata[$k] = is_null($v) ? "" : $v;
+        }
         try { $this->CFConnection->insert($key,$insertdata,null,$ttl); }
         catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','SetData',$e); return false; }
         return true;
