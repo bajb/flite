@@ -2,10 +2,12 @@
 ini_set('display_errors',false);
 $dir = realpath(dirname(__FILE__));
 $serverparts = explode('.',$_SERVER['HTTP_HOST'],3);
-$sub = count($serverparts) == 3 ? $serverparts[0] : '';
-$dom = $serverparts[count($serverparts) - 2];
-$tld = $serverparts[count($serverparts) - 1];
+$presub = $sub = count($serverparts) == 3 ? $serverparts[0] : '';
+$predom = $dom = $serverparts[count($serverparts) - 2];
+$pretld = $tld = $serverparts[count($serverparts) - 1];
 $protocol = (isset($_SERVER['HTTP_VIA']) && strpos($_SERVER['HTTP_VIA'],'HTTPS') > -1) ? 'https://' : (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
+
+@include_once('../domain.fiddle.php');
 
 if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') && $tld != 'dev') {
     ob_start("ob_gzhandler");
@@ -47,7 +49,7 @@ foreach ($files as $file) {
             if(file_exists($dir.'/_'.$dom.'/'.$file.'.css')) $f .= "\n". @file_get_contents($dir.'/_'.$dom.'/'.$file.'.css');
         }
 
-		$f = str_replace('{{URL}}',$protocol.$sub.'.'.$dom.'.'.$tld.'/',$f);
+		$f = str_replace('{{URL}}',$protocol.$presub.'.'.$predom.'.'.$pretld.'/',$f);
 		echo $f;
     }
 }

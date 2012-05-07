@@ -9,6 +9,8 @@ $dom = $serverparts[count($serverparts) - 2];
 $tld = $serverparts[count($serverparts) - 1];
 $protocol = (isset($_SERVER['HTTP_VIA']) && strpos($_SERVER['HTTP_VIA'],'HTTPS') > -1) ? 'https://' : (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
 
+@include_once('../domain.fiddle.php');
+
 if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') && $tld != 'dev') {
     ob_start("ob_gzhandler");
 } else {
