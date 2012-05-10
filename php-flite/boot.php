@@ -174,6 +174,9 @@ class FliteBase extends FliteConfig
         }
         else $this->membase->addServer('localhost');
 
+        $this->local_memcache = new Memcache;
+        $this->local_memcache->addServer('localhost',11211,true);
+
         if($this->GetConfig('memcache_servers') != false && FC::count($this->GetConfig('memcache_servers')) > 0)
         {
             $this->memcache = new Memcache;
