@@ -74,7 +74,7 @@ class CassandraObject
 
     public function Increment($key,$column,$increase_by=1)
     {
-        try { $this->CFConnection->add($key,$column,$increase_by); }
+        try { $this->CFConnection->add($key,$column,$increase_by,null,cassandra_ConsistencyLevel::ONE); }
         catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','Increment',$e); return false; }
         return true;
     }
@@ -82,7 +82,7 @@ class CassandraObject
     public function Decrement($key,$column,$reduce_by=1)
     {
         if($reduce_by > 0) $reduce_by = -1 * $reduce_by;
-        try { $this->CFConnection->add($key,$column,$increase_by); }
+        try { $this->CFConnection->add($key,$column,$increase_by,null,cassandra_ConsistencyLevel::ONE); }
         catch (Exception $e){ $_FLITE = Flite::Base(); $_FLITE->Exception('CassandraObject','Decrement',$e); return false; }
         return true;
     }
