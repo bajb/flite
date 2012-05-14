@@ -10,7 +10,7 @@ class DatabaseObject
     protected $dbobject_allow_slave = true;
     protected $dbobject_available_columns = array();
     protected $dbobject_row_exists = false;
-    protected $changed_fields;
+    protected $changed_fields = array();
     protected $dbobject_data = array();
 
     public function __construct($flitedb='db',$allow_slave=true,$slave_append='slave')
