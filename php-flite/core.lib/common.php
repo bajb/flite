@@ -42,10 +42,8 @@ class FC
         $error_log_emails = $_FLITE->GetConfig('error_log_emails', array());
         if(FC::count($error_log_emails) > 0)
         {
-            foreach($error_log_emails as $error_log_email)
-            {
-                @mail($error_log_email,'MPB Error Report',$error .': '. print_r($vars,true));
-            }
+            $error_log_email_str = implode(',', $error_log_emails);
+            @mail($error_log_email_str,'MPB Error Report',$error .': '. print_r($vars,true));
         }
 
         @error_log("Title: $error\n" . print_r($vars,true));
