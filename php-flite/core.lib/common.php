@@ -2,41 +2,41 @@
 
 class FC
 {
-    public function count($arr)
+    public static function count($arr)
     {
         return (is_array($arr) && !empty($arr)) ? count($arr) : 0;
     }
 
-    public function array_merge($array1,$array2)
+    public static function array_merge($array1,$array2)
     {
         if(!is_array($array1)) $array1 = array();
         if(!is_array($array2)) $array2 = array();
         return array_merge($array1,$array2);
     }
 
-    public function array_keys($array)
+    public static function array_keys($array)
     {
         return is_array($array) ? array_keys($array) : array();
     }
 
-    public function array_slice($array,$offset,$length=null,$preserve_keys=false)
+    public static function array_slice($array,$offset,$length=null,$preserve_keys=false)
     {
         return (is_array($array) && !empty($array)) ? array_slice($array,$offset,$length,$preserve_keys) : array();
     }
 
-    public function enable_error_reporting()
+    public static function enable_error_reporting()
     {
         error_reporting(E_ALL);
         ini_set('display_errors',true);
     }
 
-    public function disable_error_reporting()
+    public static function disable_error_reporting()
     {
         error_reporting(E_COMPILE_ERROR);
         ini_set('display_errors',false);
     }
 
-    public function error_report($error,$vars)
+    public static function error_report($error,$vars)
     {
         $_FLITE = Flite::Base();
         $error_log_emails = $_FLITE->GetConfig('error_log_emails', array());
@@ -50,24 +50,24 @@ class FC
         return true;
     }
 
-    public function is_whitelist_ip($dev_override = true)
+    public static function is_whitelist_ip($dev_override = true)
     {
         $_FLITE = Flite::Base();
         $ips = $_FLITE->GetConfig('whitelist_ips', array());
         return ($dev_override && $_FLITE->GetConfig('is_dev') ? true : (is_array($ips) ? (in_array(FC::get_user_ip(), $ips)) : false));
     }
 
-    public function inet_aton($ip)
+    public static function inet_aton($ip)
     {
         return sprintf("%u",ip2long($ip));
     }
 
-    public function inet_ntoa($long)
+    public static function inet_ntoa($long)
     {
         return long2ip($long);
     }
 
-    public function array_to_object($array,$object=false)
+    public static function array_to_object($array,$object=false)
     {
         if(!$object) $object = new stdClass();
         if(!is_array($array)) return $array;
@@ -76,7 +76,7 @@ class FC
     }
 
 
-    public function object_to_array($object, $array=false)
+    public static function object_to_array($object, $array=false)
     {
         if (!$array) $array = array();
         if (!is_object($object)) return $object;
@@ -84,7 +84,7 @@ class FC
         return $array;
     }
 
-    public function object_keys($object)
+    public static function object_keys($object)
     {
         $keys = array();
         foreach ($object as $k => $v)
@@ -94,7 +94,7 @@ class FC
         return $keys;
     }
 
-    public function array_in_array($arr1, $arr2)
+    public static function array_in_array($arr1, $arr2)
     {
         foreach ($arr1 as $a1)
         {
@@ -103,12 +103,12 @@ class FC
         return false;
     }
 
-    public function validate_email($email)
+    public static function validate_email($email)
     {
         return preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/", $email);
     }
 
-    public function ascii_encode_email($str_email,$str_display='',$bln_create_link=true) {
+    public static function ascii_encode_email($str_email,$str_display='',$bln_create_link=true) {
         if(empty($str_display)) $str_display = $str_email;
         $str_mailto = "&#109;&#097;&#105;&#108;&#116;&#111;&#058;";
         $str_encoded_email = '';
@@ -129,7 +129,7 @@ class FC
         }
     }
 
-    public function remove_empty_elements($array)
+    public static function remove_empty_elements($array)
     {
         $narr = array();
         while(list($key, $val) = each($array))
@@ -145,32 +145,32 @@ class FC
         return $narr;
     }
 
-    public function SQLLongDate()
+    public static function SQLLongDate()
     {
         return 'Y-m-d H:i:s';
     }
 
-    public function hex2bin($data)
+    public static function hex2bin($data)
     {
         $len = strlen($data);
         return pack("H".$len, $data);
     }
 
-    public function txt2bin($str)
+    public static function txt2bin($str)
     {
         $text_array = explode("\r\n", chunk_split($str, 1));
         for ($n = 0; $n < count($text_array) - 1; $n++) $newstring .= substr("0000".base_convert(ord($text_array[$n]), 10, 2), -8);
         return $newstring;
     }
 
-    public function bin2txt($str)
+    public static function bin2txt($str)
     {
         $text_array = explode("\r\n", chunk_split($str, 8));
         for ($n = 0; $n < count($text_array) - 1; $n++) $newstring = $newstring . stripslashes(chr(base_convert($text_array[$n], 2, 10)));
         return $newstring;
     }
 
-    public function curl_response($url,$timeout=15,$debug=false)
+    public static function curl_response($url,$timeout=15,$debug=false)
     {
         $_FLITE = Flite::Base();
         $debug = $debug || $_FLITE->GetConfig('debug_curl');
@@ -189,7 +189,7 @@ class FC
         return $response;
     }
 
-    public function file_size($size,$kb=true)
+    public static function file_size($size,$kb=true)
     {
         $size = floatval($size);
         if($kb) $size = $size * 1024;
@@ -197,12 +197,12 @@ class FC
         return $size ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2) . $filesizename[$i] : '0 Bytes';
     }
 
-    public function short_string()
+    public static function short_string()
     {
         return base_convert(rand(10000,9999999),20,36);
     }
 
-    public function get_user_ip()
+    public static function get_user_ip()
     {
         $retip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : (isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1');
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) $retip = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -215,7 +215,7 @@ class FC
         return $retip;
     }
 
-    public function time_difference($seconds,$string=true,$string_seconds=true,$limit_units=2)
+    public static function time_difference($seconds,$string=true,$string_seconds=true,$limit_units=2)
     {
         $days = floor($seconds / 86400);
         $seconds = $seconds%86400;
@@ -241,7 +241,7 @@ class FC
         }
     }
 
-    public function day_diff($timestamp1, $timestamp2)
+    public static function day_diff($timestamp1, $timestamp2)
     {
         if($timestamp1 < $timestamp2)
         {
