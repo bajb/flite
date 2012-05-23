@@ -110,7 +110,7 @@ class CassandraObject
 
     public function __call($method, $args)
     {
-        FC::error_report("Direct PhpCassa Call",array("Method" => $method, "Args" => $args));
+        if($method != 'remove') FC::error_report("Direct PhpCassa Call",array("Method" => $method, "Args" => $args));
         if(method_exists($this->CFConnection,$method)) return call_user_func_array(array($this->CFConnection,$method),$args);
         throw new ErrorException ('Call to Undefined Method/Class Function', 0, E_ERROR);
     }

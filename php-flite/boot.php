@@ -5,6 +5,31 @@ define('FLITE_DIR',dirname(__FILE__));
 require_once (FLITE_DIR . '/thirdparty/phpcassa-1.0.a.2/lib/autoload.php');
 use phpcassa\Connection\ConnectionPool;
 
+class Flite
+{
+    public static $flite = null;
+    public static $app = null;
+    public static $cache = null;
+
+    public static function Base ($rel_path = '/')
+    {
+        if (self::$flite === null) self::$flite = new FliteBase($rel_path);
+        return self::$flite;
+    }
+
+    public static function App ($site_view = null, $branding = null, $html_doctype = 'html5')
+    {
+        if (self::$app === null) self::$app = new FliteApplication($site_view, $branding, $html_doctype);
+        return self::$app;
+    }
+
+    public static function Cache ()
+    {
+        if (self::$cache === null) self::$cache = new FliteCache();
+        return self::$cache;
+    }
+}
+
 class FliteConfig
 {
     private $config;
@@ -15,7 +40,7 @@ class FliteConfig
 
         if (get_class($this) == 'FliteApplication')
         {
-            $_FLITE = FLITE::Base();
+            $_FLITE = Flite::Base();
             return $_FLITE->GetConfig($key, $default);
         }
         return $default;
@@ -28,7 +53,7 @@ class FliteConfig
 
         if (get_class($this) == 'FliteApplication')
         {
-            $_FLITE = FLITE::Base();
+            $_FLITE = Flite::Base();
             return $_FLITE->GetConfigAKey($key, $array_key, $default, $return_object);
         }
         return $default;
@@ -214,8 +239,6 @@ class FliteBase extends FliteConfig
         $cassandra_clustername = $this->GetConfig('cassandra_cluster');
         if ($cassandra_clustername)
         {
-            FC::enable_error_reporting();
-
             if (is_array($cassandra_clustername))
             {
                 foreach ($cassandra_clustername as $keyspace)
@@ -297,31 +320,6 @@ class FliteBase extends FliteConfig
         $e->exception = $exception;
         $this->exceptions[] = $e;
         return true;
-    }
-}
-
-class Flite
-{
-    public static $flite = null;
-    public static $app = null;
-    public static $cache = null;
-
-    public static function Base ($rel_path = '/')
-    {
-        if (self::$flite === null) self::$flite = new FliteBase($rel_path);
-        return self::$flite;
-    }
-
-    public static function App ($site_view = null, $branding = null, $html_doctype = 'html5')
-    {
-        if (self::$app === null) self::$app = new FliteApplication($site_view, $branding, $html_doctype);
-        return self::$app;
-    }
-
-    public static function Cache ()
-    {
-        if (self::$cache === null) self::$cache = new FliteCache();
-        return self::$cache;
     }
 }
 
