@@ -57,6 +57,16 @@ class CassandraObject
         if (! $this->CFConnection) return false;
     }
 
+    public function InsertFormat($format=ColumnFamily::ARRAY_FORMAT)
+    {
+        $this->CFConnection->insert_format = $format;
+    }
+
+    public function ReturnFormat($format=ColumnFamily::ARRAY_FORMAT)
+    {
+        $this->CFConnection->return_format = $format;
+    }
+
     public function GetData ($key, $columns = null, $return_object = false)
     {
         try
@@ -120,14 +130,7 @@ class CassandraObject
         try
         {
             $columnslice = new ColumnSlice($start_column, $end_column, $count, $reverse_columns);
-            if ($this->is_super)
-            {
-                $data = $this->CFConnection->get($key, $columnslice);
-            }
-            else
-            {
-                $data = $this->CFConnection->get($key, $columnslice);
-            }
+            $data = $this->CFConnection->get($key, $columnslice);
             if ($return_object && $data)
                 return FC::array_to_object($data);
             else if ($data)
