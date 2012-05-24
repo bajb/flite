@@ -145,6 +145,25 @@ class CassandraObject
         }
     }
 
+    public function GetSlice($key,ColumnSlice $slice,$return_object=false)
+    {
+        try
+        {
+            $data = $this->CFConnection->get($key, $slice);
+            if ($return_object && $data)
+                return FC::array_to_object($data);
+            else if ($data)
+                return $data;
+            else throw new Exception('Key {' . $key . '} Not Found', 404);
+        }
+        catch (Exception $e)
+        {
+            $_FLITE = Flite::Base();
+            $_FLITE->Exception('CassandraObject', 'GetSlice', $e);
+            return false;
+        }
+    }
+
     public function Delete ($key, $columns = null)
     {
         try

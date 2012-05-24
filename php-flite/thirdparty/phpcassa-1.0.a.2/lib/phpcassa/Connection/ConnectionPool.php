@@ -189,6 +189,18 @@ class ConnectionPool {
      */
     public function describe_keyspace() {
         if (NULL === $this->keyspace_description) {
+            $keyspace_description = array();
+            try
+            {
+                $keyspace_description = @include(FLITE_DIR . '/cache/keyspace_description.php');
+                if(is_object($keyspace_description))
+                {
+                    $this->keyspace_description = $keyspace_description;
+                    return $keyspace_description;
+                }
+            }
+            catch (Exception $e){}
+
             $this->keyspace_description = $this->call("describe_keyspace", $this->keyspace);
         }
 
