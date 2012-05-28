@@ -111,7 +111,7 @@ class DatabaseObject
         if($value !== $oldval)
         {
             $this->dbobject_data[$key] = $value;
-            if(!in_array($key,$this->dbobject_primary_keys)) $this->changed_fields[] = $key;
+            if(!in_array($key,$this->dbobject_primary_keys)) $this->changed_fields[$key] = $key;
         }
         return;
     }
