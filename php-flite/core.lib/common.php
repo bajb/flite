@@ -105,7 +105,7 @@ class FC
 
     public static function validate_email($email)
     {
-        return preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/", $email);
+        return preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/", $email);
     }
 
     public static function ascii_encode_email($str_email,$str_display='',$bln_create_link=true) {
