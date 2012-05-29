@@ -218,7 +218,7 @@ class CassandraObject
         if ($reduce_by > 0) $reduce_by = - 1 * $reduce_by;
         try
         {
-            $this->CFConnection->add($key, $column, $increase_by, null, ConsistencyLevel::ONE);
+            $this->CFConnection->add($key, $column, $reduce_by, null, ConsistencyLevel::ONE);
         }
         catch (Exception $e)
         {

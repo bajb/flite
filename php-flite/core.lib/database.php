@@ -126,6 +126,11 @@ class DatabaseObject
         return $this->dbobject_data[$key];
     }
 
+    public function __isset($key)
+    {
+        return isset($this->dbobject_data[$key]);
+    }
+
     public function SaveChanges()
     {
         $_FLITE = Flite::Base();
