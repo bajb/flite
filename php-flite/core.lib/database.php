@@ -121,9 +121,9 @@ class DatabaseObject
         return $this->GetValue($key);
     }
 
-    public function GetValue($key)
+    public function GetValue($key,$default=null)
     {
-        return $this->dbobject_data[$key];
+        return isset($this->dbobject_data[$key]) ? $this->dbobject_data[$key] : $default;
     }
 
     public function __isset($key)
