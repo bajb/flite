@@ -24,6 +24,12 @@ class FC
         return (is_array($array) && !empty($array)) ? array_slice($array,$offset,$length,$preserve_keys) : array();
     }
 
+    public static function array_value($array,$key,$default=null)
+    {
+        if(is_object($array)) $array = FC::object_to_array($array);
+        return isset($array[$key]) ? $array[$key] : $default;
+    }
+
     public static function enable_error_reporting()
     {
         error_reporting(E_ALL);
