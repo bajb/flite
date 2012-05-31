@@ -229,6 +229,21 @@ class CassandraObject
         return true;
     }
 
+    public function BatchInsert($rows,$ttl=null)
+    {
+        try
+        {
+            return $this->CFConnection->batch_insert($rows,null,$ttl);
+        }
+        catch (Exception $e)
+        {
+            $_FLITE = Flite::Base();
+            $_FLITE->Exception('CassandraObject', 'BatchInsert', $e);
+            return false;
+        }
+        return true;
+    }
+
     public function __call ($method, $args)
     {
         if ($method != 'remove') FC::error_report("Direct PhpCassa Call", array("Method" => $method,"Args" => $args));
