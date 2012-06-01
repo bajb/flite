@@ -278,10 +278,7 @@ class FliteApplication extends FliteConfig
     		ob_start();
             if($this->render_header_footer) $this->RenderHeader();
             $page_found = $this->Render(empty($this->render_files) ? $this->default_view : $this->render_files);
-            if(!$page_found)
-            {
-                $this->Render404();
-            }
+            if(!$page_found) $this->Render404($this->GetConfig('render_404','_errors/404.php'));
             if($this->render_header_footer) $this->RenderFooter();
             ob_flush();
 		}
@@ -292,13 +289,13 @@ class FliteApplication extends FliteConfig
 
 	/* Render 404 */
 
-	public function Render404()
+	public function Render404($render_page='_errors/404.php')
 	{
 	    if(ob_get_level()) while(@ob_end_clean());
 	    $_FLITE = Flite::Base();
         header("HTTP/1.0 404 Not Found");
         header("Status: 404 Not Found");
-        @include_once($_FLITE->GetConfig('site_root') . 'php-flite/frontend/_errors/404.php');
+        @include_once($_FLITE->GetConfig('site_root') . 'php-flite/frontend/' . $render_page);
         exit;
 	}
 
