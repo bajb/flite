@@ -75,8 +75,8 @@ class FC
 
     public static function array_to_object($array,$object=false)
     {
-        if(!$object) $object = new stdClass();
         if(!is_array($array)) return $array;
+        if(!$object) $object = new stdClass();
         foreach ($array as $k => $v) $object->{$k} = FC::array_to_object($v);
         return $object;
     }
@@ -84,8 +84,8 @@ class FC
 
     public static function object_to_array($object, $array=false)
     {
-        if (!$array) $array = array();
         if (!is_object($object)) return $object;
+        if (!$array) $array = array();
         foreach ($object as $k => $v) $array[$k] = FC::object_to_array($v);
         return $array;
     }
