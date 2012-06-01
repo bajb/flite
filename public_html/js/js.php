@@ -1,33 +1,25 @@
 <?php
 ini_set('display_errors',false);
-
 $dir = dirname(__FILE__);
 $serverparts = explode('.',$_SERVER['HTTP_HOST'],3);
-
 $sub = count($serverparts) == 3 ? $serverparts[0] : '';
 $dom = $serverparts[count($serverparts) - 2];
 $tld = $serverparts[count($serverparts) - 1];
 $protocol = (isset($_SERVER['HTTP_VIA']) && strpos($_SERVER['HTTP_VIA'],'HTTPS') > -1) ? 'https://' : (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
 
+if($tld === 'local')
+{
+    $dir = getcwd() .'/';
+}
+
 @include_once('../domain.fiddle.php');
 
-if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') && $tld != 'dev') {
+if (isset($_SERVER['HTTP_ACCEPT_ENCODING'])
+    && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')
+    && !in_array($tld, array('dev','local'))) {
     ob_start("ob_gzhandler");
 } else {
     ob_start();
-}
-
-function compress($buffer)
-{
-    global $tld;
-    if($tld == 'dev' ) return $buffer;
-    /* remove comments */
-    $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-    $buffer = preg_replace('!^([\t ]+)?\/\/.+$!m', '', $buffer);
-    /* remove tabs, spaces, newlines, etc. */
-    $buffer = str_replace(array("\t"),' ', $buffer);
-    $buffer = str_replace(array("\r\n", "\r", "\n", '  ', '    ', '    '), '', $buffer);
-    return $buffer;
 }
 
 $max_cache_hour = 0;
@@ -37,6 +29,19 @@ if(stristr($_SERVER['QUERY_STRING'],';v='))
     list(,$cache_hour) = explode(';v=',$_SERVER['QUERY_STRING']);
     $cache_hour = intval($cache_hour);
     if($cache_hour > 0) $max_cache_hour = $cache_hour;
+}
+
+function compress($buffer)
+{
+    global $tld;
+    if(in_array($tld, array('dev','local'))) return $buffer;
+    /* remove comments */
+    $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+    $buffer = preg_replace('!^([\t ]+)?\/\/.+$!m', '', $buffer);
+    /* remove tabs, spaces, newlines, etc. */
+    $buffer = str_replace(array("\t"),' ', $buffer);
+    $buffer = str_replace(array("\r\n", "\r", "\n", '  ', '    ', '    '), '', $buffer);
+    return $buffer;
 }
 
 header('Content-type: text/javascript');

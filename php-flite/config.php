@@ -1,7 +1,14 @@
 <?php
 $this->SetConfig('site_root',(substr(substr(dirname(__FILE__),0,-6),-5) == 'flite' ? substr(dirname(__FILE__),0,-16) : substr(dirname(__FILE__),0,-10)) . '/'); //With Trailing Slash
+$this->SetConfig('is_local',isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'],array('','127.0.0.1')) ?  true : (isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.local') ? true : false));
 $this->SetConfig('is_dev',isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'],array('','127.0.0.1')) ?  true : (isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.dev') ? true : false));
 $this->SetConfig('is_web',(isset($_SERVER['DOCUMENT_ROOT']) && !empty($_SERVER['DOCUMENT_ROOT'])));
+
+
+if($this->GetConfig('is_local'))
+{
+    $this->SetConfig('site_root', substr(getcwd(),0,-11) .'/');
+}
 
 /* Include Defaults */
 include_once($this->GetConfig('site_root') . 'php-flite/config/defaults.php');
@@ -32,7 +39,11 @@ $this->protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' || (iss
 $this->SetConfig('protocol',$this->protocol);
 $this->SetConfig('full_domain',$this->protocol.$this->sub_domain.'.'.$this->domain.'.'.$this->tld.'/');
 
-if($this->GetConfig('is_dev'))
+if($this->GetConfig('is_local'))
+{
+    include_once($this->GetConfig('site_root') . 'php-flite/config/local.php');
+}
+elseif($this->GetConfig('is_dev'))
 {
     include_once($this->GetConfig('site_root') . 'php-flite/config/dev.php');
 }

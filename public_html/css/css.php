@@ -7,9 +7,16 @@ $predom = $dom = $serverparts[count($serverparts) - 2];
 $pretld = $tld = $serverparts[count($serverparts) - 1];
 $protocol = (isset($_SERVER['HTTP_VIA']) && strpos($_SERVER['HTTP_VIA'],'HTTPS') > -1) ? 'https://' : (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
 
+if($tld === 'local')
+{
+    $dir = getcwd() .'/';
+}
+
 @include_once('../domain.fiddle.php');
 
-if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') && $tld != 'dev') {
+if (isset($_SERVER['HTTP_ACCEPT_ENCODING'])
+    && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')
+    && !in_array($tld, array('dev','local'))) {
     ob_start("ob_gzhandler");
 } else {
     ob_start();
@@ -27,7 +34,7 @@ if(stristr($_SERVER['QUERY_STRING'],';v='))
 function compress($buffer)
 {
     global $tld;
-    if($tld == 'dev') return $buffer;
+    if(in_array($tld, array('dev','local'))) return $buffer;
     /* remove comments */
     $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
     /* remove tabs, spaces, newlines, etc. */
@@ -78,8 +85,8 @@ header("Last-Modified: ".gmdate("D, d M Y H:i:s", $max_cache_hour)." GMT");
 
 if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $max_cache_hour)
 {
-       header("HTTP/1.1 304 Not Modified");
-       exit;
+       /*header("HTTP/1.1 304 Not Modified");
+       exit;*/
 }
 
 ob_start("compress");
