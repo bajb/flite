@@ -15,14 +15,32 @@ class CassandraObject
     private $CFConnection;
     private $cassandra_connection = 'cassandra';
     private $is_super = false;
+    private $read_consistency_level = ConsistencyLevel::QUORUM;
+    private $write_consistency_level = ConsistencyLevel::QUORUM;
+    private $buffer_size = 1024;
+    private $autopack_names = true;
+    private $autopack_values = true;
+    private $initiated = false;
 
     public function __construct ($cf, $connection_name = 'cassandra', $autopack_names = true, $autopack_values = true,
                                 $read_consistency_level = ConsistencyLevel::QUORUM, $write_consistency_level = ConsistencyLevel::QUORUM, $buffer_size = 1024)
     {
-        $_FLITE = Flite::Base();
-        $keyspace_description = @include ($_FLITE->GetConfig('site_root') . 'php-flite/cache/keyspace_description.php');
         $this->cassandra_connection = $connection_name;
         $this->columnFamily = $cf;
+        $this->autopack_names = $autopack_names;
+        $this->autopack_values = $autopack_values;
+        $this->read_consistency_level = $read_consistency_level;
+        $this->write_consistency_level = $write_consistency_level;
+        $this->buffer_size = $buffer_size;
+        $this->initiated = false;
+    }
+
+    public function Connect()
+    {
+        if($this->initiated) return true;
+
+        $_FLITE = Flite::Base();
+        $keyspace_description = @include (FLITE_DIR . '/cache/keyspace_description.php');
 
         if ($keyspace_description && isset($keyspace_description->cf_defs))
         {
@@ -40,35 +58,39 @@ class CassandraObject
             if ($this->is_super)
             {
                 $this->CFConnection = new SuperColumnFamily($_FLITE->{$this->cassandra_connection}, $this->columnFamily,
-                        $autopack_names, $autopack_values, $read_consistency_level, $write_consistency_level,
-                        $buffer_size);
+                        $this->autopack_names, $this->autopack_values, $this->read_consistency_level, $this->write_consistency_level,
+                        $this->buffer_size);
             }
             else
             {
                 $this->CFConnection = new ColumnFamily($_FLITE->{$this->cassandra_connection}, $this->columnFamily,
-                        $autopack_names, $autopack_values, $read_consistency_level, $write_consistency_level,
-                        $buffer_size);
+                        $this->autopack_names, $this->autopack_values, $this->read_consistency_level, $this->write_consistency_level,
+                        $this->buffer_size);
             }
         }
         catch (Exception $e)
         {
             $_FLITE->Exception('CassandraObject', '__construct', $e);
         }
-        if (! $this->CFConnection) return false;
+
+        $this->initiated = !(!$this->CFConnection);
     }
 
     public function InsertFormat($format=ColumnFamily::ARRAY_FORMAT)
     {
+        $this->Connect();
         $this->CFConnection->insert_format = $format;
     }
 
     public function ReturnFormat($format=ColumnFamily::ARRAY_FORMAT)
     {
+        $this->Connect();
         $this->CFConnection->return_format = $format;
     }
 
     public function GetData ($key, $columns = null, $return_object = false)
     {
+        $this->Connect();
         try
         {
             $data = $this->CFConnection->get($key, null, $columns);
@@ -89,6 +111,7 @@ class CassandraObject
 
     public function GetRange ($start, $end, $count, $columns)
     {
+        $this->Connect();
         try
         {
             $data = $this->CFConnection->get_range($start, $end, $count, null, $columns);
@@ -106,6 +129,7 @@ class CassandraObject
 
     public function SetData ($key, $data, $ttl = null)
     {
+        $this->Connect();
         $insertdata = array();
         foreach ($data as $k => $v)
         {
@@ -127,6 +151,7 @@ class CassandraObject
     public function GetColumns ($key, $start_column = "", $end_column = "", $reverse_columns = false, $count = 10,
                                 $return_object = false)
     {
+        $this->Connect();
         try
         {
             $columnslice = new ColumnSlice($start_column, $end_column, $count, $reverse_columns);
@@ -147,6 +172,7 @@ class CassandraObject
 
     public function GetSlice($key,ColumnSlice $slice,$return_object=false)
     {
+        $this->Connect();
         try
         {
             $data = $this->CFConnection->get($key, $slice);
@@ -166,6 +192,7 @@ class CassandraObject
 
     public function Delete ($key, $columns = null)
     {
+        $this->Connect();
         try
         {
             $this->CFConnection->remove($key, $columns);
@@ -182,6 +209,7 @@ class CassandraObject
     public function GetMulti ($keys, $columns = null, $column_start = "", $column_finish = "", $reverse_order = false,
                             $column_count = 100)
     {
+        $this->Connect();
         try
         {
             $columnslice = new ColumnSlice($column_start, $column_finish, $column_count, $reverse_order);
@@ -200,6 +228,7 @@ class CassandraObject
 
     public function Increment ($key, $column, $increase_by = 1)
     {
+        $this->Connect();
         try
         {
             $this->CFConnection->add($key, $column, $increase_by, null, ConsistencyLevel::ONE);
@@ -215,6 +244,7 @@ class CassandraObject
 
     public function Decrement ($key, $column, $reduce_by = 1)
     {
+        $this->Connect();
         if ($reduce_by > 0) $reduce_by = - 1 * $reduce_by;
         try
         {
@@ -231,6 +261,7 @@ class CassandraObject
 
     public function BatchInsert($rows,$ttl=null)
     {
+        $this->Connect();
         try
         {
             return $this->CFConnection->batch_insert($rows,null,$ttl);
@@ -246,6 +277,7 @@ class CassandraObject
 
     public function __call ($method, $args)
     {
+        $this->Connect();
         if ($method != 'remove') FC::error_report("Direct PhpCassa Call", array("Method" => $method,"Args" => $args));
         if (method_exists($this->CFConnection, $method)) return call_user_func_array(array($this->CFConnection,$method),
                 $args);
