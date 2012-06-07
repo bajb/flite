@@ -281,7 +281,8 @@ class CassandraObject
         $this->Connect();
         try
         {
-            return $this->CFConnection->batch_insert($rows,null,$ttl);
+            $this->CFConnection->batch_insert($rows,null,$ttl);
+            return true;
         }
         catch (Exception $e)
         {
