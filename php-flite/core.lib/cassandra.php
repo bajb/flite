@@ -21,6 +21,8 @@ class CassandraObject
     private $autopack_names = true;
     private $autopack_values = true;
     private $initiated = false;
+    private $insert_format = false;
+    private $return_format = false;
 
     public function __construct ($cf, $connection_name = 'cassandra', $autopack_names = true, $autopack_values = true,
                                 $read_consistency_level = ConsistencyLevel::QUORUM, $write_consistency_level = ConsistencyLevel::QUORUM, $buffer_size = 1024)
@@ -33,6 +35,11 @@ class CassandraObject
         $this->write_consistency_level = $write_consistency_level;
         $this->buffer_size = $buffer_size;
         $this->initiated = false;
+    }
+
+    public function Connected()
+    {
+        return $this->initiated;
     }
 
     public function Connect()
@@ -74,18 +81,28 @@ class CassandraObject
         }
 
         $this->initiated = !(!$this->CFConnection);
+
+        if($this->return_format !== false) $this->ReturnFormat($this->return_format);
+        if($this->insert_format !== false) $this->InsertFormat($this->insert_format);
+
     }
 
     public function InsertFormat($format=ColumnFamily::ARRAY_FORMAT)
     {
-        $this->Connect();
-        $this->CFConnection->insert_format = $format;
+        $this->insert_format = $format;
+        if($this->Connected())
+        {
+            $this->CFConnection->insert_format = $format;
+        }
     }
 
     public function ReturnFormat($format=ColumnFamily::ARRAY_FORMAT)
     {
-        $this->Connect();
-        $this->CFConnection->return_format = $format;
+        $this->return_format = $format;
+        if($this->Connected())
+        {
+            $this->CFConnection->return_format = $format;
+        }
     }
 
     public function GetData ($key, $columns = null, $return_object = false)
