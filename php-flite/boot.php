@@ -32,7 +32,7 @@ class Flite
 
 class FliteConfig
 {
-    private $config;
+    protected $config;
 
     public function GetConfig ($key, $default = false)
     {
