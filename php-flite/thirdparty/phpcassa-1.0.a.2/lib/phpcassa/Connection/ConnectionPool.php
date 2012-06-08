@@ -192,7 +192,7 @@ class ConnectionPool {
             $keyspace_description = array();
             try
             {
-                $keyspace_description = @include(FLITE_DIR . '/cache/keyspace_description.php');
+                $keyspace_description = @include(FLITE_DIR . '/cache/keyspace_'. strtolower($this->keyspace) .'_description.php');
                 if(is_object($keyspace_description))
                 {
                     $this->keyspace_description = $keyspace_description;

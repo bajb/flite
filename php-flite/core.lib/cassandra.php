@@ -47,8 +47,7 @@ class CassandraObject
         if($this->initiated) return true;
 
         $_FLITE = Flite::Base();
-        $keyspace_description = @include (FLITE_DIR . '/cache/keyspace_description.php');
-
+        $keyspace_description = $_FLITE->{$this->cassandra_connection}->describe_keyspace();
         if ($keyspace_description && isset($keyspace_description->cf_defs))
         {
             foreach ($keyspace_description->cf_defs as $coldef)
@@ -65,14 +64,14 @@ class CassandraObject
             if ($this->is_super)
             {
                 $this->CFConnection = new SuperColumnFamily($_FLITE->{$this->cassandra_connection}, $this->columnFamily,
-                        $this->autopack_names, $this->autopack_values, $this->read_consistency_level, $this->write_consistency_level,
-                        $this->buffer_size);
+                    $this->autopack_names, $this->autopack_values, $this->read_consistency_level, $this->write_consistency_level,
+                    $this->buffer_size);
             }
             else
             {
                 $this->CFConnection = new ColumnFamily($_FLITE->{$this->cassandra_connection}, $this->columnFamily,
-                        $this->autopack_names, $this->autopack_values, $this->read_consistency_level, $this->write_consistency_level,
-                        $this->buffer_size);
+                    $this->autopack_names, $this->autopack_values, $this->read_consistency_level, $this->write_consistency_level,
+                    $this->buffer_size);
             }
         }
         catch (Exception $e)
