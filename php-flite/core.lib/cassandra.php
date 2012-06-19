@@ -104,13 +104,13 @@ class CassandraObject
         }
     }
 
-    public function GetData ($key, $columns = null, $return_object = false)
+    public function GetData ($key, $columns = null, $return_object = false,$single_return=true)
     {
         $this->Connect();
         try
         {
             $data = $this->CFConnection->get($key, null, $columns);
-            if (FC::count($columns) == 1 && $data) return $data[$columns[0]];
+            if ($single_return && FC::count($columns) == 1 && $data) return $data[$columns[0]];
             if ($return_object && $data)
                 return FC::array_to_object($data);
             else if ($data)

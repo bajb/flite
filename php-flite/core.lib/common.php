@@ -30,6 +30,21 @@ class FC
         return isset($array[$key]) ? $array[$key] : $default;
     }
 
+    public static function serialized( $data )
+    {
+    	if ( !is_string( $data ) ) return false;
+
+    	$data = trim( $data );
+    	$length = strlen( $data );
+
+    	if ( $length < 4 ) return false;
+    	elseif ( ':' !== $data[1] ) return false;
+    	elseif ( ';' !== $data[$length-1] ) return false;
+    	elseif ( $data[0] !== 's' ) return false;
+    	elseif ( '"' !== $data[$length-2] ) return false;
+    	else return true;
+    }
+
     public static function enable_error_reporting()
     {
         error_reporting(E_ALL);
