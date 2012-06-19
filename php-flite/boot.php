@@ -30,6 +30,93 @@ class Flite
     }
 }
 
+class FliteDataObject implements IteratorAggregate
+{
+    private $_data = array();
+    private $position = 0;
+
+    public function __construct($data)
+    {
+        $this->Populate($data);
+        $this->position = 0;
+    }
+
+    public function Populate($data)
+    {
+        if(is_object($data) || is_array($data))
+        {
+            foreach ($data as $k => $v) $this->Set($k,$v);
+        }
+    }
+
+    public function __set($key,$value)
+    {
+        return $this->SetValue($key,$value);
+    }
+
+    public function __get($key)
+    {
+        return $this->GetValue($key);
+    }
+
+    public function __isset($key)
+    {
+        return isset($this->_data[$key]);
+    }
+
+    public function Exists($key)
+    {
+        return isset($this->_data[$key]);
+    }
+
+    public function Set($key,$value)
+    {
+        return $this->_data[$key] = $value;
+    }
+
+    public function Get($key,$default=null)
+    {
+        return isset($this->_data[$key]) ? $this->_data[$key] : $default;
+    }
+
+    public function GetArray($key,$default=array())
+    {
+        if(isset($this->_data[$key]))
+        {
+            return is_array($this->_data[$key]) ? $this->_data[$key] :
+                (is_object($this->_data[$key]) ? FC::object_to_array($this->_data[$key]) : array());
+        }
+        else return $default;
+    }
+
+    public function GetInt($key,$default=0)
+    {
+        if(isset($this->_data[$key])) return intval($this->_data[$key]);
+        else return $default;
+    }
+
+    public function GetFloat($key,$default=0)
+    {
+        if(isset($this->_data[$key])) return floatval($this->_data[$key]);
+        else return $default;
+    }
+
+    public function GetBoolean($key,$default=false)
+    {
+        if(isset($this->_data[$key]))
+        {
+            return in_array($this->_data[$key], array('true','1',1,true), true);
+        }
+        return $default;
+    }
+
+    public function getIterator()
+    {
+        $o = new ArrayObject($this->_data);
+        return $o->getIterator();
+    }
+}
+
 class FliteConfig
 {
     protected $config;
