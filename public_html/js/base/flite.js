@@ -4,5 +4,6 @@ var Flite = {
     SubDomain:"##SUBDOMAIN##",
     Tld:"##TLD##",
     FullDomain:"##SUBDOMAIN##.##DOMAIN##.##TLD##",
-    Protocol:"##PROTOCOL##"
+    Protocol:"##PROTOCOL##",
+    Template:"##TEMPLATE##"
 };

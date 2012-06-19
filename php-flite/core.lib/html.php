@@ -24,6 +24,7 @@ class FCHTML {
     );
 
     private $static_domain = 'static';
+    private $template = '';
 
     /**
      * Store the doctype for the whole helper
@@ -69,6 +70,16 @@ class FCHTML {
         }
 
         $this->setCloseTag();
+    }
+
+    public function SetTemplate($template)
+    {
+        $this->template = $template;
+    }
+
+    public function GetTemplate()
+    {
+        return $this->template;
     }
 
     public function SetCssVersion($version)
@@ -179,9 +190,10 @@ class FCHTML {
     {
         $_FLITE = Flite::Base();
         $path = str_replace('|',';',$path);
+        $tpl = empty($this->template) ? '' : ';tpl=' . $this->template;
         $link = '    ';
         if($cssif) $link .= "<!--[if $cssif]>";
-        $link .= "<link type='text/css' rel='stylesheet' href='".$this->StaticDomain()."/css/{$path}{$this->cssVersion}'".$this->closetag;
+        $link .= "<link type='text/css' rel='stylesheet' href='".$this->StaticDomain()."/css/{$path}{$this->cssVersion}$tpl'".$this->closetag;
         if($cssif) $link .= "<![endif]-->";
         return $link . "\n";
     }
@@ -196,7 +208,8 @@ class FCHTML {
     {
         $_FLITE = Flite::Base();
         $path = str_replace('|',';',$path);
-        $link = "<script type='text/javascript' src='".$this->StaticDomain()."/js/{$path}{$this->jsVersion}'></script>";
+        $tpl = empty($this->template) ? '' : ';tpl=' . $this->template;
+        $link = "<script type='text/javascript' src='".$this->StaticDomain()."/js/{$path}{$this->jsVersion}$tpl'></script>";
         return $link . "\n";
     }
 

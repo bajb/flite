@@ -31,6 +31,12 @@ if(stristr($_SERVER['QUERY_STRING'],';v='))
     if($cache_hour > 0) $max_cache_hour = $cache_hour;
 }
 
+if(stristr($_SERVER['QUERY_STRING'],';tpl='))
+{
+    list(,$template) = explode(';tpl=',$_SERVER['QUERY_STRING']);
+    if(stristr($template,';')) list($template,) = explode(';',$template);
+}
+
 function compress($buffer)
 {
     global $tld;
@@ -50,9 +56,9 @@ if(!is_array($files)) $files = array($files);
 
 $already_loaded = $load_files = array();
 
-foreach ($files as $file) {
-
-    if (strpos($file,'/') === false && substr($file, 0, 2) != 'v=' && trim($file) != '')
+foreach ($files as $file)
+{
+    if (strpos($file,'/') === false  && trim($file) != '' && substr($file,0,2) != 'v=' && substr($file,0,4) != 'tpl=')
     {
         $file = str_replace('_','/',$file);
 
@@ -61,6 +67,12 @@ foreach ($files as $file) {
             $check_time = filemtime($dir.'/_'.$dom.'/'.$file.'.full.css');
             if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
             $load_files[] = $dir.'/_'.$dom.'/'.$file.'.full.css';
+        }
+        else if(isset($template) && !empty($template) && file_exists($dir.'/_'.$template.'/'.$file.'.full.css'))
+        {
+            $check_time = filemtime($dir.'/_'.$template.'/'.$file.'.full.css');
+            if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+            $load_files[] = $dir.'/_'.$template.'/'.$file.'.full.css';
         }
         else
         {
@@ -76,6 +88,12 @@ foreach ($files as $file) {
                 $check_time = filemtime($dir.'/_'.$dom.'/'.$file.'.css');
                 if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
                 $load_files[] = $dir.'/_'.$dom.'/'.$file.'.css';
+            }
+            else if(isset($template) && !empty($template) && file_exists($dir.'/_'.$template.'/'.$file.'.css'))
+            {
+                $check_time = filemtime($dir.'/_'.$template.'/'.$file.'.css');
+                if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+                $load_files[] = $dir.'/_'.$template.'/'.$file.'.css';
             }
         }
     }

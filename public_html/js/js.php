@@ -31,6 +31,12 @@ if(stristr($_SERVER['QUERY_STRING'],';v='))
     if($cache_hour > 0) $max_cache_hour = $cache_hour;
 }
 
+if(stristr($_SERVER['QUERY_STRING'],';tpl='))
+{
+    list(,$template) = explode(';tpl=',$_SERVER['QUERY_STRING']);
+    if(stristr($template,';')) list($template,) = explode(';',$template);
+}
+
 function compress($buffer)
 {
     global $tld;
@@ -54,7 +60,7 @@ $already_loaded = $load_files = array();
 
 foreach ($files as $file)
 {
-    if (strpos($file,'/') === false && substr($file, 0, 2) != 'v=' && trim($file) != '')
+    if (strpos($file,'/') === false && substr($file,0,2) != 'v=' && substr($file,0,4) != 'tpl=' && trim($file) != '')
     {
         $file = str_replace('_','/',$file);
 
@@ -63,6 +69,12 @@ foreach ($files as $file)
             $check_time = filemtime($dir . '/_'. $dom .'/'. $file .'.full.js');
             if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
             $load_files[] = $dir . '/_'. $dom .'/'. $file .'.full.js';
+        }
+        else if(isset($template) && !empty($template) && file_exists($dir.'/_'.$template.'/'.$file.'.full.js'))
+        {
+            $check_time = filemtime($dir.'/_'.$template.'/'.$file.'.full.js');
+            if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+            $load_files[] = $dir.'/_'.$template.'/'.$file.'.full.js';
         }
         else
         {
@@ -78,6 +90,12 @@ foreach ($files as $file)
                 $check_time = filemtime($dir . '/_'. $dom .'/'. $file .'.js');
                 if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
                 $load_files[] = $dir . '/_'. $dom .'/'. $file .'.js';
+            }
+            else if(isset($template) && !empty($template) && file_exists($dir.'/_'.$template.'/'.$file.'.js'))
+            {
+                $check_time = filemtime($dir.'/_'.$template.'/'.$file.'.js');
+                if($check_time > $max_cache_hour) $max_cache_hour = $check_time;
+                $load_files[] = $dir.'/_'.$template.'/'.$file.'.js';
             }
         }
     }
@@ -106,6 +124,7 @@ foreach ($load_files as $file)
         $f = str_replace('##TLD##', $tld, $f);
         $f = str_replace('##SUBDOMAIN##', $sub, $f);
         $f = str_replace('##PROTOCOL##', $protocol, $f);
+        $f = str_replace('##TEMPLATE##', isset($template) ? $template : '', $f);
     }
 
     echo $f . ";\n";
