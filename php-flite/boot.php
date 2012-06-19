@@ -51,12 +51,12 @@ class FliteDataObject implements IteratorAggregate
 
     public function __set($key,$value)
     {
-        return $this->SetValue($key,$value);
+        return $this->Set($key,$value);
     }
 
     public function __get($key)
     {
-        return $this->GetValue($key);
+        return $this->Get($key);
     }
 
     public function __isset($key)
