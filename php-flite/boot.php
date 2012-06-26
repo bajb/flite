@@ -11,18 +11,37 @@ class Flite
     public static $app = null;
     public static $cache = null;
 
+
+    /**
+     * @static
+     * @param string $rel_path
+     * @return FliteBase
+     */
     public static function Base ($rel_path = '/')
     {
         if (self::$flite === null) self::$flite = new FliteBase($rel_path);
         return self::$flite;
     }
 
+
+    /**
+     * @static
+     * @param null $site_view
+     * @param null $branding
+     * @param string $html_doctype
+     * @return FliteApplication
+     */
     public static function App ($site_view = null, $branding = null, $html_doctype = 'html5')
     {
         if (self::$app === null) self::$app = new FliteApplication($site_view, $branding, $html_doctype);
         return self::$app;
     }
 
+
+    /**
+     * @static
+     * @return FliteCache
+     */
     public static function Cache ()
     {
         if (self::$cache === null) self::$cache = new FliteCache();
