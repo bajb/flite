@@ -317,7 +317,7 @@ class DBConnection
 					    return $data;
 					}
 				}
-				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetRows');
+				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetRows',$cache_key);
 				return $data;
 			}
 		}
@@ -380,7 +380,7 @@ class DBConnection
 					    return $data;
 					}
 				}
-				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetKeyedRows');
+				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetKeyedRows',$cache_key);
 				return $data;
 			}
 		}
@@ -426,7 +426,7 @@ class DBConnection
 				{
 					$data[] = $value[0];
 				}
-				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetCols');
+				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetCols',$cache_key);
 				return $data;
 			}
 		}
@@ -467,7 +467,7 @@ class DBConnection
 			if ($result)
 			{
 				$row = mysql_fetch_array($result);
-				if($row && $cache_time) $this->SetCache($query,$row[0],$cache_time,'GetField');
+				if($row && $cache_time) $this->SetCache($query,$row[0],$cache_time,'GetField',$cache_key);
 				return $row ? $row[0] : false;
 			}
 		}
@@ -509,7 +509,7 @@ class DBConnection
 			if ($result)
 			{
 				$data = mysql_num_rows($result);
-				if($cache_time) $this->SetCache($query,$data,$cache_time,'NumRows');
+				if($cache_time) $this->SetCache($query,$data,$cache_time,'NumRows',$cache_key);
 				return $data;
 			}
 		}
@@ -551,7 +551,7 @@ class DBConnection
 			if ($result)
 			{
 			    $data = mysql_fetch_object($result);
-			    if($cache_time) $this->SetCache($query,$data,$cache_time,'GetRow');
+			    if($cache_time) $this->SetCache($query,$data,$cache_time,'GetRow',$cache_key);
 			    return $data;
 			}
 		}
@@ -592,11 +592,12 @@ class DBConnection
 	    else return $data;
 	}
 
-	private function SetCache($sql,$value,$timeout=600,$source='')
+	private function SetCache($sql,$value,$timeout=600,$source='',$cache_key)
 	{
 	    $_FLITE = Flite::Base();
 	    if(!$value) return false;
-	    $_FLITE->memcache->set($this->CacheKey($sql,$source), $value, MEMCACHE_COMPRESSED,$timeout);
+        $cache_key = !is_null($cache_key) ? $cache_key : $this->CacheKey($sql,$source);
+	    $_FLITE->memcache->set($cache_key, $value, MEMCACHE_COMPRESSED,$timeout);
 	}
 
 	//Close Database Connection
