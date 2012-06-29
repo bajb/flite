@@ -274,11 +274,11 @@ class DBConnection
 	}
 
 	//Array of results
-	public function GetRows($query = "",$cache_time=false)
+	public function GetRows($query = "",$cache_time=false,$cache_key=null)
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query,'GetRows');
+            $cache = $this->GetCache($query,'GetRows',$cache_key);
             if($cache) return $cache;
 	    }
 
@@ -325,11 +325,11 @@ class DBConnection
 	}
 
 	//Array of results
-	public function GetKeyedRows($query = "",$cache_time=false)
+	public function GetKeyedRows($query = "",$cache_time=false,$cache_key=null)
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query,'GetKeyedRows');
+            $cache = $this->GetCache($query,'GetKeyedRows',$cache_key);
             if($cache) return $cache;
 	    }
 
@@ -388,11 +388,11 @@ class DBConnection
 	}
 
 	//Array of cols
-	public function GetCols($query = "",$cache_time=false)
+	public function GetCols($query = "",$cache_time=false,$cache_key=null)
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query,'GetCols');
+            $cache = $this->GetCache($query,'GetCols',$cache_key);
             if($cache) return $cache;
 	    }
 
@@ -433,11 +433,11 @@ class DBConnection
 		return false;
 	}
 
-	public function GetField($query = "",$cache_time=false)
+	public function GetField($query = "",$cache_time=false,$cache_key=null)
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query,'GetField');
+            $cache = $this->GetCache($query,'GetField',$cache_key);
             if($cache) return $cache;
 	    }
 
@@ -475,11 +475,11 @@ class DBConnection
 	}
 
 	//Gets Number of rows in query
-	public function NumRows($query = "",$cache_time=false)
+	public function NumRows($query = "",$cache_time=false,$cache_key=null)
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query,'NumRows');
+            $cache = $this->GetCache($query,'NumRows',$cache_key);
             if($cache) return $cache;
 	    }
 
@@ -517,11 +517,11 @@ class DBConnection
 	}
 
 	//Get single row from database
-	public function GetRow($query = "",$cache_time=false)
+	public function GetRow($query = "",$cache_time=false,$cache_key=null)
 	{
 	    if($cache_time)
 	    {
-            $cache = $this->GetCache($query,'GetRow');
+            $cache = $this->GetCache($query,'GetRow',$cache_key);
             if($cache) return $cache;
 	    }
 
@@ -582,11 +582,12 @@ class DBConnection
 	    return "SQLCACHE:$source:" . md5($sql);
 	}
 
-	private function GetCache($sql,$source='')
+	private function GetCache($sql,$source='',$cache_key=null)
 	{
 	    if(isset($_GET['rebuild-db-cache'])) return false;
 	    $_FLITE = Flite::Base();
-	    $data = $_FLITE->memcache->get($this->CacheKey($sql,$source));
+        $cache_key = !is_null($cache_key) ? $cache_key : $this->CacheKey($sql,$source);
+	    $data = $_FLITE->memcache->get($cache_key);
 	    if(empty($data) || !$data) return false;
 	    else return $data;
 	}
