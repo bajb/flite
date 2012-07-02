@@ -279,4 +279,11 @@ class FC
         $seconds = $timestamp1 - $timestamp2;
         return ceil($seconds/86400);
     }
+
+    public static function month_diff($timestamp1, $timestamp2 = null)
+    {
+        if(is_null($timestamp2)) $timestamp2 = time();
+        return ( date("m", $timestamp2) - date("m", $timestamp1) )
+            + (12 * ( date("Y", $timestamp2) - date("Y", $timestamp1) ) );
+    }
 }
