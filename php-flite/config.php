@@ -6,7 +6,7 @@ $this->SetConfig('is_web',(isset($_SERVER['DOCUMENT_ROOT']) && !empty($_SERVER['
 
 if($this->GetConfig('is_local'))
 {
-    $web_roots = array('internal', 'flite_html');
+    $web_roots = array('internal', 'flite_html', 'inbound');
     $this->SetConfig('site_root', rtrim(str_replace($web_roots, '', getcwd()), '\\/') .'/');
 }
 
