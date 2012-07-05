@@ -193,9 +193,14 @@ class DatabaseObject
     {
         $_FLITE = Flite::Base();
         $colsql = '*';
-        if(!is_array($columns) && !is_null($columns)) $columns = explode(',',$columns);
-        if(is_array($columns)) $colsql = '`' . implode('`,`',$columns) . '`';
-        else if(!empty($columns)) $colsql = '`' . $columns . '`';
+
+        if($columns === true || $columns == '*') $colsql = '*';
+        else
+        {
+            if(!is_array($columns) && !is_null($columns)) $columns = explode(',',$columns);
+            if(is_array($columns)) $colsql = '`' . implode('`,`',$columns) . '`';
+            else if(!empty($columns)) $colsql = '`' . $columns . '`';
+        }
 
 
         $row = $_FLITE->{$this->dbobject_connection . ($this->dbobject_allow_slave ? $this->dbobject_slave_append : '')}->GetRow("SELECT $colsql FROM `$this->dbobject_table_name` " . $this->GetWhere());
