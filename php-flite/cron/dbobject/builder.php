@@ -91,7 +91,7 @@ foreach ($db_connections as $db_connection => $prefix)
                 }
                 $contents .=  "\n\t" . '**/';
 
-                $contents .=  "\n\t" . 'public function __construct($'. implode('=null, $',$primary) .'=null)';
+                $contents .=  "\n\t" . 'public function __construct($'. implode('=null, $',$primary) .'=null,$preload_keys=false)';
                 $contents .=  "\n\t" . '{';
                 $contents .=  "\n\t\t" . 'parent::__construct(\''. $db_connection .'\',true,\'slave\');';
                 $contents .=  "\n\t\t" . '$this->SetPrimaryKeys(array(\''. implode("','",$primary).'\'));';
@@ -103,6 +103,8 @@ foreach ($db_connections as $db_connection => $prefix)
                 {
                     $contents .=  "\n\t\t" . 'if(!is_null($'. $pr .')) $this->'. $pr .' = $'. $pr .';';
                 }
+
+                $contents .=  "\n\t\t" . 'if($preload_keys) $this->Load($preload_keys);';
 
                 $contents .=  "\n\t" . '}';
 
