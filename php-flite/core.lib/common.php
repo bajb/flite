@@ -88,6 +88,21 @@ class FC
         return long2ip($long);
     }
 
+    public static function obj($input)
+    {
+        if(is_object($input)) return $input;
+        if(is_array($input)) return FC::array_to_object($input);
+        return new stdClass();
+    }
+
+    public static function arr($input)
+    {
+        if(is_array($input)) return $input;
+        if(is_object($input)) return FC::object_to_array($input);
+        if(is_string($input) && stristr($input,',')) return explode(',',$input);
+        return array($input);
+    }
+
     public static function array_to_object($array,$object=false)
     {
         if(!is_array($array)) return $array;
