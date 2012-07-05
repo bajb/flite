@@ -11,7 +11,7 @@ if($this->GetConfig('is_local'))
 }
 
 /* Include Defaults */
-include_once($this->GetConfig('site_root') . 'php-flite/config/defaults.php');
+include_once(FLITE_DIR . '/config/defaults.php');
 
 if(isset($_SERVER['HOSTNAME']) && $_SERVER['HOSTNAME'] == $this->GetConfig("dev_hostname"))
 {
@@ -42,20 +42,20 @@ $this->SetConfig('full_domain',$this->protocol.$this->sub_domain.'.'.$this->doma
 if($this->GetConfig('is_local'))
 {
     define('FLITE_ENV','local');
-    include_once($this->GetConfig('site_root') . 'php-flite/config/local.php');
+    include_once(FLITE_DIR . '/config/local.php');
 }
-elseif($this->GetConfig('is_dev'))
+else if($this->GetConfig('is_dev'))
 {
     define('FLITE_ENV','dev');
-    include_once($this->GetConfig('site_root') . 'php-flite/config/dev.php');
+    include_once(FLITE_DIR . '/config/dev.php');
 }
 else
 {
     define('FLITE_ENV','live');
-    include_once($this->GetConfig('site_root') . 'php-flite/config/live.php');
+    include_once(FLITE_DIR . '/config/live.php');
 }
 
-if(file_exists($this->GetConfig('site_root') . 'php-flite/config/'. $this->domain .'.php'))
+if(file_exists(FLITE_DIR . '/config/'. $this->domain .'.php'))
 {
-    include_once($this->GetConfig('site_root') . 'php-flite/config/'. $this->domain .'.php');
+    include_once(FLITE_DIR . '/config/'. $this->domain .'.php');
 }

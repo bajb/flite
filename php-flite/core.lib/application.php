@@ -33,14 +33,14 @@ class FliteApplication extends FliteConfig
         $this->site_view = $site_view;
         $this->branding_enabled = !($branding === false);
         $this->template = is_null($branding) ? $_FLITE->domain : $branding;
-        $this->frontend_root = $_FLITE->GetConfig('site_root') . 'php-flite/frontend/' . $this->site_view . '/';
+        $this->frontend_root = FLITE_DIR . '/frontend/' . $this->site_view . '/';
 
         $this->html = new FCHTML($_FLITE->GetConfig('static_sub_domain',empty($_FLITE->sub_domain) ? 'www' : $_FLITE->sub_domain),$html_doctype);
         $lasthour = mktime(date("H"),0,0);
         $this->html->SetCssVersion(';v=' . $lasthour);
         $this->html->SetJsVersion(';v=' . $lasthour);
 
-        if(file_exists($_FLITE->GetConfig('site_root') . 'php-flite/config/'. $this->template .'.php')) include_once($_FLITE->GetConfig('site_root') . 'php-flite/config/'. $this->template .'.php');
+        if(file_exists(FLITE_DIR . '/config/'. $this->template .'.php')) include_once(FLITE_DIR . '/config/'. $this->template .'.php');
         if(file_exists($this->frontend_root . 'config/base.php')) include_once($this->frontend_root . 'config/base.php');
 
         if($this->branding_enabled && file_exists($this->frontend_root . 'config/'. $this->template .'.php')) include_once($this->frontend_root . 'config/'. $this->template .'.php');
@@ -295,7 +295,7 @@ class FliteApplication extends FliteConfig
 	    $_FLITE = Flite::Base();
         header("HTTP/1.0 404 Not Found");
         header("Status: 404 Not Found");
-        @include_once($_FLITE->GetConfig('site_root') . 'php-flite/frontend/' . $render_page);
+        @include_once(FLITE_DIR . '/frontend/' . $render_page);
         exit;
 	}
 

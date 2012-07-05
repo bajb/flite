@@ -194,7 +194,7 @@ class FliteBase extends FliteConfig
 
     private function Loader ($classname)
     {
-        $b = $this->GetConfig('site_root') . 'php-flite/dblib/';
+        $b = FLITE_DIR . '/dblib/';
         $classname = strtolower($classname);
 
         if (file_exists($b . str_replace('_', '/', $classname) . '.php'))
@@ -205,14 +205,14 @@ class FliteBase extends FliteConfig
         {
             include_once ($b . $classname . '.php');
         }
-        else if (file_exists($this->GetConfig('site_root') . 'php-flite/lib/' . str_replace('_', '/', $classname) .
+        else if (file_exists(FLITE_DIR . '/lib/' . str_replace('_', '/', $classname) .
                  '.php'))
         {
-            include_once ($this->GetConfig('site_root') . 'php-flite/lib/' . str_replace('_', '/', $classname) . '.php');
+            include_once (FLITE_DIR . '/lib/' . str_replace('_', '/', $classname) . '.php');
         }
-        else if (file_exists($this->GetConfig('site_root') . 'php-flite/lib/' . $classname . '.php'))
+        else if (file_exists(FLITE_DIR . '/lib/' . $classname . '.php'))
         {
-            include_once ($this->GetConfig('site_root') . 'php-flite/lib/' . $classname . '.php');
+            include_once (FLITE_DIR . '/lib/' . $classname . '.php');
         }
     }
 
@@ -266,8 +266,8 @@ class FliteBase extends FliteConfig
         error_reporting($this->GetConfig('error_reporting'));
         ini_set('display_errors', $this->GetConfig('display_errors'));
 
-        if (! @include_once ($this->GetConfig('site_root') . 'php-flite/cache/core.lib.php')) $this->LoadFiles(
-                $this->GetConfig('site_root') . 'php-flite/core.lib/');
+        if (! @include_once (FLITE_DIR . '/cache/core.lib.php')) $this->LoadFiles(
+            FLITE_DIR . '/core.lib/');
 
         if ($this->GetConfig('zlib_enabled'))
         {
@@ -379,7 +379,7 @@ class FliteBase extends FliteConfig
             }
         }
 
-        $this->LoadFiles($this->GetConfig('site_root') . 'php-flite/included/');
+        $this->LoadFiles(FLITE_DIR . '/included/');
 
         $this->Define();
     }

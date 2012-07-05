@@ -1,5 +1,5 @@
 <?php
-require_once($this->GetConfig('site_root') .'php-flite/thirdparty/encryption/class.rc4crypt.php');
+require_once(FLITE_DIR . '/thirdparty/encryption/class.rc4crypt.php');
 
 class Cookies
 {
