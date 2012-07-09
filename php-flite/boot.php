@@ -23,6 +23,21 @@ class Flite
         return self::$flite;
     }
 
+    /**
+     * @param $connection
+     * @return DBConnection
+     */
+    public static function DB($connection='db') { return self::Base()->DB($connection); }
+
+    /**
+     * @return Memcache
+     */
+    public function Memcache($use_local=false) { return self::Base()->Memcache($use_local); }
+
+    /**
+     * @return Membase
+     */
+    public function Membase() { return self::Base()->Membase(); }
 
     /**
      * @static
@@ -432,7 +447,7 @@ class FliteBase extends FliteConfig
      * @param $connection
      * @return DBConnection
      */
-    public function DB($connection)
+    public function DB($connection='db')
     {
         return isset($this->$connection) ? $this->$connection : false;
     }
