@@ -427,6 +427,31 @@ class FliteBase extends FliteConfig
         $this->exceptions[] = $e;
         return true;
     }
+
+    /**
+     * @param $connection
+     * @return DBConnection
+     */
+    public function DB($connection)
+    {
+        return isset($this->$connection) ? $this->$connection : false;
+    }
+
+    /**
+     * @return Memcache
+     */
+    public function Memcache($use_local=false)
+    {
+        return $use_local ? $this->local_memcache : $this->memcache;
+    }
+
+    /**
+     * @return Membase
+     */
+    public function Membase()
+    {
+        return $this->membase;
+    }
 }
 
 $_FLITE = Flite::Base(isset($relative_path) ? $relative_path : '/');
