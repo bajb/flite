@@ -1,6 +1,6 @@
 <?php
 
-class DatabaseObject
+class DatabaseObject implements IteratorAggregate
 {
     protected $dbobject_primary_keys = array();
     protected $dbobject_primary_key_data = array();
@@ -20,6 +20,12 @@ class DatabaseObject
         if($allow_slave && !empty($slave_append) && !isset($_FLITE->{$flitedb . $slave_append})) $allow_slave = false;
         $this->dbobject_allow_slave = $allow_slave;
         $this->dbobject_slave_append = $slave_append;
+    }
+
+    public function getIterator()
+    {
+        $o = new ArrayObject($this->dbobject_data);
+        return $o->getIterator();
     }
 
     public function SetTable($table)
