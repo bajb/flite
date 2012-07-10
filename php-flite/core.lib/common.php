@@ -141,13 +141,10 @@ class FC
 
     public static function validate_email($email,$dns=true)
     {
-        if ( preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/", $email) )
-        {
-            if(!$dns) return true;
-            list($usr,$host) = explode('@',$email,2);
-            if(checkdnsrr($host) || FLITE_ENV == 'dev') return true;
-        }
-        return false;
+        if(!filter_var($email,FILTER_VALIDATE_EMAIL)) return false;
+        if(!$dns) return true;
+        list($usr,$host) = explode('@',$email,2);
+        return checkdnsrr($host) || FLITE_ENV == 'dev';
     }
 
     public static function ascii_encode_email($str_email,$str_display='',$bln_create_link=true) {
