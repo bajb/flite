@@ -1,6 +1,15 @@
 <?php
 define('PHP_FLITE_START_TIME', microtime(true));
-define('FLITE_DIR',dirname(__FILE__));
+if(strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+{
+    $_PATH = rtrim(getcwd(), '\\/');
+    $_PATH_PARTS = explode('\\', dirname(__FILE__));
+    define('FLITE_DIR',dirname($_PATH).'/'.end($_PATH_PARTS));
+}
+else
+{
+    define('FLITE_DIR',dirname(__FILE__));
+}
 
 require_once (FLITE_DIR . '/thirdparty/phpcassa-1.0.a.2/lib/autoload.php');
 use phpcassa\Connection\ConnectionPool;

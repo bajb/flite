@@ -4,12 +4,6 @@ $this->SetConfig('is_local',isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER[
 $this->SetConfig('is_dev',isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'],array('','127.0.0.1')) ?  true : (isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.dev') ? true : false));
 $this->SetConfig('is_web',(isset($_SERVER['DOCUMENT_ROOT']) && !empty($_SERVER['DOCUMENT_ROOT'])));
 
-if($this->GetConfig('is_local'))
-{
-    $web_roots = array('internal', 'flite_html', 'inbound');
-    $this->SetConfig('site_root', rtrim(str_replace($web_roots, '', getcwd()), '\\/') .'/');
-}
-
 /* Include Defaults */
 include_once(FLITE_DIR . '/config/defaults.php');
 
