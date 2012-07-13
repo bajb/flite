@@ -63,6 +63,11 @@ class MessageQueue
     private $queue = null;
     private $connect_args = array();
 
+    public static function MessageParser($message,$encoding)
+    {
+        return $encoding == 'MQ:json' ? json_decode($message) : $message;
+    }
+
     public function __construct($connect=false,$host=null,$username=null,$password=null,$port=5672)
     {
         if(!is_null($host))
