@@ -45,10 +45,10 @@ class FC
     	else return true;
     }
 
-    public static function enable_error_reporting()
+    public static function enable_error_reporting($display_errors=true)
     {
         error_reporting(E_ALL);
-        ini_set('display_errors',true);
+        ini_set('display_errors',$display_errors);
     }
 
     public static function disable_error_reporting()

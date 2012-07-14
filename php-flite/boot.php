@@ -41,12 +41,12 @@ class Flite
     /**
      * @return Memcache
      */
-    public function Memcache($use_local=false) { return self::Base()->Memcache($use_local); }
+    public static function Memcache($use_local=false) { return self::Base()->Memcache($use_local); }
 
     /**
      * @return Membase
      */
-    public function Membase() { return self::Base()->Membase(); }
+    public static function Membase() { return self::Base()->Membase(); }
 
     /**
      * @static

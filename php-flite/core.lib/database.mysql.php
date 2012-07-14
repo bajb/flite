@@ -561,7 +561,9 @@ class DBConnection
 	//Format string input as not to destroy a SQL Query
 	public function FormatInput($value = "",$maxlen = 0)
 	{
-		$out = mysql_escape_string($value);
+        $this->Connect();
+        if($this->IsConnected()) $out = mysql_real_escape_string($value,$this->conn);
+        else $out = mysql_real_escape_string($value);
 		if($maxlen != 0)
 		{
 			$out = substr($out,0,$maxlen);
@@ -574,7 +576,7 @@ class DBConnection
 	{
 	    $this->Connect();
 		if($this->IsConnected()) return mysql_real_escape_string($string,$this->conn);
-		else return mysql_escape_string($string);
+		else return mysql_real_escape_string($string);
 	}
 
 	public function CacheKey($sql,$source='')

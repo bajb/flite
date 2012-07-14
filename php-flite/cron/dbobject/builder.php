@@ -23,12 +23,12 @@ if(empty($db_connections)) $db_connections = array('db' => '');
 
 foreach ($db_connections as $db_connection => $prefix)
 {
-    if($tables = $_FLITE->{$db_connection}->GetRows("SHOW TABLES"))
+    if($tables = $_FLITE->DB($db_connection)->GetRows("SHOW TABLES"))
     {
         foreach ($tables as $table)
         {
             $cname = '';
-            $tbl = $table->{'Tables_in_' . $_FLITE->{$db_connection}->GetDBName()};
+            $tbl = $table->{'Tables_in_' . $_FLITE->DB($db_connection)->GetDBName()};
 
             $cname = str_replace('_','|',$prefix) . '_' . $tbl;
             if(substr($cname,0,4) == 'tbl_') $cname = substr($cname,4);
@@ -41,7 +41,7 @@ foreach ($db_connections as $db_connection => $prefix)
 
             unset($primary1);
             $contents = $primary = '';
-            if($columns = $_FLITE->{$db_connection}->GetRows("SHOW COLUMNS FROM `$tbl`"))
+            if($columns = $_FLITE->DB($db_connection)->GetRows("SHOW COLUMNS FROM `$tbl`"))
             {
 
                 $contents =  '<?php' . "\n";
@@ -171,12 +171,10 @@ foreach ($db_connections as $db_connection => $prefix)
         }
     }
     else
-    print 'No Tables Found\n';
-
-
-    $errors = $_FLITE->{$db_connection}->GetErrors();
-    if(!empty($errors))
     {
-        print_nice_array($errors);
+        print 'No Tables Found\n';
     }
+
+    $errors = $_FLITE->DB($db_connection)->GetErrors();
+    if(!empty($errors)) print_r($errors);
 }
