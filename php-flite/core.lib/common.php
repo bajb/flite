@@ -24,6 +24,13 @@ class FC
         return (is_array($array) && !empty($array)) ? array_slice($array,$offset,$length,$preserve_keys) : array();
     }
 
+    /**
+     * @static
+     * @param array $array Array to lookup key in
+     * @param string $key key of array element
+     * @param mixed $default Default value if key does not exist
+     * @return mixed
+     */
     public static function array_value($array,$key,$default=null)
     {
         if(is_object($array)) $array = FC::object_to_array($array);
