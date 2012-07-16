@@ -1,5 +1,4 @@
 <?php
-
 use phpcassa\ColumnFamily;
 use phpcassa\SuperColumnFamily;
 use phpcassa\ColumnSlice;
