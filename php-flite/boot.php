@@ -304,10 +304,11 @@ class FliteBase extends FliteConfig
             ini_set('zlib.output_compression_level', 0);
         }
 
-        if ($this->start_session && $this->GetConfig('is_web'))
+        if ($this->start_session && $this->GetConfig('is_web') && !defined("FLITE_NO_SESSION"))
         {
             session_start();
         }
+        else $this->start_session = false;
 
         spl_autoload_register(array($this,'Loader'));
 
