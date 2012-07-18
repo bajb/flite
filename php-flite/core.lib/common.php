@@ -305,4 +305,15 @@ class FC
         return ( date("m", $timestamp2) - date("m", $timestamp1) )
             + (12 * ( date("Y", $timestamp2) - date("Y", $timestamp1) ) );
     }
+
+
+    /**
+     * @static
+     * @return string username of the process calling php e.g. apache
+     */
+    public static function get_current_user()
+    {
+        $usr = posix_getpwuid(posix_geteuid());
+        return $usr['name'];
+    }
 }
