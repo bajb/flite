@@ -19,7 +19,7 @@ class FliteCache extends FliteConfig
     public function CreateCache($file,$data)
     {
         if(!$this->_FileChanged($file, $data)) return null;
-        return file_put_contents(FLITE_DIR . self::CACHE_DIR . $file, $this->_SerializeData($data));
+        return false !== file_put_contents(FLITE_DIR . self::CACHE_DIR . $file, $this->_SerializeData($data));
     }
 
     private function _LoadFile($file)
