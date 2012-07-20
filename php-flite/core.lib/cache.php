@@ -36,7 +36,7 @@ class FliteCache extends FliteConfig
         $cache = $this->_LoadFile($file);
         if(!is_null($cache))
         {
-            return md5($cache) !== md5($this->_SerializeData($data));
+            return md5($cache, true) !== md5($this->_SerializeData($data), true);
         }
         return true;
     }
