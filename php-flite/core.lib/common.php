@@ -37,6 +37,19 @@ class FC
         return isset($array[$key]) ? $array[$key] : $default;
     }
 
+    /**
+     * @static
+     * @param object $object Array to lookup key in
+     * @param string $key key of object
+     * @param mixed $default Default value if key does not exist
+     * @return mixed
+     */
+    public static function object_value($object,$key,$default=null)
+    {
+        $object = FC::obj($object);
+        return isset($object->$key) ? $object->$key : $default;
+    }
+
     public static function serialized( $data )
     {
     	if ( !is_string( $data ) ) return false;
