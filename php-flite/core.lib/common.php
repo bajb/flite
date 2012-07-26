@@ -326,7 +326,11 @@ class FC
      */
     public static function get_current_user()
     {
-        $usr = posix_getpwuid(posix_geteuid());
-        return $usr['name'];
+        if(function_exists("posix_getpwuid"))
+        {
+            $usr = posix_getpwuid(posix_geteuid());
+            return $usr['name'];
+        }
+        else return "nobody";
     }
 }
