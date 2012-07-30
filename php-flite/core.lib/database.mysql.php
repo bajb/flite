@@ -317,6 +317,7 @@ class DBConnection
 					    return $data;
 					}
 				}
+                mysql_free_result($result);
 				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetRows',$cache_key);
 				return $data;
 			}
@@ -380,6 +381,7 @@ class DBConnection
 					    return $data;
 					}
 				}
+                mysql_free_result($result);
 				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetKeyedRows',$cache_key);
 				return $data;
 			}
@@ -426,6 +428,7 @@ class DBConnection
 				{
 					$data[] = $value[0];
 				}
+                mysql_free_result($result);
 				if($cache_time) $this->SetCache($query,$data,$cache_time,'GetCols',$cache_key);
 				return $data;
 			}
@@ -467,6 +470,7 @@ class DBConnection
 			if ($result)
 			{
 				$row = mysql_fetch_array($result);
+                mysql_free_result($result);
 				if($row && $cache_time) $this->SetCache($query,$row[0],$cache_time,'GetField',$cache_key);
 				return $row ? $row[0] : false;
 			}
@@ -509,6 +513,7 @@ class DBConnection
 			if ($result)
 			{
 				$data = mysql_num_rows($result);
+                mysql_free_result($result);
 				if($cache_time) $this->SetCache($query,$data,$cache_time,'NumRows',$cache_key);
 				return $data;
 			}
@@ -551,6 +556,7 @@ class DBConnection
 			if ($result)
 			{
 			    $data = mysql_fetch_object($result);
+                mysql_free_result($result);
 			    if($cache_time) $this->SetCache($query,$data,$cache_time,'GetRow',$cache_key);
 			    return $data;
 			}
