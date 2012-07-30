@@ -1,5 +1,5 @@
 RewriteEngine on
-
+RewriteBase /js/
 RewriteRule ^([^/\.]+)/?$ js.php?$1 [L]
 
 

@@ -1,4 +1,5 @@
 RewriteEngine on
+RewriteBase /css/
 RewriteRule ^([^/\.]+)/?$ css.php?$1 [L]
 
 FileETag none
