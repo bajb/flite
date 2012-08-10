@@ -31,10 +31,10 @@ class FC
      * @param mixed $default Default value if key does not exist
      * @return mixed
      */
-    public static function array_value($array,$key,$default=null)
+    public static function array_value($array,$key,$default=null,$default_on_empty=false)
     {
         if(is_object($array)) $array = FC::object_to_array($array);
-        return isset($array[$key]) ? $array[$key] : $default;
+        return isset($array[$key]) ? ($default_on_empty && empty($array[$key]) ? $default : $array[$key]) : $default;
     }
 
     /**
@@ -44,10 +44,10 @@ class FC
      * @param mixed $default Default value if key does not exist
      * @return mixed
      */
-    public static function object_value($object,$key,$default=null)
+    public static function object_value($object,$key,$default=null,$default_on_empty=false)
     {
         $object = FC::obj($object);
-        return isset($object->$key) ? $object->$key : $default;
+        return isset($object->$key) ? ($default_on_empty && empty($object->$key) ? $default : $object->$key) : $default;
     }
 
     public static function serialized( $data )
