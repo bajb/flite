@@ -29,6 +29,7 @@ class FC
      * @param array $array Array to lookup key in
      * @param string $key key of array element
      * @param mixed $default Default value if key does not exist
+     * @param bool $default_on_empty Default value if key is empty
      * @return mixed
      */
     public static function array_value($array,$key,$default=null,$default_on_empty=false)
@@ -42,6 +43,7 @@ class FC
      * @param object $object Array to lookup key in
      * @param string $key key of object
      * @param mixed $default Default value if key does not exist
+     * @param bool $default_on_empty Default value if key is empty
      * @return mixed
      */
     public static function object_value($object,$key,$default=null,$default_on_empty=false)
