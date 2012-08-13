@@ -22,6 +22,7 @@ class DBConnection
 
 	private $connect_attempts = 5; //Times to try to connect
 	private $connect_wait = 50; //Milliseconds to wait between connect attempts
+    private $deadlock_retries = 2; //Times to retry a deadlocked query
 
 	public function DBConnection($dbhost='',$dbuser='',$dbpass='',$dbname='')
 	{
@@ -246,6 +247,8 @@ class DBConnection
 			    $query_pass = mysql_query($query,$this->conn);
 			}
 
+            $query_pass = $this->DeadlockCheck($query_pass, $query);
+
 			if ( $query_pass )
 			{
 				$this->WriteQueryLog($query,'RunQuery',microtime(true) - $start);
@@ -295,6 +298,8 @@ class DBConnection
 			    $this->Connect();
 			    $result = @mysql_query($query,$this->conn);
 			}
+
+            $result = $this->DeadlockCheck($result, $query);
 
 			if(@mysql_error($this->conn))
 			{
@@ -347,6 +352,8 @@ class DBConnection
 			    $this->Connect();
 			    $result = @mysql_query($query,$this->conn);
 			}
+
+            $result = $this->DeadlockCheck($result, $query);
 
 			if(@mysql_error($this->conn))
 			{
@@ -412,6 +419,8 @@ class DBConnection
 			    $result = @mysql_query($query,$this->conn);
 			}
 
+            $result = $this->DeadlockCheck($result, $query);
+
 			if(@mysql_error($this->conn))
 			{
 				$this->SendError('Query Failed',$query);
@@ -458,6 +467,8 @@ class DBConnection
 			    $result = @mysql_query($query,$this->conn);
 			}
 
+            $result = $this->DeadlockCheck($result, $query);
+
 			if(@mysql_error($this->conn))
 			{
 				$this->SendError('Query Failed',$query);
@@ -501,6 +512,8 @@ class DBConnection
 			    $result = @mysql_query($query,$this->conn);
 			}
 
+            $result = $this->DeadlockCheck($result, $query);
+
 			if(@mysql_error($this->conn))
 			{
 				$this->SendError('Query Failed',$query);
@@ -543,6 +556,8 @@ class DBConnection
 			    $this->Connect();
 			    $result = @mysql_query($query,$this->conn);
 			}
+
+            $result = $this->DeadlockCheck($result, $query);
 
 			if(@mysql_error($this->conn))
 			{
@@ -607,6 +622,16 @@ class DBConnection
         $cache_key = !is_null($cache_key) ? $cache_key : $this->CacheKey($sql,$source);
 	    $_FLITE->memcache->set($cache_key, $value, MEMCACHE_COMPRESSED,$timeout);
 	}
+
+    private function DeadlockCheck($result, $query)
+    {
+        $tries = 0;
+        while(mysql_errno($this->conn) == 1213 && $tries++ < $this->deadlock_retries)
+        {
+            $result = @mysql_query($query,$this->conn);
+        }
+        return $result;
+    }
 
 	//Close Database Connection
 	public function Disconnect()
