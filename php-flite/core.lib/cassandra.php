@@ -274,6 +274,22 @@ class CassandraObject
         return true;
     }
 
+    public function RemoveCounter ($key, $column,$consistency_level=null)
+    {
+        $this->Connect();
+        try
+        {
+            $this->CFConnection->remove_counter($key,$column,$consistency_level);
+        }
+        catch (Exception $e)
+        {
+            $_FLITE = Flite::Base();
+            $_FLITE->Exception('CassandraObject', 'RemoveCounter', $e);
+            return false;
+        }
+        return true;
+    }
+
     public function BatchInsert($rows,$ttl=null)
     {
         $this->Connect();
