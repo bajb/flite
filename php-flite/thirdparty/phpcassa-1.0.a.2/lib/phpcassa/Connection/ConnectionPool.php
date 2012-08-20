@@ -78,8 +78,8 @@ class ConnectionPool {
                                 $servers=NULL,
                                 $pool_size=NULL,
                                 $max_retries=self::DEFAULT_MAX_RETRIES,
-                                $send_timeout=5000,
-                                $recv_timeout=5000,
+                                $send_timeout=1000,
+                                $recv_timeout=3000,
                                 $recycle=self::DEFAULT_RECYCLE,
                                 $credentials=NULL,
                                 $framed_transport=true)
