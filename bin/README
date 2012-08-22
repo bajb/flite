@@ -1,0 +1,5 @@
+Add to .bashrc
+=========================================================
+export FLITE_V1_DIR="/path-to-flite/flite"
+export FLITE_DIR="/path-to-flite/php-flite"
+=========================================================
