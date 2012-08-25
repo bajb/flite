@@ -3,6 +3,7 @@ $this->SetConfig('site_root',(substr(substr(dirname(__FILE__),0,-6),-5) == 'flit
 $this->SetConfig('is_local',isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'],array('','127.0.0.1')) ?  true : (isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.local') ? true : false));
 $this->SetConfig('is_dev',isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'],array('','127.0.0.1')) ?  true : (isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.dev') ? true : false));
 $this->SetConfig('is_web',(isset($_SERVER['DOCUMENT_ROOT']) && !empty($_SERVER['DOCUMENT_ROOT'])));
+if(defined('FLITE_WIN') && FLITE_WIN) $this->SetConfig('is_local',true);
 
 if($this->GetConfig('is_local'))
 {

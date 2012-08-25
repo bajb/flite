@@ -4,10 +4,12 @@ if(strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
 {
     $_PATH = rtrim(getcwd(), '\\/');
     $_PATH_PARTS = explode('\\', dirname(__FILE__));
+    define('FLITE_WIN',true);
     define('FLITE_DIR',dirname($_PATH).'/'.end($_PATH_PARTS));
 }
 else
 {
+    define('FLITE_WIN',false);
     define('FLITE_DIR',dirname(__FILE__));
 }
 
