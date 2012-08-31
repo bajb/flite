@@ -196,7 +196,7 @@ class MessageQueue
         return $encoding == 'MQ:json' ? json_decode($message) : $message;
     }
 
-    public function ConsumeQueue($queue_name,$class='StandardProcessor',$consumer_config=array(),$sleep_seconds=1)
+    public function ConsumeQueue($queue_name,$class='StandardProcessor',$consumer_config=array(),$sleep_seconds=2,$max_run_seconds=3600)
     {
         if(!$this->connected) $this->Connect();
         if(!$this->connected) return false;
@@ -212,6 +212,7 @@ class MessageQueue
         }
 
         $processor->SetConfig($consumer_config);
+        $start = time();
 
         while(true)
         {
@@ -224,6 +225,7 @@ class MessageQueue
             {
                 $processor->Process($message,$this->queue);
             }
+            if(time() - $start > $max_run_seconds) break;
         }
     }
 }
