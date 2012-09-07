@@ -1,7 +1,6 @@
 <?php
 require_once (substr(dirname(__FILE__), 0, - 10) . 'boot.php');
 
-
 $cassandra_clustername = $_FLITE->GetConfig('cassandra_cluster');
 if ($cassandra_clustername && is_array($cassandra_clustername))
 {

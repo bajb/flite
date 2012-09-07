@@ -1,13 +1,13 @@
 <?php
-interface MessageQComsumer
+interface MessageQConsumer
 {
     public function Name();
     public function Version();
     public function SetConfig($config);
-    public function Process($envelope,$queue);
+    public function Process($envelope,$queue=null);
 }
 
-class StandardProcessor implements MessageQComsumer
+class StandardProcessor implements MessageQConsumer
 {
     public function Name()
     {
