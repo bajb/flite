@@ -54,7 +54,7 @@ $dirs[] = $flite_dir . '/lib/';
 foreach($dirs as $directory) $class_lookup = array_merge($class_lookup,GetClasses($flite_dir,$directory));
 
 $cached = '[classes]';
-foreach($class_lookup as $class => $path) $cached .= "$class=$path\n";
+foreach($class_lookup as $class => $path) $cached .= "\n$class=$path";
 file_put_contents($flite_dir . '/cache/class.ini',$cached);
 
 print_r($class_lookup);
