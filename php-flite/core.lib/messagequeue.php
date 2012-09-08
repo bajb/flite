@@ -6,6 +6,13 @@ interface MessageQConsumer
     public function SetConfig($config);
     public function Process($envelope,$queue=null);
 }
+interface MessageQComsumer
+{
+    public function Name();
+    public function Version();
+    public function SetConfig($config);
+    public function Process($envelope,$queue=null);
+}
 
 class StandardProcessor implements MessageQConsumer
 {
