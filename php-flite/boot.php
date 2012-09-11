@@ -465,6 +465,7 @@ class FliteBase extends FliteConfig
         define('SUB_DOMAIN', $this->sub_domain);
         define('REL_PATH', $this->GetConfig('relative_path', '/'));
         define('PROTOCOL', $this->protocol);
+        define('FULL_ADDRESS', "$this->protocol"."$this->sub_domain.$this->domain.$this->tld");
     }
 
     public function DebugTime ($call, $force = false, $return_time = false)
