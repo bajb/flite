@@ -2,6 +2,23 @@
 
 class FC
 {
+    /**
+     * Unfortunate oversight by PHP's part meaning that you can't chain an
+     * object from it's instantiation;
+     *
+     * new Foo()->Bar(); //throws an error
+     *
+     * FC::_(new Foo())->Bar(); //works lovely
+     *
+     * @static
+     * @param $_
+     * @return mixed
+     */
+    public static function _($_)
+    {
+        return $_;
+    }
+
     public static function count($arr)
     {
         return (is_array($arr) && !empty($arr)) ? count($arr) : 0;
@@ -197,7 +214,7 @@ class FC
         {
             if (is_array($val))
             {
-                $val = remove_empty_elements($val);
+                $val = FC::remove_empty_elements($val);
                 if (count($val)!=0) $narr[$key] = $val;
             }
             else if ($val != "" || is_int($val)) $narr[$key] = $val;
@@ -220,6 +237,7 @@ class FC
     public static function txt2bin($str)
     {
         $text_array = explode("\r\n", chunk_split($str, 1));
+        $newstring = '';
         for ($n = 0; $n < count($text_array) - 1; $n++) $newstring .= substr("0000".base_convert(ord($text_array[$n]), 10, 2), -8);
         return $newstring;
     }
@@ -227,6 +245,7 @@ class FC
     public static function bin2txt($str)
     {
         $text_array = explode("\r\n", chunk_split($str, 8));
+        $newstring = '';
         for ($n = 0; $n < count($text_array) - 1; $n++) $newstring = $newstring . stripslashes(chr(base_convert($text_array[$n], 2, 10)));
         return $newstring;
     }
