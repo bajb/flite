@@ -57,6 +57,4 @@ $cached = '[classes]';
 foreach($class_lookup as $class => $path) $cached .= "\n$class=$path";
 file_put_contents($flite_dir . '/cache/class.ini',$cached);
 
-print_r($class_lookup);
-
 echo number_format(count($class_lookup),0) . " class references cached in ". number_format(strlen($cached),0) ." bytes\n";
