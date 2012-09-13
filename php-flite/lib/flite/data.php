@@ -28,7 +28,7 @@ class Flite_DataCollection
         {
             if($handler instanceof Flite_DataHandler)
             {
-                $this->_handlers[] = $handler;
+                $this->_handlers[$handler->Name()] = $handler;
             }
         }
     }
@@ -37,8 +37,13 @@ class Flite_DataCollection
     {
         if($handler instanceof Flite_DataHandler)
         {
-            $this->_handlers[] = $handler;
+            $this->_handlers[$handler->Name()] = $handler;
         }
+    }
+
+    public function GetHandler($name)
+    {
+        return isset($this->_handlers[$name]) ? $this->_handlers[$name] : false;
     }
 
     public function Handlers()
@@ -53,7 +58,7 @@ class Flite_DataCollection
         {
             if(!$handler->Valid())
             {
-                $this->_failed[] = $handler;
+                $this->_failed[$handler->Name()] = $handler;
                 $valid = false;
             }
         }
