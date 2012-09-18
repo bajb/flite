@@ -178,6 +178,11 @@ class FliteConfig
 {
     protected $config;
 
+    /**
+     * @param       $key
+     * @param mixed $default
+     * @return mixed
+     */
     public function GetConfig ($key, $default = false)
     {
         if (isset($this->config->$key)) return $this->config->$key;
