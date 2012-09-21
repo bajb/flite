@@ -213,9 +213,9 @@ class MessageQueue
 
         $processor = new $class();
 
-        if(!in_array("MessageQComsumer",class_implements($processor)))
+        if(!in_array("MessageQConsumer",class_implements($processor)))
         {
-            throw new Exception("$class must implement MessageQComsumer");
+            throw new Exception("$class must implement MessageQConsumer");
         }
 
         $processor->SetConfig($consumer_config);

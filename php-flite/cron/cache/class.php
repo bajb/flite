@@ -46,8 +46,11 @@ function GetClasses($flite_dir, $directory)
 
     return $class_lookup;
 }
-
 $flite_dir    = dirname(dirname(dirname(__FILE__)));
+if(strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+{
+    $flite_dir = dirname(getcwd()) . '/php-flite';
+}
 $class_lookup = $dirs = array();
 $dirs[]       = $flite_dir . '/dblib/';
 $dirs[]       = $flite_dir . '/lib/';
