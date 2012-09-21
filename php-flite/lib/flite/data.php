@@ -8,6 +8,7 @@
 
 class Flite_DataCollection
 {
+
     private $_handlers;
     private $_failed;
     private $_populated;
@@ -16,19 +17,19 @@ class Flite_DataCollection
      * @param array $handlers
      * @param mixed $populate_data
      */
-    public function __construct($handlers=array(),$populate_data=null)
+    public function __construct($handlers = array(), $populate_data = null)
     {
         $this->AddHandlers($handlers);
         if(is_array($populate_data)) $this->PopulateData($populate_data);
     }
 
-    public function AddHandlers($handlers=array())
+    public function AddHandlers($handlers = array())
     {
         foreach($handlers as $handler)
         {
             if($handler instanceof Flite_DataHandler)
             {
-                $this->_handlers[$handler->Name()] = $handler;
+                $this->_handlers[$handler->GetName()] = $handler;
             }
         }
     }
@@ -37,18 +38,39 @@ class Flite_DataCollection
     {
         if($handler instanceof Flite_DataHandler)
         {
-            $this->_handlers[$handler->Name()] = $handler;
+            $this->_handlers[$handler->GetName()] = $handler;
         }
     }
 
     public function GetHandler($name)
     {
-        return isset($this->_handlers[$name]) ? $this->_handlers[$name] : false;
+        return isset($this->_handlers[$name]) ? $this->_handlers[$name] : new Flite_DataHandler($name);
     }
 
-    public function Handlers()
+    public function Handler($name)
     {
-        return $this->_handlers;
+        return $this->GetHandler($name);
+    }
+
+    public function GetHandlers(array $array)
+    {
+        $return = array();
+        foreach($array as $handler)
+        {
+            if(isset($this->_handlers[$handler]))
+            {
+                $return[$handler] = $this->_handlers[$handler];
+            }
+            else $return[$handler] = new Flite_DataHandler($handler);
+        }
+
+        return $return;
+    }
+
+    public function Handlers($array = null)
+    {
+        if(is_null($array)) return $this->_handlers;
+        else return $this->GetHandlers($array);
     }
 
     public function Valid()
@@ -56,12 +78,16 @@ class Flite_DataCollection
         $valid = true;
         foreach($this->_handlers as $handler)
         {
-            if(!$handler->Valid())
+            if($handler instanceof Flite_DataHandler)
             {
-                $this->_failed[$handler->Name()] = $handler;
-                $valid = false;
+                if(!$handler->Valid())
+                {
+                    $this->_failed[$handler->GetName()] = $handler;
+                    $valid                              = false;
+                }
             }
         }
+
         return $valid;
     }
 
@@ -69,10 +95,13 @@ class Flite_DataCollection
     {
         foreach($this->_handlers as $handler)
         {
-            if(isset($keyvalue[$handler->Name()]))
+            if($handler instanceof Flite_DataHandler)
             {
-                $handler->SetData($keyvalue[$handler->Name()]);
-                $this->_populated = true;
+                if(isset($keyvalue[$handler->GetName()]))
+                {
+                    $handler->SetData($keyvalue[$handler->GetName()]);
+                    $this->_populated = true;
+                }
             }
         }
     }
@@ -90,6 +119,7 @@ class Flite_DataCollection
 
 class Flite_DataHandler
 {
+
     private $_name;
     private $_required;
     private $_validators;
@@ -97,13 +127,14 @@ class Flite_DataHandler
     private $_options;
     private $_data;
     private $_exceptions;
+    private $_populated = false;
 
     public function __construct($name,
-                                $required=false,
-                                $validators=null,
-                                $filters=null,
-                                $options=null,
-                                $data=null)
+                                $required = false,
+                                $validators = null,
+                                $filters = null,
+                                $options = null,
+                                $data = null)
     {
         $this->Name($name);
         $this->Required($required ? true : false);
@@ -119,7 +150,7 @@ class Flite_DataHandler
                 {
                     if(isset($validator[0]) && is_array($validator[0]))
                     {
-                        $this->AddValidator(Flite_Callback::_($validator[0],$validator[1]));
+                        $this->AddValidator(Flite_Callback::_($validator[0], $validator[1]));
                     }
                 }
                 else if($validator instanceof Flite_Callback)
@@ -137,7 +168,6 @@ class Flite_DataHandler
             $this->AddValidator($validators);
         }
 
-
         if(is_array($filters))
         {
             foreach($filters as $filter)
@@ -150,7 +180,7 @@ class Flite_DataHandler
                 {
                     if(isset($filter[0]) && is_array($filter[0]))
                     {
-                        $this->AddFilter(Flite_Callback::_($filter[0],$filter[1]));
+                        $this->AddFilter(Flite_Callback::_($filter[0], $filter[1]));
                     }
                 }
                 else if($filter instanceof Flite_Callback)
@@ -171,34 +201,55 @@ class Flite_DataHandler
         $this->SetOptions($options);
     }
 
-    public function Name($name=null)
+    public function __toString()
+    {
+        return $this->_name;
+    }
+
+    public function Populated()
+    {
+        return $this->_populated ? true : false;
+    }
+
+    public function GetName()
+    {
+        return $this->_name;
+    }
+
+    public function Name($name = null)
     {
         if(is_string($name))
         {
             $this->_name = $name;
+
             return $this;
         }
-        return $this->_name;
+
+        return $this->GetName();
     }
 
     public function ID()
     {
-        return str_replace('_','-',$this->Name());
+        return str_replace('_', '-', $this->Name());
     }
 
-    public function Required($set=null)
+    public function Required($set = null)
     {
         if(is_bool($set))
         {
             $this->_required = $set;
+
             return $this;
         }
+
         return $this->_required ? true : false;
     }
 
     public function SetData($data)
     {
+        $this->_populated = !is_null($data);
         $this->_data = $data;
+
         return $this;
     }
 
@@ -219,18 +270,21 @@ class Flite_DataHandler
                 $data = $filter->Process($this->Data());
             }
         }
+
         return $data;
     }
 
     public function SetOptions($options)
     {
         $this->_options = $options;
+
         return $this;
     }
 
     public function AddOption($option)
     {
         $this->_options[] = $option;
+
         return $this;
     }
 
@@ -242,6 +296,7 @@ class Flite_DataHandler
     public function AddFilter(Flite_Callback $filter)
     {
         $this->_filters[] = $filter;
+
         return $this;
     }
 
@@ -250,29 +305,39 @@ class Flite_DataHandler
         if(!is_null($replace_filters) && is_array($replace_filters))
         {
             $this->_filters = $replace_filters;
+
             return $this;
         }
+
         return $this->_filters;
     }
 
     public function AddValidator(Flite_Callback $validator)
     {
         $this->_validators[] = $validator;
+
         return $this;
     }
 
-    public function Validators($replace_validators=null)
+    public function Validators($replace_validators = null)
     {
         if(!is_null($replace_validators) && is_array($replace_validators))
         {
             $this->_validators = $replace_validators;
+
             return $this;
         }
+
         return $this->_validators;
     }
 
     public function Valid()
     {
+        if($this->Required() && !$this->Populated())
+        {
+            $this->_exceptions[] = new Exception("Required Field " . $this->Name());
+            return false;
+        }
         if(!is_array($this->_validators)) return true;
 
         $valid = true;
@@ -286,7 +351,7 @@ class Flite_DataHandler
                     $passed = $validator->Process($this->Data());
                     if(!$passed)
                     {
-                        throw new Exception("Validation failed",0);
+                        throw new Exception("Validation failed");
                     }
                 }
                 catch(Exception $e)
@@ -296,6 +361,7 @@ class Flite_DataHandler
                 if(!$passed) $valid = false;
             }
         }
+
         return $valid;
     }
 
@@ -307,19 +373,20 @@ class Flite_DataHandler
 
 class Flite_Callback
 {
-    public function __construct(callable $method,$options = array())
+
+    public function __construct(callable $method, $options = array())
     {
-        $this->_method = $method;
+        $this->_method  = $method;
         $this->_options = $options;
     }
 
-    public static function _(callable $method,$options=array())
+    public static function _(callable $method, $options = array())
     {
-        return new Flite_Callback($method,$options);
+        return new Flite_Callback($method, $options);
     }
 
-    public function Process($input=null)
+    public function Process($input = null)
     {
-        return call_user_func_array($this->_method,FC::array_merge(array($input),$this->_options));
+        return call_user_func_array($this->_method, FC::array_merge(array($input), $this->_options));
     }
 }
