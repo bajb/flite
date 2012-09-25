@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(dirname(dirname(__FILE__))) . 'boot.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/boot.php');
 
 $dblib = FLITE_DIR . '/dblib/';
 $db_connections = array();

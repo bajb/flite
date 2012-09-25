@@ -1,4 +1,6 @@
-
+<?php
+/* @var $this FliteApplication */
+?>
 </body>
 <?php
 echo $this->html->js('flite');
