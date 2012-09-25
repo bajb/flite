@@ -7,7 +7,8 @@ if(defined('FLITE_WIN') && FLITE_WIN) $this->SetConfig('is_local',true);
 
 if($this->GetConfig('is_local'))
 {
-    $web_roots = array('internal', 'flite_html', 'inbound');
+    // todo extract these to a configurable ini file
+    $web_roots = array('internal', 'flite_html', 'inbound', 'flow');
     $this->SetConfig('site_root', rtrim(str_replace($web_roots, '', getcwd()), '\\/') .'/');
 }
 
