@@ -55,6 +55,7 @@ class Flite_DataCollection
     public function GetHandlers(array $array)
     {
         $return = array();
+        $return = array();
         foreach($array as $handler)
         {
             if(isset($this->_handlers[$handler]))
@@ -138,65 +139,8 @@ class Flite_DataHandler
     {
         $this->Name($name);
         $this->Required($required ? true : false);
-        if(is_array($validators))
-        {
-            foreach($validators as $validator)
-            {
-                if(is_string($validator))
-                {
-                    $this->AddValidator(Flite_Callback::_($validator));
-                }
-                else if(is_array($validator))
-                {
-                    if(isset($validator[0]) && is_array($validator[0]))
-                    {
-                        $this->AddValidator(Flite_Callback::_($validator[0], $validator[1]));
-                    }
-                }
-                else if($validator instanceof Flite_Callback)
-                {
-                    $this->AddValidator($validator);
-                }
-            }
-        }
-        else if(is_string($validators))
-        {
-            $this->AddValidator(Flite_Callback::_($validators));
-        }
-        else if($validators instanceof Flite_Callback)
-        {
-            $this->AddValidator($validators);
-        }
-
-        if(is_array($filters))
-        {
-            foreach($filters as $filter)
-            {
-                if(is_string($filter))
-                {
-                    $this->AddFilter(Flite_Callback::_($filter));
-                }
-                else if(is_array($filter))
-                {
-                    if(isset($filter[0]) && is_array($filter[0]))
-                    {
-                        $this->AddFilter(Flite_Callback::_($filter[0], $filter[1]));
-                    }
-                }
-                else if($filter instanceof Flite_Callback)
-                {
-                    $this->AddFilter($filter);
-                }
-            }
-        }
-        else if(is_string($filters))
-        {
-            $this->AddFilter(Flite_Callback::_($filters));
-        }
-        else if($filters instanceof Flite_Callback)
-        {
-            $this->AddFilter($filters);
-        }
+        $this->AddValidators($validators);
+        $this->AddFilters($filters);
         $this->SetData($data);
         $this->SetOptions($options);
     }
@@ -248,7 +192,7 @@ class Flite_DataHandler
     public function SetData($data)
     {
         $this->_populated = !is_null($data);
-        $this->_data = $data;
+        $this->_data      = $data;
 
         return $this;
     }
@@ -300,11 +244,45 @@ class Flite_DataHandler
         return $this;
     }
 
+    public function AddFilters($filters)
+    {
+        if(is_array($filters))
+        {
+            foreach($filters as $filter)
+            {
+                if(is_string($filter))
+                {
+                    $this->AddFilter(Flite_Callback::_($filter, array(), 'filter'));
+                }
+                else if(is_array($filter))
+                {
+                    if(isset($filter[0]) && is_array($filter[0]))
+                    {
+                        $this->AddFilter(Flite_Callback::_($filter[0], $filter[1], 'filter'));
+                    }
+                }
+                else if($filter instanceof Flite_Callback)
+                {
+                    $this->AddFilter($filter);
+                }
+            }
+        }
+        else if(is_string($filters))
+        {
+            $this->AddFilter(Flite_Callback::_($filters, array(), 'filter'));
+        }
+        else if($filters instanceof Flite_Callback)
+        {
+            $this->AddFilter($filters);
+        }
+    }
+
     public function Filters($replace_filters)
     {
         if(!is_null($replace_filters) && is_array($replace_filters))
         {
-            $this->_filters = $replace_filters;
+            $this->_filters = array();
+            $this->AddFilters($replace_filters);
 
             return $this;
         }
@@ -319,11 +297,45 @@ class Flite_DataHandler
         return $this;
     }
 
+    public function AddValidators($validators)
+    {
+        if(is_array($validators))
+        {
+            foreach($validators as $validator)
+            {
+                if(is_string($validator))
+                {
+                    $this->AddValidator(Flite_Callback::_($validator, array(), "validator"));
+                }
+                else if(is_array($validator))
+                {
+                    if(isset($validator[0]) && is_array($validator[0]))
+                    {
+                        $this->AddValidator(Flite_Callback::_($validator[0], $validator[1], "validator"));
+                    }
+                }
+                else if($validator instanceof Flite_Callback)
+                {
+                    $this->AddValidator($validator);
+                }
+            }
+        }
+        else if(is_string($validators))
+        {
+            $this->AddValidator(Flite_Callback::_($validators, array(), "validator"));
+        }
+        else if($validators instanceof Flite_Callback)
+        {
+            $this->AddValidator($validators);
+        }
+    }
+
     public function Validators($replace_validators = null)
     {
         if(!is_null($replace_validators) && is_array($replace_validators))
         {
-            $this->_validators = $replace_validators;
+            $this->_validators = array();
+            $this->AddValidators($replace_validators);
 
             return $this;
         }
@@ -336,6 +348,7 @@ class Flite_DataHandler
         if($this->Required() && !$this->Populated())
         {
             $this->_exceptions[] = new Exception("Required Field " . $this->Name());
+
             return false;
         }
         if(!is_array($this->_validators)) return true;
@@ -374,19 +387,40 @@ class Flite_DataHandler
 class Flite_Callback
 {
 
-    public function __construct(callable $method, $options = array())
+    private $_method;
+    private $_options;
+    private $_type;
+
+    public function __construct(callable $method, $options = array(), $callback_type = null)
     {
         $this->_method  = $method;
         $this->_options = $options;
+        $this->_type    = $callback_type;
     }
 
-    public static function _(callable $method, $options = array())
+    public static function _(callable $method, $options = array(), $callback_type = null)
     {
-        return new Flite_Callback($method, $options);
+        return new Flite_Callback($method, $options, $callback_type);
     }
 
     public function Process($input = null)
     {
+        if($this->_type == 'filter' && is_string($this->_method))
+        {
+            if(!function_exists($this->_method) && method_exists("Flite_Filter", $this->_method))
+            {
+                $this->_method = array("Flite_Filter", $this->_method);
+            }
+        }
+
+        if($this->_type == 'validator' && is_string($this->_method))
+        {
+            if(!function_exists($this->_method) && method_exists("Flite_Validate", $this->_method))
+            {
+                $this->_method = array("Flite_Validate", $this->_method);
+            }
+        }
+
         return call_user_func_array($this->_method, FC::array_merge(array($input), $this->_options));
     }
 }
