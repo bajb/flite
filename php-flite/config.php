@@ -7,7 +7,8 @@ if(defined('FLITE_WIN') && FLITE_WIN) $this->SetConfig('is_local',true);
 
 if($this->GetConfig('is_local'))
 {
-    $web_roots = array('internal', 'flite_html', 'inbound');
+    // todo extract these to a configurable ini file
+    $web_roots = array('internal', 'flite_html', 'inbound', 'flow');
     $this->SetConfig('site_root', rtrim(str_replace($web_roots, '', getcwd()), '\\/') .'/');
 }
 
@@ -36,7 +37,8 @@ else
 
 $this->SetConfig('site_domain',$this->domain. '.' . $this->tld);
 
-$this->protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' || (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'],'HTTPS'))) ? 'https://' : 'http://';
+$this->protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ||
+                    (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'],'HTTPS'))) ? 'https://' : 'http://';
 $this->SetConfig('protocol',$this->protocol);
 $this->SetConfig('full_domain',$this->protocol.$this->sub_domain.'.'.$this->domain.'.'.$this->tld.'/');
 

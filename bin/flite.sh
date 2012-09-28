@@ -37,6 +37,8 @@ action "PHP-Flite Keyspace Rebuild Complete" /bin/true
 echo "Rebuilding PHP-Flite Lib/Config Cache Files"
 rm $FLITE_DIR/cache/config.php -f
 php $FLITE_DIR/cron/cache/config.php
+rm $FLITE_DIR/cache/class.ini -f
+php $FLITE_DIR/cron/cache/class.php
 rm $FLITE_DIR/cache/core.lib.php -f
 php $FLITE_DIR/cron/cache/corelib.php
 tput cuu1

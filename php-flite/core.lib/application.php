@@ -231,7 +231,14 @@ class FliteApplication extends FliteConfig
 	    $_FLITE = Flite::Base();
 	    $this->render_header_footer = $render_header_footer;
 
-	    if(is_null($controller) && isset($_SERVER['REDIRECT_URL']) && strlen($_SERVER['REDIRECT_URL']) > 1) $this->controller = strtolower(substr($_SERVER['REDIRECT_URL'],1));
+	    if(is_null($controller) && isset($_SERVER['REDIRECT_URL']) && strlen($_SERVER['REDIRECT_URL']) > 1)
+        {
+            $this->controller = strtolower(substr($_SERVER['REDIRECT_URL'],1));
+        }
+        else if(is_null($controller) && isset($_SERVER['REQUEST_URI']) && strlen($_SERVER['REQUEST_URI']) > 1)
+        {
+            list($this->controller,) = explode('?',strtolower(substr($_SERVER['REQUEST_URI'],1)));
+        }
 	    if(REL_PATH != '/') $this->controller = str_replace(REL_PATH,'','/' . $this->controller);
         if(is_null($controller) && empty($this->controller)) $this->controller = 'default';
 

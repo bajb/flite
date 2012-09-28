@@ -1,9 +1,14 @@
 <?php
-$this->SetConfig("site_title",'PHP Flite');
-$this->SetConfig('page_title','');
+/* @var $this FliteApplication */
 
-/*$this->SetRoutes(array(
-    '*' => array('controller' => 'example', 'view' => 'example',
-        'settings' => array('controller' => 'settings', 'view' => 'settings')
+$this->SetConfig("site_title", 'PHP Flite');
+$this->SetConfig('page_title', '');
+
+$this->SetRoutes(
+    array(
+         '*' => array(
+             'controller' => 'default', 'view' => 'default',
+             'settings'   => array('controller' => 'default', 'view' => 'default')
+         )
     )
-));*/
+);

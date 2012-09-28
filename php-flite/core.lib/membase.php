@@ -6,7 +6,6 @@ class Membase
 
     public function __construct()
     {
-        $connected = false;
         $this->connection = new Memcache;
     }
 

@@ -29,7 +29,7 @@ $this->SetConfig('cookie_salt', 'J�94@#jhf');
 //$this->SetConfig('cookie_path','/foo/');
 //$this->SetConfig('cookie_domain','.'.$_FLITE->domain.'.'.$_FLITE->tld);
 
-$this->SetConfig('whitelist_ips', array('81.144.208.5','81.144.208.6','81.144.208.7','81.144.208.8','81.144.208.9','81.144.208.10')); // Whitelist IPs for FC::is_whitelist_ip()
+$this->SetConfig('whitelist_ips', array('127.0.0.1')); // Whitelist IPs for FC::is_whitelist_ip()
 
 $this->SetConfig('static_sub_domain', 'static');
 

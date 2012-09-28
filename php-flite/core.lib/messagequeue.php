@@ -1,13 +1,20 @@
 <?php
+interface MessageQConsumer
+{
+    public function Name();
+    public function Version();
+    public function SetConfig($config);
+    public function Process($envelope,$queue=null);
+}
 interface MessageQComsumer
 {
     public function Name();
     public function Version();
     public function SetConfig($config);
-    public function Process($envelope,$queue);
+    public function Process($envelope,$queue=null);
 }
 
-class StandardProcessor implements MessageQComsumer
+class StandardProcessor implements MessageQConsumer
 {
     public function Name()
     {
@@ -206,9 +213,9 @@ class MessageQueue
 
         $processor = new $class();
 
-        if(!in_array("MessageQComsumer",class_implements($processor)))
+        if(!in_array("MessageQConsumer",class_implements($processor)))
         {
-            throw new Exception("$class must implement MessageQComsumer");
+            throw new Exception("$class must implement MessageQConsumer");
         }
 
         $processor->SetConfig($consumer_config);

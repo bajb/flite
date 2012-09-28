@@ -13,15 +13,21 @@ else
     define('FLITE_DIR',dirname(__FILE__));
 }
 
+$fini = parse_ini_file(FLITE_DIR . '/config/flite.ini',true);
+define('FLITE_ENVIRONMENT',isset($fini['flite']['environment']) ? $fini['flite']['environment'] : 'production');
+define('FLITE_CASSANDRA',isset($fini['flite']['cassandra']) && $fini['flite']['cassandra']);
+define('FLITE_QUEUES',isset($fini['flite']['queues']) && $fini['flite']['queues']);
+
+if(!FLITE_CASSANDRA) goto flite; //Sorry :(
 require_once (FLITE_DIR . '/thirdparty/phpcassa-1.0.a.2/lib/autoload.php');
 use phpcassa\Connection\ConnectionPool;
+flite: //Sorry :(
 
 class Flite
 {
     public static $flite = null;
     public static $app = null;
     public static $cache = null;
-
 
     /**
      * @static
@@ -42,6 +48,7 @@ class Flite
 
     /**
      * @return Memcache
+     * @param bool $use_local Use Local Memcache Host
      */
     public static function Memcache($use_local=false) { return self::Base()->Memcache($use_local); }
 
@@ -49,6 +56,11 @@ class Flite
      * @return Membase
      */
     public static function Membase() { return self::Base()->Membase(); }
+
+    /**
+     * @return MessageQueue
+     */
+    public static function MQ() { return self::Base()->MQ(); }
 
     /**
      * @static
@@ -166,6 +178,11 @@ class FliteConfig
 {
     protected $config;
 
+    /**
+     * @param       $key
+     * @param mixed $default
+     * @return mixed
+     */
     public function GetConfig ($key, $default = false)
     {
         if (isset($this->config->$key)) return $this->config->$key;
@@ -206,6 +223,22 @@ class FliteBase extends FliteConfig
     public $tweak_server_value = true;
     private $initiated = false;
 
+    private $class_lookup=null;
+
+    public $cassandra;
+    public $local_memcache;
+    public $memcache;
+    public $membase;
+    public $mq;
+    public $local_page;
+    public $page;
+    public $db;
+    public $dbslave;
+    public $domain;
+    public $tld;
+    public $sub_domain;
+    public $protocol;
+
     public function __construct ($rel_path = '/')
     {
         if (! $this->initiated)
@@ -220,23 +253,35 @@ class FliteBase extends FliteConfig
 
     private function Loader ($classname)
     {
-        $classname = strtolower($classname);
+        if(is_null($this->class_lookup))
+        {
+            $this->class_lookup = @parse_ini_file(FLITE_DIR . '/cache/class.ini');
+            if(!is_array($this->class_lookup)) $this->class_lookup = false;
+        }
+        if(isset($this->class_lookup[$classname]))
+        {
+            include_once(FLITE_DIR . $this->class_lookup[$classname]);
+        }
+        else
+        {
+            $classname = strtolower($classname);
 
-        if (file_exists(FLITE_DIR . '/lib/' . str_replace('_', '/', $classname) . '.php'))
-        {
-            include_once (FLITE_DIR . '/lib/' . str_replace('_', '/', $classname) . '.php');
-        }
-        else if (file_exists(FLITE_DIR . '/lib/' . $classname . '.php'))
-        {
-            include_once (FLITE_DIR . '/lib/' . $classname . '.php');
-        }
-        else if (file_exists(FLITE_DIR . '/dblib/' . str_replace('_', '/', $classname) . '.php'))
-        {
-            include_once (FLITE_DIR . '/dblib/' . str_replace('_', '/', $classname) . '.php');
-        }
-        else if (file_exists(FLITE_DIR . '/dblib/' . $classname . '.php'))
-        {
-            include_once (FLITE_DIR . '/dblib/' . $classname . '.php');
+            if (file_exists(FLITE_DIR . '/lib/' . str_replace('_', '/', $classname) . '.php'))
+            {
+                include_once (FLITE_DIR . '/lib/' . str_replace('_', '/', $classname) . '.php');
+            }
+            else if (file_exists(FLITE_DIR . '/lib/' . $classname . '.php'))
+            {
+                include_once (FLITE_DIR . '/lib/' . $classname . '.php');
+            }
+            else if (file_exists(FLITE_DIR . '/dblib/' . str_replace('_', '/', $classname) . '.php'))
+            {
+                include_once (FLITE_DIR . '/dblib/' . str_replace('_', '/', $classname) . '.php');
+            }
+            else if (file_exists(FLITE_DIR . '/dblib/' . $classname . '.php'))
+            {
+                include_once (FLITE_DIR . '/dblib/' . $classname . '.php');
+            }
         }
     }
 
@@ -370,41 +415,47 @@ class FliteBase extends FliteConfig
             $this->memcache = new stdClass();
         }
 
-        $this->cassandra = new stdClass();
-        $cassandra_clustername = $this->GetConfig('cassandra_cluster');
-        if ($cassandra_clustername)
+        if(FLITE_CASSANDRA)
         {
-            if (is_array($cassandra_clustername))
+            $this->cassandra = new stdClass();
+            $cassandra_clustername = $this->GetConfig('cassandra_cluster');
+            if ($cassandra_clustername)
             {
-                foreach ($cassandra_clustername as $keyspace)
+                if (is_array($cassandra_clustername))
                 {
-                    if (is_array($keyspace))
+                    foreach ($cassandra_clustername as $keyspace)
                     {
-                        $this->{(isset($keyspace['flite_name']) ? $keyspace['flite_name'] : "cassandra_" . $keyspace)} = new ConnectionPool(
-                                $keyspace['keyspace'],
-                                (isset($keyspace['nodes']) ? $keyspace['nodes'] : $this->GetConfig('cassie_servers',
-                                        null)));
-                    }
-                    else
-                    {
-                        $this->{(FC::count($cassandra_clustername) == 1 ? 'cassandra' : "cassandra_" . $keyspace)} = new ConnectionPool(
-                                $keyspace, $this->GetConfig('cassie_servers', null));
+                        if (is_array($keyspace))
+                        {
+                            $this->{(isset($keyspace['flite_name']) ? $keyspace['flite_name'] : "cassandra_" . $keyspace)} = new ConnectionPool(
+                                    $keyspace['keyspace'],
+                                    (isset($keyspace['nodes']) ? $keyspace['nodes'] : $this->GetConfig('cassie_servers',
+                                            null)));
+                        }
+                        else
+                        {
+                            $this->{(FC::count($cassandra_clustername) == 1 ? 'cassandra' : "cassandra_" . $keyspace)} = new ConnectionPool(
+                                    $keyspace, $this->GetConfig('cassie_servers', null));
+                        }
                     }
                 }
-            }
-            else
-            {
-                $this->cassandra = new ConnectionPool($cassandra_clustername, $this->GetConfig('cassie_servers', null));
+                else
+                {
+                    $this->cassandra = new ConnectionPool($cassandra_clustername, $this->GetConfig('cassie_servers', null));
+                }
             }
         }
 
-        if (is_array($this->GetConfig('message_exchanges')))
+        if(FLITE_QUEUES)
         {
-            $mqs = $this->GetConfig('message_exchanges');
-            foreach ($mqs as $mq_conf)
+            if (is_array($this->GetConfig('message_exchanges')))
             {
-                $this->$mq_conf['flite_name'] = new MessageQueue(false, $mq_conf['hosts'], $mq_conf['username'],
-                        $mq_conf['password'], isset($mq_conf['port']) ? $mq_conf['port'] : 5672);
+                $mqs = $this->GetConfig('message_exchanges');
+                foreach ($mqs as $mq_conf)
+                {
+                    $this->$mq_conf['flite_name'] = new MessageQueue(false, $mq_conf['hosts'], $mq_conf['username'],
+                            $mq_conf['password'], isset($mq_conf['port']) ? $mq_conf['port'] : 5672);
+                }
             }
         }
 
@@ -419,6 +470,7 @@ class FliteBase extends FliteConfig
         define('SUB_DOMAIN', $this->sub_domain);
         define('REL_PATH', $this->GetConfig('relative_path', '/'));
         define('PROTOCOL', $this->protocol);
+        define('FULL_ADDRESS', "$this->protocol"."$this->sub_domain.$this->domain.$this->tld");
     }
 
     public function DebugTime ($call, $force = false, $return_time = false)
@@ -437,6 +489,7 @@ class FliteBase extends FliteConfig
                 echo "\n<br /><h2>$call</h2><br>Time Since Start: <strong>$start</strong>ms, Time Since Last Check: <strong>$last</strong>ms\n<br>";
             else return $start;
         }
+        return true;
     }
 
     public function SendErrorReport ($script, $message, $errorno = 0)
@@ -466,7 +519,17 @@ class FliteBase extends FliteConfig
     }
 
     /**
+     * @param $connection
+     * @return MessageQueue
+     */
+    public function MQ($connection='mq')
+    {
+        return isset($this->$connection) ? $this->$connection : false;
+    }
+
+    /**
      * @return Memcache
+     * @param bool $use_local
      */
     public function Memcache($use_local=false)
     {

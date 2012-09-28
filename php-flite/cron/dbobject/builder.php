@@ -1,9 +1,9 @@
 <?php
-require_once(substr(dirname(__FILE__),0,-13) . 'boot.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/boot.php');
 
-$dblib = $_FLITE->GetConfig('site_root') . 'php-flite/dblib/';
-
+$dblib = FLITE_DIR . '/dblib/';
 $db_connections = array();
+
 if(is_array($_FLITE->GetConfig('databases')))
 {
     $dbs = $_FLITE->GetConfig('databases');
@@ -23,7 +23,8 @@ if(empty($db_connections)) $db_connections = array('db' => '');
 
 foreach ($db_connections as $db_connection => $prefix)
 {
-    if($tables = $_FLITE->DB($db_connection)->GetRows("SHOW TABLES"))
+    $tables = $_FLITE->DB($db_connection)->GetRows("SHOW TABLES");
+    if($tables)
     {
         foreach ($tables as $table)
         {
@@ -41,7 +42,8 @@ foreach ($db_connections as $db_connection => $prefix)
 
             unset($primary1);
             $contents = $primary = '';
-            if($columns = $_FLITE->DB($db_connection)->GetRows("SHOW COLUMNS FROM `$tbl`"))
+            $columns = $_FLITE->DB($db_connection)->GetRows("SHOW COLUMNS FROM `$tbl`");
+            if($columns)
             {
 
                 $contents =  '<?php' . "\n";
