@@ -105,6 +105,10 @@ class CassandraObject
 
     public function GetData ($key, $columns = null, $return_object = false,$single_return=true)
     {
+        if(file_exists(FLITE_DIR . '/.cassandra.debug'))
+        {
+            error_log("Getting key '$key' in $this->columnFamily");
+        }
         $this->Connect();
         try
         {
@@ -144,6 +148,10 @@ class CassandraObject
 
     public function SetData ($key, $data, $ttl = null)
     {
+        if(file_exists(FLITE_DIR . '/.cassandra.debug'))
+        {
+            error_log("Inserting data @ key '$key' in $this->columnFamily");
+        }
         $this->Connect();
         $insertdata = array();
         foreach ($data as $k => $v)
@@ -166,6 +174,10 @@ class CassandraObject
     public function GetColumns ($key, $start_column = "", $end_column = "", $reverse_columns = false, $count = 10,
                                 $return_object = false)
     {
+        if(file_exists(FLITE_DIR . '/.cassandra.debug'))
+        {
+            error_log("Getting columns for key '$key' in $this->columnFamily");
+        }
         $this->Connect();
         try
         {
