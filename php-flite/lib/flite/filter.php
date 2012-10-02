@@ -71,6 +71,11 @@ class Flite_Filter
         else return array($string);
     }
 
+    /**
+     * Returns a name object
+     * @param $full_name
+     * @return stdClass
+     */
     public static function SplitName($full_name)
     {
         $name             = new stdClass();
