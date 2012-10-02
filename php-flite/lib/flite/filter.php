@@ -45,7 +45,7 @@ class Flite_Filter
 
     public static function Clean($string)
     {
-        return strip_tags(trim($string));
+        return trim(strip_tags($string));
     }
 
     public static function Boolean($string)
@@ -78,6 +78,7 @@ class Flite_Filter
      */
     public static function SplitName($full_name)
     {
+        $full_name = preg_replace('!\s+!', ' ', $full_name); // Make multiple spaces single
         $name             = new stdClass();
         $parts            = explode(' ', trim($full_name));
         $name->first_name = $name->middle_name = $name->last_name = null;
