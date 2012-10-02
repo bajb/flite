@@ -72,28 +72,26 @@ class Flite_Filter
         else return array($string);
     }
 
-    public static function Name($full_name)
+    public static function SplitName($full_name)
     {
-        $_name             = new stdClass();
-        $_name->name       = $full_name;
-        $parts             = explode(' ', $_name->name, 3);
-        $_name->first_name = $_name->middle_name = $_name->last_name = null;
+        $name             = new stdClass();
+        $parts             = explode(' ', trim($full_name), 3);
+        $name->first_name = $name->middle_name = $name->last_name = null;
         switch(count($parts))
         {
             case 1:
-                $_name->first = $parts[0];
+                $name->first_name = $parts[0];
                 break;
             case 2:
-                $_name->first = $parts[0];
-                $_name->last  = $parts[1];
+                $name->first_name = $parts[0];
+                $name->last_name  = $parts[1];
                 break;
             case 3:
-                $_name->first  = $parts[0];
-                $_name->middle = $parts[1];
-                $_name->last   = $parts[2];
+                $name->first_name  = $parts[0];
+                $name->middle_name = $parts[1];
+                $name->last_name   = $parts[2];
                 break;
         }
-
-        return $_name;
+        return $name;
     }
 }
