@@ -5,7 +5,6 @@
  * Time: 11:48
  * Description: Basic Data Filtering
  */
-
 class Flite_Filter
 {
 
@@ -66,19 +65,18 @@ class Flite_Filter
 
     public static function Arr($string)
     {
-        if(is_array($string)) return $string;
-        if(is_object($string)) return FC::object_to_array($string);
-        if(stristr($string, ',')) return explode(',', $string);
+        if (is_array($string)) return $string;
+        if (is_object($string)) return FC::object_to_array($string);
+        if (stristr($string, ',')) return explode(',', $string);
         else return array($string);
     }
 
     public static function SplitName($full_name)
     {
         $name             = new stdClass();
-        $parts             = explode(' ', trim($full_name), 3);
+        $parts            = explode(' ', trim($full_name));
         $name->first_name = $name->middle_name = $name->last_name = null;
-        switch(count($parts))
-        {
+        switch (count($parts)) {
             case 1:
                 $name->first_name = $parts[0];
                 break;
@@ -86,10 +84,11 @@ class Flite_Filter
                 $name->first_name = $parts[0];
                 $name->last_name  = $parts[1];
                 break;
-            case 3:
+            default:
                 $name->first_name  = $parts[0];
-                $name->middle_name = $parts[1];
-                $name->last_name   = $parts[2];
+                unset($parts[0]);
+                $name->last_name   = array_pop($parts);
+                $name->middle_name = implode(' ', $parts);
                 break;
         }
         return $name;
