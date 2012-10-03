@@ -74,14 +74,14 @@ class Flite_DataCollection
         else return $this->GetHandlers($array);
     }
 
-    public function Valid()
+    public function Valid($process_all = false)
     {
         $valid = true;
         foreach($this->_handlers as $handler)
         {
             if($handler instanceof Flite_DataHandler)
             {
-                if(!$handler->Valid())
+                if(!$handler->Valid($process_all))
                 {
                     $this->_failed[$handler->GetName()] = $handler;
                     $valid                              = false;
