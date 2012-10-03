@@ -283,6 +283,20 @@ class Flite_FormField
                 break;
         }
 
+        //if(!$this->Handler()->Valid())
+
+        $_errors = $this->Handler()->Exceptions();
+       // var_dump($_errors);
+        if(FC::count($_errors) > 0)
+        {
+            $errors = array();
+            foreach($_errors as $error)
+            {
+                $errors[] = $error->getMessage();
+            }
+            $html .= '<div class="errors">'.implode(',', $errors).'</div>';
+
+        }
         return $html;
     }
 

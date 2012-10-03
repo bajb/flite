@@ -395,14 +395,14 @@ class Flite_Callback
     private $_options;
     private $_type;
 
-    public function __construct(callable $method, $options = array(), $callback_type = null)
+    public function __construct($method, $options = array(), $callback_type = null)
     {
         $this->_method  = $method;
         $this->_options = $options;
         $this->_type    = $callback_type;
     }
 
-    public static function _(callable $method, $options = array(), $callback_type = null)
+    public static function _($method, $options = array(), $callback_type = null)
     {
         return new Flite_Callback($method, $options, $callback_type);
     }
