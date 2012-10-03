@@ -96,13 +96,13 @@ class Flite_Form extends Flite_DataCollection
 
     public function RenderFormOpen()
     {
-        return '<form id="' . $this->ID() . '" name="' . $this->Name() . '" method="post">';
+        return '<form id="' . $this->ID() . '" name="' . $this->Name() . '" method="post">'
+             . '<input type="hidden" name="flite_submitted_form" value="' . $this->Name() . '" />';
     }
 
     public function RenderFormClose()
     {
-        return '<input type="hidden" name="flite_submitted_form" ' .
-        'value="' . $this->Name() . '" /></form>';
+        return '</form>';
     }
 
     public function RenderSubmit()
@@ -283,20 +283,17 @@ class Flite_FormField
                 break;
         }
 
-        //if(!$this->Handler()->Valid())
 
-        $_errors = $this->Handler()->Exceptions();
-       // var_dump($_errors);
-        if(FC::count($_errors) > 0)
+        $field_errors = $this->Handler()->Exceptions();
+        if(FC::count($field_errors) > 0)
         {
             $errors = array();
-            foreach($_errors as $error)
-            {
+            foreach($field_errors as $error)
                 $errors[] = $error->getMessage();
-            }
-            $html .= '<div class="errors">'.implode(',', $errors).'</div>';
 
+            $html .= '<div class="errors">'.implode(',', $errors).'</div>';
         }
+
         return $html;
     }
 
