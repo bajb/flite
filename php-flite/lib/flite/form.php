@@ -274,6 +274,9 @@ class Flite_FormField
             case 'password':
                 $html = $this->ElementHTML('password', $replacements);
                 break;
+            case 'textarea':
+                $html = $this->ElementHTML('textarea', $replacements);
+                break;
             case 'text':
             default:
                 $html = $this->ElementHTML('text', $replacements);
@@ -549,5 +552,10 @@ class Flite_FormView
     public function Select($name)
     {
         return $this->Field($name)->Type('select');
+    }
+
+    public function Textarea($name)
+    {
+        return $this->Field($name)->Type('textarea');
     }
 }
