@@ -195,6 +195,7 @@ class FC
 
     public static function is_json($string)
     {
+        if(substr($string, 0, 1) != '{') return false;
         json_decode($string);
 
         return (json_last_error() == JSON_ERROR_NONE);
