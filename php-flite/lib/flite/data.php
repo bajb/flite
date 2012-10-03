@@ -343,7 +343,7 @@ class Flite_DataHandler
         return $this->_validators;
     }
 
-    public function Valid()
+    public function Valid($process_all = false)
     {
         if($this->Required() && !$this->Populated())
         {
@@ -371,7 +371,11 @@ class Flite_DataHandler
                 {
                     $this->_exceptions[] = $e;
                 }
-                if(!$passed) $valid = false;
+                if(!$passed)
+                {
+                    $valid = false;
+                    if(!$process_all) break;
+                }
             }
         }
 
