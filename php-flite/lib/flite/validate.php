@@ -19,7 +19,7 @@ class Flite_Validate
     public static function StringLength($string, $min = 1, $max = null)
     {
         if($min && $min > 0 && strlen($string) <= $min) throw new Exception("Minimum Length of $min Required");
-        if($max && $max > 0 && strlen($string) >= $min) throw new Exception("Maximum Length of $max Required");
+        if($max && $max > 0 && strlen($string) >= $max) throw new Exception("Maximum Length of $max Required");
 
         return true;
     }

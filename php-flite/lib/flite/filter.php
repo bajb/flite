@@ -8,6 +8,12 @@
 class Flite_Filter
 {
 
+
+    public static function SingleSpaces($string)
+    {
+        return preg_replace('!\s+!', ' ', $string);
+    }
+
     public static function Email($email)
     {
         return strtolower(trim($email));
