@@ -17,6 +17,7 @@ $fini = parse_ini_file(FLITE_DIR . '/config/flite.ini',true);
 define('FLITE_ENVIRONMENT',isset($fini['flite']['environment']) ? $fini['flite']['environment'] : 'production');
 define('FLITE_CASSANDRA',isset($fini['flite']['cassandra']) && $fini['flite']['cassandra']);
 define('FLITE_QUEUES',isset($fini['flite']['queues']) && $fini['flite']['queues']);
+define('FLITE_PRODUCTION_ROOT', isset($fini['flite']['production_root']) ? $fini['flite']['production_root'] : '');
 
 if(!FLITE_CASSANDRA) goto flite; //Sorry :(
 require_once (FLITE_DIR . '/thirdparty/phpcassa-1.0.a.2/lib/autoload.php');
