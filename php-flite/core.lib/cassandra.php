@@ -41,6 +41,14 @@ class CassandraObject
         return $this->initiated;
     }
 
+    private function Debug($message)
+    {
+        if(file_exists(FLITE_DIR . '/.cassandra.debug'))
+        {
+            error_log($this->cassandra_connection . "] " . $message);
+        }
+    }
+
     public function Connect()
     {
         if($this->initiated) return true;
@@ -105,10 +113,7 @@ class CassandraObject
 
     public function GetData ($key, $columns = null, $return_object = false,$single_return=true)
     {
-        if(file_exists(FLITE_DIR . '/.cassandra.debug'))
-        {
-            error_log("Getting key '$key' in $this->columnFamily");
-        }
+        $this->Debug("Getting key '$key' in $this->columnFamily");
         $this->Connect();
         try
         {
@@ -133,6 +138,7 @@ class CassandraObject
         $this->Connect();
         try
         {
+            $this->Debug("Getting Range '$start' to '$end' ($count) in $this->columnFamily");
             $data = $this->CFConnection->get_range($start, $end, $count, null, $columns);
             if ($data)
                 return $data;
@@ -148,10 +154,7 @@ class CassandraObject
 
     public function SetData ($key, $data, $ttl = null)
     {
-        if(file_exists(FLITE_DIR . '/.cassandra.debug'))
-        {
-            error_log("Inserting data @ key '$key' in $this->columnFamily");
-        }
+        $this->Debug("Inserting data @ key '$key' in $this->columnFamily");
         $this->Connect();
         $insertdata = array();
         foreach ($data as $k => $v)
@@ -174,10 +177,7 @@ class CassandraObject
     public function GetColumns ($key, $start_column = "", $end_column = "", $reverse_columns = false, $count = 10,
                                 $return_object = false)
     {
-        if(file_exists(FLITE_DIR . '/.cassandra.debug'))
-        {
-            error_log("Getting columns for key '$key' in $this->columnFamily");
-        }
+        $this->Debug("Getting columns for key '$key' in $this->columnFamily");
         $this->Connect();
         try
         {
@@ -236,7 +236,9 @@ class CassandraObject
     public function GetMulti ($keys, $columns = null, $column_start = "", $column_finish = "", $reverse_order = false,
                             $column_count = 100)
     {
+        if(empty($keys)) return false;
         $this->Connect();
+        $this->Debug("Getting keys '". implode(', ',$keys) ."' in $this->columnFamily");
         try
         {
             $columnslice = new ColumnSlice($column_start, $column_finish, $column_count, $reverse_order);
@@ -255,6 +257,7 @@ class CassandraObject
 
     public function Increment ($key, $column, $increase_by = 1)
     {
+        $this->Debug("Incrementing key '$key' in $this->columnFamily");
         $this->Connect();
         try
         {
@@ -271,6 +274,7 @@ class CassandraObject
 
     public function Decrement ($key, $column, $reduce_by = 1)
     {
+        $this->Debug("Decrement key '$key' in $this->columnFamily");
         $this->Connect();
         if ($reduce_by > 0) $reduce_by = - 1 * $reduce_by;
         try
@@ -307,6 +311,7 @@ class CassandraObject
         $this->Connect();
         try
         {
+            $this->Debug("Batch Inserting '". count($rows) ."' rows in $this->columnFamily");
             $this->CFConnection->batch_insert($rows,null,$ttl);
             return true;
         }
