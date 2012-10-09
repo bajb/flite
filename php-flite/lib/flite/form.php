@@ -94,10 +94,18 @@ class Flite_Form extends Flite_DataCollection
     }
 
 
-    public function RenderFormOpen()
+    public function RenderFormOpen($attributes = array())
     {
-        return '<form id="' . $this->ID() . '" name="' . $this->Name() . '" method="post">'
+        return '<form ' . $this->AttributesToString($attributes) . ' id="' . $this->ID() . '" name="' . $this->Name() . '" method="post">'
              . '<input type="hidden" name="flite_submitted_form" value="' . $this->Name() . '" />';
+    }
+
+    protected function AttributesToString($attributes)
+    {
+        $output = array();
+        foreach($attributes as $key => $value)
+            $output[] = sprintf('%s="%s"', $key, $value);
+        return implode(" ", $output);
     }
 
     public function RenderFormClose()
@@ -410,6 +418,7 @@ class Flite_FormView
     /**
      * @var $_form Flite_Form
      */
+    private $_attributes;
     private $_form;
     private $_fields;
     private $_order;
@@ -457,9 +466,14 @@ class Flite_FormView
         return $return;
     }
 
+    public function AddAttributes($attributes)
+    {
+        $this->_attributes = FC::arr($attributes);
+        return $this;
+    }
     public function OpenForm()
     {
-        return $this->_form->RenderFormOpen();
+        return $this->_form->RenderFormOpen($this->_attributes);
     }
 
     public function CloseForm()
