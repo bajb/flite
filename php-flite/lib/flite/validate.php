@@ -118,6 +118,17 @@ class Flite_Validate
 
                 return true;
                 break;
+            case "objects":
+                foreach($input as $check)
+                {
+                    if(gettype($check) != "object")
+                    {
+                        throw new Exception('Invalid array of objects');
+                    }
+                }
+
+                return true;
+                break;
         }
 
         return true;
