@@ -87,7 +87,7 @@ class Flite_Filter
         $full_name = preg_replace('!\s+!', ' ', $full_name); // Make multiple spaces single
         $name             = new stdClass();
         $parts            = explode(' ', trim($full_name));
-        $name->first_name = $name->middle_name = $name->last_name = null;
+        $name->first_name = $name->middle_name = $name->last_name = '';
         switch(count($parts))
         {
             case 1:

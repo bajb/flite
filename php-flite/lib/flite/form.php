@@ -307,7 +307,7 @@ class Flite_FormField
 
     public function RenderOpen()
     {
-        $html = '<div id="element-' . $this->Name() . '">';
+        $html = '<div class="element type-'.$this->_type.'" id="element-' . $this->Name() . '">';
 
         return $html;
     }
