@@ -145,7 +145,7 @@ class FC
 
     public static function arr($input)
     {
-        if(is_null($input)) return array();
+        if(is_null($input) || $input === false) return array();
         if(is_array($input)) return $input;
         if(is_object($input)) return FC::object_to_array($input);
         if(is_string($input) && stristr($input, ',')) return explode(',', $input);
