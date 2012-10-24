@@ -117,6 +117,7 @@ class FC
 
     public static function is_whitelist_ip($dev_override = true)
     {
+        if(FLITE_ENV == 'local') return true;
         $_FLITE = Flite::Base();
         $ips    = $_FLITE->GetConfig('whitelist_ips', array());
 
