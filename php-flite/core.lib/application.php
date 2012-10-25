@@ -316,4 +316,9 @@ class FliteApplication extends FliteConfig
         $_FLITE = Flite::Base();
         return $_FLITE->GetConfig('relative_path','/');
     }
+
+  public function GetController()
+  {
+    return $this->controller;
+  }
 }
