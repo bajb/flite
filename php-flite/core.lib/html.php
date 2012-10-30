@@ -54,7 +54,7 @@ class FCHTML {
      *
      * @var unknown_type
      */
-    private $jsVersion = ';v=488419200';
+    private $jsVersion = ';v=488419201';
 
     /**
      * Set the default doc type for the html helper
