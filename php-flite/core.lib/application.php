@@ -23,6 +23,7 @@ class FliteApplication extends FliteConfig
     // Late addition to the var team. Left public for backwards compatibility
     public $render_header_footer;
 
+
     /*
     Set Branding to False to disable attempts to include branding replacements
     */
