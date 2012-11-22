@@ -9,7 +9,7 @@ class Flite_Filter
 {
 
 
-  public function URI($string)
+  public static function URI($string)
   {
     $string = strtolower($string);
     $string = preg_replace("/[^A-Za-z0-9 ]/", '', $string);
