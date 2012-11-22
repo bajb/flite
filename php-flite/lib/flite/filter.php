@@ -9,13 +9,13 @@ class Flite_Filter
 {
 
 
-  public static function URI($string)
+  public static function URI($string, $separator = '-')
   {
     $string = strtolower($string);
     $string = preg_replace("/[^A-Za-z0-9 ]/", '', $string);
     $string = trim($string);
     $string = Flite_Filter::SingleSpaces($string);
-    $string = str_replace(' ', '-', $string);
+    $string = str_replace(' ', $separator, $string);
     return $string;
   }
 
