@@ -15,11 +15,13 @@ if($site_root !== FLITE_PRODUCTION_ROOT)
         {
             $is_local = true;
         }
-        if(isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.dev'))
-        {
-            $is_dev = true;
-        }
     }
+
+    if(isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.dev'))
+    {
+        $is_dev = true;
+    }
+
     $this->SetConfig('is_local', $is_local);
     $this->SetConfig('is_dev', $is_dev);
 }
