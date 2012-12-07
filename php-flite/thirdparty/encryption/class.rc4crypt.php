@@ -2,17 +2,18 @@
 
 class rc4crypt
 {
-	/**
-	 * The symmetric encryption function
-	 *
-	 * @param string $pwd Key to encrypt with (can be binary of hex)
-	 * @param string $data Content to be encrypted
-	 * @param bool $ispwdHex Key passed is in hexadecimal or not
-	 * @access public
-	 * @return string
-	 */
-	
-	public function encrypt ($pwd, $data, $ispwdHex = 0)
+
+  /**
+   * The symmetric encryption function
+   *
+   * @param string   $pwd      Key to encrypt with (can be binary of hex)
+   * @param string   $data     Content to be encrypted
+   * @param bool|int $ispwdHex Key passed is in hexadecimal or not
+   * @access public
+   * @return string
+   */
+
+	public static function encrypt($pwd, $data, $ispwdHex = 0)
 	{
 		if ($ispwdHex)
 		$pwd = @pack('H*', $pwd); // valid input, please!
@@ -29,7 +30,7 @@ class rc4crypt
 			$key[$i] = ord($pwd[$i % $pwd_length]);
 			$box[$i] = $i;
 		}
-		
+
 		for ($j = $i = 0; $i < 256; $i++)
 		{
 			$j = ($j + $box[$i] + $key[$i]) % 256;
@@ -37,7 +38,7 @@ class rc4crypt
 			$box[$i] = $box[$j];
 			$box[$j] = $tmp;
 		}
-		
+
 		for ($a = $j = $i = 0; $i < $data_length; $i++)
 		{
 			$a = ($a + 1) % 256;
@@ -48,21 +49,21 @@ class rc4crypt
 			$k = $box[(($box[$a] + $box[$j]) % 256)];
 			$cipher .= chr(ord($data[$i]) ^ $k);
 		}
-		
+
 		return $cipher;
 	}
-	
-	/**
-	 * Decryption, recall encryption
-	 *
-	 * @param string $pwd Key to decrypt with (can be binary of hex)
-	 * @param string $data Content to be decrypted
-	 * @param bool $ispwdHex Key passed is in hexadecimal or not
-	 * @access public
-	 * @return string
-	 */
-	
-	public function decrypt ($pwd, $data, $ispwdHex = 0)
+
+  /**
+   * Decryption, recall encryption
+   *
+   * @param string   $pwd      Key to decrypt with (can be binary of hex)
+   * @param string   $data     Content to be decrypted
+   * @param bool|int $ispwdHex Key passed is in hexadecimal or not
+   * @access public
+   * @return string
+   */
+
+	public static function decrypt ($pwd, $data, $ispwdHex = 0)
 	{
 		return rc4crypt::encrypt($pwd, $data, $ispwdHex);
 	}
