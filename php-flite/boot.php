@@ -3,7 +3,11 @@ define('PHP_FLITE_START_TIME', microtime(true));
 if(strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
 {
   define('FLITE_WIN', true);
-  if(!defined('FLITE_DIR'))
+  if(defined('CWD'))
+  {
+    define('FLITE_DIR', CWD);
+  }
+  else
   {
     $_PATH       = rtrim(getcwd(), '\\/');
     $_PATH_PARTS = explode('\\', dirname(__FILE__));
