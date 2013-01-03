@@ -445,7 +445,13 @@ class DBConnection
 		return false;
 	}
 
-	public function GetField($query = "",$cache_time=false,$cache_key=null)
+  /**
+   * @param string   $query
+   * @param bool     $cache_time
+   * @param null|int $cache_key
+   * @return string|int|float|bool
+   */
+  public function GetField($query = "",$cache_time=false,$cache_key=null)
 	{
 	    if($cache_time)
 	    {
