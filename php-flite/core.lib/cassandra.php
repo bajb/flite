@@ -255,6 +255,24 @@ class CassandraObject
         }
     }
 
+  public function GetMultiBatched($keys, $columns = null, $column_start = "", $column_finish = "",
+                                  $reverse_order = false, $column_count = 100, $batch_size = 250)
+  {
+    $total_keys  = FC::count($keys);
+    $batch_count = ceil($total_keys / $batch_size);
+
+    $return = array();
+    for($i = 0; $i < $batch_count; $i++)
+    {
+      $batch_keys = array_slice($keys, $i * $batch_size, $batch_size);
+      $res        = $this->GetMulti(
+        $batch_keys, $columns, $column_start, $column_finish, $reverse_order, $column_count
+      );
+      if($res) $return = array_merge($return, $res);
+    }
+    return $return;
+  }
+
     public function Increment ($key, $column, $increase_by = 1)
     {
         $this->Debug("Incrementing key '$key' in $this->columnFamily");
