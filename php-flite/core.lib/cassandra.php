@@ -268,7 +268,7 @@ class CassandraObject
       $res        = $this->GetMulti(
         $batch_keys, $columns, $column_start, $column_finish, $reverse_order, $column_count
       );
-      if($res) $return = array_merge($return, $res);
+      if($res) $return = $return + $res; // merge the arrays but preserve numeric keys
     }
     return $return;
   }
