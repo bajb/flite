@@ -10,7 +10,7 @@
 class FliteApplication extends FliteConfig
 {
     private $branding_enabled=true;
-    private $controller;
+    public $controller;
     private $default_view;
     private $template;
     private $site_view;
