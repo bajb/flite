@@ -11,7 +11,9 @@ if($site_root !== FLITE_PRODUCTION_ROOT)
 
     if(isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'], array('', '127.0.0.1')))
     {
-        if(isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.local'))
+        $server_name = isset($_SERVER['SERVER_NAME']) ?
+          $_SERVER['SERVER_NAME'] : "";
+        if(substr($server_name, -6) == '.local')
         {
             $is_local = true;
         }
