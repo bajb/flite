@@ -91,7 +91,8 @@ foreach ($db_connections as $db_connection => $prefix)
                         $contents .=  "\n\t" . ' * @param ' . $column->Type . ' $' . $column->Field;
                     }
                 }
-                $contents .=  "\n\t" . '**/';
+                $contents .=  "\n\t" . ' * @param bool|string|array $preload_keys';
+                $contents .=  "\n\t" . ' */';
 
                 $contents .=  "\n\t" . 'public function __construct($'. implode('=null, $',$primary) .'=null,$preload_keys=false)';
                 $contents .=  "\n\t" . '{';
