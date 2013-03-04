@@ -572,3 +572,11 @@ class FliteBase extends FliteConfig
 }
 
 $_FLITE = Flite::Base(isset($relative_path) ? $relative_path : '/');
+
+if($_FLITE->GetConfig("session_version", 1) === 2)
+{
+  if(file_exists(FLITE_DIR . "/session_boot.php"))
+  {
+    require_once(FLITE_DIR . "/session_boot.php");
+  }
+}
