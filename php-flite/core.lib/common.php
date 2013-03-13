@@ -6,13 +6,13 @@ class FC
   /**
    * Unfortunate oversight by PHP's part meaning that you can't chain an
    * object from it's instantiation;
-   *
    * new Foo()->Bar(); //throws an error
-   *
    * FC::_(new Foo())->Bar(); //works lovely
    *
    * @static
+   *
    * @param $_
+   *
    * @return mixed
    */
   public static function _($_)
@@ -27,8 +27,10 @@ class FC
 
   public static function array_merge($array1, $array2)
   {
-    if(!is_array($array1)) $array1 = array();
-    if(!is_array($array2)) $array2 = array();
+    if(!is_array($array1))
+      $array1 = array();
+    if(!is_array($array2))
+      $array2 = array();
 
     return array_merge($array1, $array2);
   }
@@ -45,25 +47,30 @@ class FC
 
   /**
    * @static
+   *
    * @param array  $array            Array to lookup key in
    * @param string $key              key of array element
    * @param mixed  $default          Default value if key does not exist
    * @param bool   $default_on_empty Default value if key is empty
+   *
    * @return mixed
    */
   public static function array_value($array, $key, $default = null, $default_on_empty = false)
   {
-    if(is_object($array)) $array = FC::object_to_array($array);
+    if(is_object($array))
+      $array = FC::object_to_array($array);
 
     return isset($array[$key]) ? ($default_on_empty && empty($array[$key]) ? $default : $array[$key]) : $default;
   }
 
   /**
    * @static
+   *
    * @param object $object           Array to lookup key in
    * @param string $key              key of object
    * @param mixed  $default          Default value if key does not exist
    * @param bool   $default_on_empty Default value if key is empty
+   *
    * @return mixed
    */
   public static function object_value($object, $key, $default = null, $default_on_empty = false)
@@ -75,16 +82,22 @@ class FC
 
   public static function serialized($data)
   {
-    if(!is_string($data)) return false;
+    if(!is_string($data))
+      return false;
 
     $data   = trim($data);
     $length = strlen($data);
 
-    if($length < 4) return false;
-    elseif(':' !== $data[1]) return false;
-    elseif(';' !== $data[$length - 1]) return false;
-    elseif($data[0] !== 's') return false;
-    elseif('"' !== $data[$length - 2]) return false;
+    if($length < 4)
+      return false;
+    elseif(':' !== $data[1])
+      return false;
+    elseif(';' !== $data[$length - 1])
+      return false;
+    elseif($data[0] !== 's')
+      return false;
+    elseif('"' !== $data[$length - 2])
+      return false;
     else return true;
   }
 
@@ -117,22 +130,24 @@ class FC
 
   public static function is_whitelist_ip($dev_override = true)
   {
-    if(FLITE_ENV == 'local') return true;
+    if(FLITE_ENV == 'local')
+      return true;
     $_FLITE = Flite::Base();
     $ips    = $_FLITE->GetConfig('whitelist_ips', array());
 
     return ($dev_override && $_FLITE->GetConfig('is_dev') ?
-    true : (is_array($ips) ? (in_array(FC::get_user_ip(), $ips)) : false));
+      true : (is_array($ips) ? (in_array(FC::get_user_ip(), $ips)) : false));
   }
 
   public static function is_development_ip($dev_override = true)
   {
-    if(FLITE_ENV == 'local') return true;
+    if(FLITE_ENV == 'local')
+      return true;
     $_FLITE = Flite::Base();
     $ips    = $_FLITE->GetConfig('development_ips', array());
 
     return ($dev_override && $_FLITE->GetConfig('is_dev') ?
-    true : (is_array($ips) ? (in_array(FC::get_user_ip(), $ips)) : false));
+      true : (is_array($ips) ? (in_array(FC::get_user_ip(), $ips)) : false));
   }
 
   public static function inet_aton($ip)
@@ -147,27 +162,38 @@ class FC
 
   public static function obj($input)
   {
-    if(is_object($input)) return $input;
-    if(is_array($input)) return FC::array_to_object($input);
+    if(is_object($input))
+      return $input;
+    if(is_array($input))
+      return FC::array_to_object($input);
 
     return new stdClass();
   }
 
   public static function arr($input)
   {
-    if(is_null($input) || $input === false) return array();
-    if(is_array($input)) return $input;
-    if(is_object($input)) return FC::object_to_array($input);
-    if(is_string($input) && stristr($input, ',')) return explode(',', $input);
+    if(is_null($input) || $input === false)
+      return array();
+    if(is_array($input))
+      return $input;
+    if(is_object($input))
+      return FC::object_to_array($input);
+    if(is_string($input) && stristr($input, ','))
+      return explode(',', $input);
 
     return array($input);
   }
 
   public static function array_to_object($array, $object = false)
   {
-    if(!is_array($array)) return $array;
-    if(!$object) $object = new stdClass();
-    foreach($array as $k => $v) $object->{$k} = FC::array_to_object($v);
+    if(!is_array($array))
+      return $array;
+    if(!$object)
+      $object = new stdClass();
+    foreach($array as $k => $v)
+    {
+      $object->{$k} = FC::array_to_object($v);
+    }
 
     return $object;
   }
@@ -175,9 +201,14 @@ class FC
 
   public static function object_to_array($object, $array = false)
   {
-    if(!is_object($object)) return $object;
-    if(!$array) $array = array();
-    foreach($object as $k => $v) $array[$k] = FC::object_to_array($v);
+    if(!is_object($object))
+      return $object;
+    if(!$array)
+      $array = array();
+    foreach($object as $k => $v)
+    {
+      $array[$k] = FC::object_to_array($v);
+    }
 
     return $array;
   }
@@ -197,7 +228,8 @@ class FC
   {
     foreach($arr1 as $a1)
     {
-      if(in_array($a1, $arr2)) return true;
+      if(in_array($a1, $arr2))
+        return true;
     }
 
     return false;
@@ -205,7 +237,8 @@ class FC
 
   public static function is_json($string)
   {
-    if(substr($string, 0, 1) != '{') return false;
+    if(substr($string, 0, 1) != '{')
+      return false;
     json_decode($string);
 
     return (json_last_error() == JSON_ERROR_NONE);
@@ -213,8 +246,10 @@ class FC
 
   public static function validate_email($email, $dns = true)
   {
-    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
-    if(!$dns) return true;
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL))
+      return false;
+    if(!$dns)
+      return true;
     list(, $host) = explode('@', $email, 2);
 
     return checkdnsrr($host) || FLITE_ENV !== 'live';
@@ -222,7 +257,8 @@ class FC
 
   public static function ascii_encode_email($str_email, $str_display = '', $bln_create_link = true)
   {
-    if(empty($str_display)) $str_display = $str_email;
+    if(empty($str_display))
+      $str_display = $str_email;
     $str_mailto        = "&#109;&#097;&#105;&#108;&#116;&#111;&#058;";
     $str_encoded_email = '';
     for($i = 0; $i < strlen($str_email); $i++)
@@ -240,7 +276,7 @@ class FC
     if($bln_create_link)
     {
       return "<a href=\"" . $str_mailto . $str_encoded_email . "\">" .
-      ($str_display == $str_email ? $str_encoded_email : $str_display) . "</a>";
+        ($str_display == $str_email ? $str_encoded_email : $str_display) . "</a>";
     }
     else
     {
@@ -250,16 +286,19 @@ class FC
 
   public static function remove_empty_elements($array)
   {
-    if(empty($array) || !is_array($array)) return $array;
+    if(empty($array) || !is_array($array))
+      return $array;
     $narr = array();
     foreach($array as $key => $val)
     {
       if(is_array($val))
       {
         $val = FC::remove_empty_elements($val);
-        if(count($val) != 0) $narr[$key] = $val;
+        if(count($val) != 0)
+          $narr[$key] = $val;
       }
-      else if($val != "" || is_int($val)) $narr[$key] = $val;
+      else if($val != "" || is_int($val))
+        $narr[$key] = $val;
     }
     unset($array);
 
@@ -312,11 +351,14 @@ class FC
     curl_setopt($api_call, CURLOPT_CONNECTTIMEOUT, $timeout);
     curl_setopt($api_call, CURLOPT_TIMEOUT, $timeout);
     curl_setopt($api_call, CURLOPT_RETURNTRANSFER, true);
-    if($debug) echo 'Calling URL: ' . $url;
+    if($debug)
+      echo 'Calling URL: ' . $url;
     $response = curl_exec($api_call);
     $errno    = curl_errno($api_call);
-    if($debug && (!is_string($response) || !strlen($response))) echo("Failure Contacting Server");
-    if($errno > 0 && $debug) echo 'Error Number:' . $errno;
+    if($debug && (!is_string($response) || !strlen($response)))
+      echo("Failure Contacting Server");
+    if($errno > 0 && $debug)
+      echo 'Error Number:' . $errno;
     curl_close($api_call);
 
     return $response;
@@ -325,11 +367,12 @@ class FC
   public static function file_size($size, $kb = true)
   {
     $size = floatval($size);
-    if($kb) $size = $size * 1024;
+    if($kb)
+      $size = $size * 1024;
     $filesizename = array(" Bytes", " KB", " MB", " GB", " TB", " PB", " EB", " ZB", " YB");
 
     return $size ?
-    round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $filesizename[intval($i)] : '0 Bytes';
+      round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $filesizename[intval($i)] : '0 Bytes';
   }
 
   public static function short_string()
@@ -340,9 +383,11 @@ class FC
   public static function get_user_ip()
   {
     $retip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] :
-    (isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1');
-    if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) $retip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    if(isset($_SERVER['HTTP_X_REAL_FORWARDED_FOR'])) $retip = $_SERVER['HTTP_X_REAL_FORWARDED_FOR'];
+      (isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1');
+    if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+      $retip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    if(isset($_SERVER['HTTP_X_REAL_FORWARDED_FOR']))
+      $retip = $_SERVER['HTTP_X_REAL_FORWARDED_FOR'];
     if(isset($retip) && stristr($retip, ','))
     {
       list($retip,) = explode(',', $retip, 2);
@@ -363,16 +408,22 @@ class FC
     $minutes = floor($seconds / 60);
     $seconds = $seconds % 60;
 
-    if(!$string) return array('days' => $days, 'hours' => $hours, 'minutes' => $minutes, 'seconds' => $seconds);
+    if(!$string)
+      return array('days' => $days, 'hours' => $hours, 'minutes' => $minutes, 'seconds' => $seconds);
     else
     {
       $out = array();
-      if($days > 0) $out[] = "$days Days";
-      if($hours > 0 && count($out) < $limit_units) $out[] = "$hours Hrs";
-      if($minutes > 0 && count($out) < $limit_units) $out[] = "$minutes Mins";
-      if($seconds > 0 && $string_seconds && count($out) < $limit_units) $out[] = "$seconds seconds";
+      if($days > 0)
+        $out[] = "$days Days";
+      if($hours > 0 && count($out) < $limit_units)
+        $out[] = "$hours Hrs";
+      if($minutes > 0 && count($out) < $limit_units)
+        $out[] = "$minutes Mins";
+      if($seconds > 0 && $string_seconds && count($out) < $limit_units)
+        $out[] = "$seconds seconds";
 
-      if(!$string_seconds && ($days + $hours + $minutes) == 0) $out = array('&lt;1 min');
+      if(!$string_seconds && ($days + $hours + $minutes) == 0)
+        $out = array('&lt;1 min');
 
       return implode(', ', $out);
     }
@@ -393,10 +444,11 @@ class FC
 
   public static function month_diff($timestamp1, $timestamp2 = null)
   {
-    if(is_null($timestamp2)) $timestamp2 = time();
+    if(is_null($timestamp2))
+      $timestamp2 = time();
 
     return (date("m", $timestamp2) - date("m", $timestamp1))
-    + (12 * (date("Y", $timestamp2) - date("Y", $timestamp1)));
+      + (12 * (date("Y", $timestamp2) - date("Y", $timestamp1)));
   }
 
 
