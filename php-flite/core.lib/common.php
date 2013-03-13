@@ -20,6 +20,24 @@ class FC
     return $_;
   }
 
+  /**
+   * Returns the public vars for an object
+   *
+   * @param $object
+   *
+   * @return array
+   */
+  public static function get_pubic_vars($object)
+  {
+    $vars = array();
+    foreach($object as $var => $value)
+    {
+      $vars[$var] = $value;
+    }
+
+    return $vars;
+  }
+
   public static function count($arr)
   {
     return (is_array($arr) && !empty($arr)) ? count($arr) : 0;
