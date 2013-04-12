@@ -305,6 +305,17 @@ class FliteBase extends FliteConfig
       {
         include_once (FLITE_DIR . '/dblib/' . $classname . '.php');
       }
+      // Namespace classes
+      else if(
+        file_exists(
+          FLITE_DIR . '/lib/' . str_replace('\\', '/', $classname) . '.php'
+        )
+      )
+      {
+        include_once (
+          FLITE_DIR . '/lib/' . str_replace('\\', '/', $classname) . '.php'
+        );
+      }
     }
   }
 
