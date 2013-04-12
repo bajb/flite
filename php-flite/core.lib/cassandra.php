@@ -7,6 +7,8 @@ use phpcassa\Schema\StrategyClass;
 use cassandra;
 use cassandra\SliceRange;
 use cassandra\ConsistencyLevel;
+use phpcassa\Index\IndexExpression;
+use phpcassa\Index\IndexClause;
 
 class CassandraObject
 {
@@ -131,6 +133,45 @@ class CassandraObject
             $_FLITE->Exception('CassandraObject', 'GetData', $e);
             return false;
         }
+    }
+
+  /**
+   * @param      $key
+   * @param      $value
+   * @param null $columns
+   * @param int  $count
+   * @param bool $return_objects
+   *
+   * @return array
+   */
+    public function GetIndexedData($key, $value, $columns = null, $count = 100, $return_objects = true)
+    {
+      $this->Debug("Getting indexed key '$key' in $this->columnFamily");
+      $this->Connect();
+      try
+      {
+        $index_exp = new IndexExpression($key, $value);
+        $index_clause = new IndexClause(array($index_exp), '', $count);
+        $_rows = $this->CFConnection->get_indexed_slices($index_clause, null, $columns);
+
+        $rows = array();
+        if($return_objects)
+        {
+          foreach($_rows as $key => $value)
+          {
+            $rows[$key] = $return_objects ? FC::array_to_object($value) : $value;
+          }
+        }
+
+        return $rows;
+      }
+      catch (Exception $e)
+      {
+        $_FLITE = Flite::Base();
+        $_FLITE->Exception('CassandraObject', 'GetData', $e);
+        return false;
+      }
+
     }
 
     public function GetRange ($start, $end, $count, $columns)
