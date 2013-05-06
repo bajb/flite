@@ -49,6 +49,10 @@ if ($cassandra_clustername && is_array($cassandra_clustername))
                         $output .= "\n" . '$_KEYSPACE_DESCRIPTION->cf_defs["' . $cf_count . '"]->' . $cf_key . ' = array();';
                         foreach ($cf_val as $cm_key => $cm_val)
                         {
+                            if(!is_scalar($cf_key) || !is_scalar($cm_key) || !is_scalar($cm_val))
+                            {
+                                continue 3;
+                            }
                             $output .= "\n" . '$_KEYSPACE_DESCRIPTION->cf_defs["' . $cf_count . '"]->' . $cf_key . '[' . $cm_key .
                                      '] = "' . $cm_val . '";';
                         }
