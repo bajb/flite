@@ -16,14 +16,17 @@ if ($cassandra_clustername && is_array($cassandra_clustername))
             $process_keyspaces[] = (FC::count($cassandra_clustername) == 1 ? 'cassandra' : "cassandra_" . $keyspace);
         }
     }
-
+error_reporting(E_ALL);
+  ini_set("display_errors",true);
     foreach ($process_keyspaces as $flite_name)
     {
         /**
          * Describe Keyspace
          */
         echo $flite_name . "\n";
+
         $keyspace_description = $_FLITE->$flite_name->describe_keyspace();
+
         $output = '<?php';
         $output .= "\n" . '$_KEYSPACE_DESCRIPTION = new stdClass();';
         if ($keyspace_description)
@@ -49,17 +52,27 @@ if ($cassandra_clustername && is_array($cassandra_clustername))
                         $output .= "\n" . '$_KEYSPACE_DESCRIPTION->cf_defs["' . $cf_count . '"]->' . $cf_key . ' = array();';
                         foreach ($cf_val as $cm_key => $cm_val)
                         {
-                            if(!is_scalar($cf_key) || !is_scalar($cm_key) || !is_scalar($cm_val))
-                            {
-                                continue 3;
-                            }
+                          if(is_scalar($cm_val))
+                          {
                             $output .= "\n" . '$_KEYSPACE_DESCRIPTION->cf_defs["' . $cf_count . '"]->' . $cf_key . '[' . $cm_key .
-                                     '] = "' . $cm_val . '";';
+                            '] = "' . $cm_val . '";';
+                          }
+                          else
+                          {
+                            foreach($cm_val as $mt_key => $mt_val)
+                            {
+                              $output .= "\n" . '$_KEYSPACE_DESCRIPTION->cf_defs["' . $cf_count . '"]->' . $cf_key . '[' . $cm_key .
+                              ']->'. $mt_key .' = "' . $mt_val . '"; //LOOK';
+                            }
+                          }
                         }
-                        continue;
                     }
+                  else
+                  {
                     $output .= "\n" . '$_KEYSPACE_DESCRIPTION->cf_defs["' . $cf_count . '"]->' . $cf_key . ' = "' . $cf_val .
-                             '";';
+                    '";';
+                  }
+
                 }
                 $cf_count ++;
             }
