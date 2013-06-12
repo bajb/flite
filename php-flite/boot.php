@@ -69,6 +69,11 @@ class Flite
   public static function Membase() { return self::Base()->Membase(); }
 
   /**
+   * @return Memcache
+   */
+  public static function VersionsMemcache() { return self::Base()->VersionsMemcache(); }
+
+  /**
    * @return MessageQueue
    */
   public static function MQ() { return self::Base()->MQ(); }
@@ -261,6 +266,7 @@ class FliteBase extends FliteConfig
   public $tld;
   public $sub_domain;
   public $protocol;
+  public $versions_memcache;
 
   public function __construct($rel_path = '/')
   {
@@ -450,6 +456,28 @@ class FliteBase extends FliteConfig
       $this->memcache = new stdClass();
     }
 
+    $this->versions_memcache = new Memcache();
+    $ver_memcache = $this->GetConfig('versions_memcache');
+    if($ver_memcache && (FC::count($ver_memcache) > 0))
+    {
+      foreach($ver_memcache as $mserv)
+      {
+        if(is_array($mserv))
+        {
+          $this->versions_memcache->addServer(
+            $mserv['host'], isset($mserv['port']) ? $mserv['port'] : 11211,
+            isset($mserv['persistent']) ? $mserv['persistent'] : true
+          );
+        }
+        else
+          $this->versions_memcache->addServer($mserv);
+      }
+    }
+    else
+    {
+      $this->versions_memcache->addServer('localhost');
+    }
+
     if(FLITE_CASSANDRA)
     {
       $this->cassandra       = new stdClass();
@@ -579,6 +607,14 @@ class FliteBase extends FliteConfig
   public function Membase()
   {
     return $this->membase;
+  }
+
+  /**
+   * @return Memcache
+   */
+  public function VersionsMemcache()
+  {
+    return $this->versions_memcache;
   }
 }
 
