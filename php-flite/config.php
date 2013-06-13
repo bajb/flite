@@ -78,11 +78,6 @@ else if($this->GetConfig('is_dev'))
     define('FLITE_ENV','dev');
     include_once(FLITE_DIR . '/config/dev.php');
 }
-else if($this->domain === 'backupcubes' && $this->tld === 'com')
-{
-  define('FLITE_ENV','live');
-  include_once(FLITE_DIR . '/config/backupcubes.php');
-}
 else
 {
     define('FLITE_ENV','live');
