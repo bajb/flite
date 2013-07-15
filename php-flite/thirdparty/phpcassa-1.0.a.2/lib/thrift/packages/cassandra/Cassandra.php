@@ -26,6 +26,7 @@ interface CassandraIf {
   public function remove($key, $column_path, $timestamp, $consistency_level);
   public function remove_counter($key, $path, $consistency_level);
   public function batch_mutate($mutation_map, $consistency_level);
+  public function atomic_batch_mutate($mutation_map, $consistency_level);
   public function truncate($cfname);
   public function describe_schema_versions();
   public function describe_keyspaces();
