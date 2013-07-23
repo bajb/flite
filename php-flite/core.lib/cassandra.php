@@ -60,8 +60,11 @@ class CassandraObject
       $_FLITE->Exception('CassandraObject', $method, $e);
     }
 
+    if($e instanceof cassandra\NotFoundException)
+      return false;
+
     if($this->throw_exceptions)
-      throw new Exception($e);
+      throw $e;
 
     return false;
   }
