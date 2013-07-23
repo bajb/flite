@@ -1,14 +1,14 @@
 <?php
-use phpcassa\ColumnFamily;
-use phpcassa\SuperColumnFamily;
-use phpcassa\ColumnSlice;
-use phpcassa\SystemManager;
-use phpcassa\Schema\StrategyClass;
 use cassandra;
 use cassandra\SliceRange;
 use cassandra\ConsistencyLevel;
 use phpcassa\Index\IndexExpression;
 use phpcassa\Index\IndexClause;
+use phpcassa\ColumnFamily;
+use phpcassa\SuperColumnFamily;
+use phpcassa\ColumnSlice;
+use phpcassa\SystemManager;
+use phpcassa\Schema\StrategyClass;
 
 class CassandraObject
 {
