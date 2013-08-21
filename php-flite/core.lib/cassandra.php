@@ -550,7 +550,9 @@ class CassandraObject
   {
     $this->Connect();
 
-    if ($method != 'remove')
+    $allowedDirectCallMethods = array("remove" => 1, "EnableExceptions" => 1,);
+
+    if (!array_key_exists($method, $allowedDirectCallMethods))
     {
       FC::error_report("Direct PhpCassa Call", array("Method" => $method,"Args" => $args));
     }
