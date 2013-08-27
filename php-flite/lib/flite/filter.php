@@ -96,6 +96,7 @@ class Flite_Filter
   public static function SplitName($full_name)
   {
     $full_name        = preg_replace('!\s+!', ' ', $full_name); // Make multiple spaces single
+    $full_name        = self::Clean($full_name);
     $name             = new stdClass();
     $parts            = explode(' ', trim($full_name));
     $name->first_name = $name->middle_name = $name->last_name = '';
