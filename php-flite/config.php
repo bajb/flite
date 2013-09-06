@@ -57,7 +57,7 @@ if($this->GetConfig('is_web'))
 else
 {
     $this->sub_domain = 'www';
-    $this->domain = 'phpflite';
+    $this->domain = isset($this->domain) ? $this->domain : 'phpflite';
     $this->tld = $this->GetConfig('is_dev') ? 'dev' : 'com';
 }
 
