@@ -17,6 +17,10 @@ if($site_root !== FLITE_PRODUCTION_ROOT)
         {
             $is_local = true;
         }
+        if(substr($server_name, -6) == '.cubex')
+        {
+            $is_local = true;
+        }
     }
 
     if(isset($_SERVER['SERVER_NAME']) && stristr($_SERVER['SERVER_NAME'], '.dev'))
