@@ -81,6 +81,7 @@ class MessageQueue
         {
             if(is_array($host)) $this->hosts = $host;
             else $this->hosts[] = $this->host = $host;
+            shuffle($this->hosts);
         }
         if(!is_null($port)) $this->port = $port;
         if(!is_null($username)) $this->username = $username;
@@ -117,17 +118,15 @@ class MessageQueue
         {
             if(is_array($host)) $this->hosts = $host;
             else $this->hosts[] = $this->host = $host;
+            shuffle($this->hosts);
         }
-        if(!is_null($port)) $this->port = $this->port;
-        if(!is_null($username)) $this->username = $this->username;
-        if(!is_null($password)) $this->password = $this->password;
+        if(!is_null($port)) $this->port = $port;
+        if(!is_null($username)) $this->username = $username;
+        if(!is_null($password)) $this->password = $password;
 
         if(empty($this->host) && !empty($this->hosts)) $this->host = current($this->hosts);
 
         $this->connection = new AMQPConnection(array('host' => $this->host,'port' => $this->port,'login' => $this->username,'password' => $this->password));
-
-        //Connect to the first server as primary, and rotate all the slaves on failure
-        shuffle($this->hosts);
 
         while(!$this->connected && !empty($this->hosts))
         {
