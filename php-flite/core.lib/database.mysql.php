@@ -318,7 +318,7 @@ class DBConnection
 					$data[] = $obj;
 					if(memory_get_usage() > 980217728)
 					{
-					    error_log($query);
+					    error_log('High Memory Usage: ' . $query);
 					    return $data;
 					}
 				}
