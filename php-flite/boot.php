@@ -391,7 +391,35 @@ class FliteBase extends FliteConfig
 
     if($this->start_session && $this->GetConfig('is_web') && !defined("FLITE_NO_SESSION"))
     {
-      session_start();
+      if($this->domain === 'studybackup')
+      {
+        session_set_cookie_params(
+          0,
+          '/',
+          '.' . $this->domain . '.' . $this->tld
+        );
+
+        if(isset($_COOKIE['SESSID']) || !isset($_COOKIE['PHPSESSID']))
+        {
+          session_name('SESSID');
+          session_start();
+        }
+        else
+        {
+          session_start();
+          session_name('SESSID');
+          session_regenerate_id();
+        }
+
+        if(isset($_COOKIE['PHPSESSID']))
+        {
+          setcookie('PHPSESSID', '', time() - 864000, '/');
+        }
+      }
+      else
+      {
+        session_start();
+      }
     }
     else
     {
