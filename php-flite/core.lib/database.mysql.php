@@ -24,6 +24,18 @@ class DBConnection
 	private $connect_wait = 50; //Milliseconds to wait between connect attempts
     private $deadlock_retries = 2; //Times to retry a deadlocked query
 
+  private static $_exceptions_enabled = false;
+
+  public static function enableExceptions()
+  {
+    self::$_exceptions_enabled = true;
+  }
+
+  public static function disableExceptions()
+  {
+    self::$_exceptions_enabled = false;
+  }
+
 	public function DBConnection($dbhost='',$dbuser='',$dbpass='',$dbname='')
 	{
 	    if(!is_array($dbhost)) $dbhost = array($dbhost);
@@ -81,14 +93,15 @@ class DBConnection
 			}
 			else
 			{
-				if($this->attempt_connect < $this->connect_attempts)
+				if((mysql_errno() == 2006) && ($this->attempt_connect < $this->connect_attempts))
 				{
 					$this->attempt_connect++;
-					$this->SendError('Connection Attempt ' . $this->attempt_connect . ' failed to ' . $usehost);
+					$this->SendError('Connection Attempt ' . $this->attempt_connect . ' failed to ' . $usehost, '', false);
 					usleep($this->connect_wait);
 				}
 				else
 				{
+          $this->SendError('Failed to connect to MySQL');
 					return false;
 				}
 			}
@@ -99,53 +112,70 @@ class DBConnection
 		}
 	}
 
-	private function SendError($error,$query='')
+	private function SendError($error,$query='', $allow_exception = true)
 	{
-		if($this->conn)
-		{
-			$this->errors[] = array(
-				'time' => time(),
-				'message' => $error,
-				'query' => $query,
-				'mysql_error' => mysql_error($this->conn),
-				'mysql_errno' => mysql_errno($this->conn)
-			);
+    try
+    {
+      if($this->conn)
+      {
+        $this->errors[] = array(
+          'time' => time(),
+          'message' => $error,
+          'query' => $query,
+          'mysql_error' => mysql_error($this->conn),
+          'mysql_errno' => mysql_errno($this->conn)
+        );
 
-			if(mysql_errno($this->conn) == 2006)
-			{
-			    $this->attempt_connect = 0;
-			    $this->connected = false;
-			    $this->Connect();
-			}
+        if(mysql_errno($this->conn) == 2006)
+        {
+            $this->attempt_connect = 0;
+            $this->connected = false;
+            $this->Connect();
+        }
 
-			if(!in_array(mysql_errno($this->conn),array(1062)))
-			{
-			    error_log("Failed to connect: " . print_r($_SERVER['PHP_SELF'],true) . print_r($this->dbhost,true) . print_r($this->errors[count($this->errors) - 1],true));
-			}
-		}
-		else
-		{
-			$this->errors[] = array(
-				'time' => time(),
-				'message' => $error,
-				'query' => $query,
-				'extended' => 'No MySQL Connection',
-				'mysql_error' => mysql_error(),
-				'mysql_errno' => mysql_errno()
-			);
+        if(!in_array(mysql_errno($this->conn),array(1062)))
+        {
+          throw new Exception(
+            "Failed to connect: " . print_r($_SERVER['PHP_SELF'],true) . print_r($this->dbhost,true) .
+            print_r($this->errors[count($this->errors) - 1],true)
+          );
+        }
+      }
+      else
+      {
+        $this->errors[] = array(
+          'time' => time(),
+          'message' => $error,
+          'query' => $query,
+          'extended' => 'No MySQL Connection',
+          'mysql_error' => mysql_error(),
+          'mysql_errno' => mysql_errno()
+        );
 
-			if(mysql_errno() == 2006)
-			{
-			    $this->attempt_connect = 0;
-			    $this->connected = false;
-			    $this->Connect();
-			}
+        if(mysql_errno() == 2006)
+        {
+            $this->attempt_connect = 0;
+            $this->connected = false;
+            $this->Connect();
+        }
 
-			if(!in_array(mysql_errno(),array(1062)))
-			{
-			     error_log("Failed to connect: " . print_r($_SERVER['PHP_SELF'],true) . print_r($this->dbhost,true) . print_r($this->errors[count($this->errors) - 1],true));
-			}
-		}
+        if(!in_array(mysql_errno(),array(1062)))
+        {
+          throw new Exception(
+            "Failed to connect: " . print_r($_SERVER['PHP_SELF'],true) . print_r($this->dbhost,true) .
+            print_r($this->errors[count($this->errors) - 1],true)
+          );
+        }
+      }
+    }
+    catch(Exception $e)
+    {
+      error_log($e->getMessage());
+      if(self::$_exceptions_enabled && $allow_exception)
+      {
+        throw new Exception('Database Error');
+      }
+    }
 
 		return true;
 	}

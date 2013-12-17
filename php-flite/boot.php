@@ -253,6 +253,8 @@ class FliteBase extends FliteConfig
 
   private $class_lookup = null;
 
+  private $force_db_master = false;
+
   public $cassandra;
   public $local_memcache;
   public $memcache;
@@ -596,11 +598,26 @@ class FliteBase extends FliteConfig
   }
 
   /**
+   * Force all DB connections to use the master even if the user asks for the slave
+   *
+   * @param bool $use_master
+   */
+  public function ForceDBMaster($use_master)
+  {
+    $this->force_db_master = $use_master;
+  }
+
+  /**
    * @param $connection
    * @return DBConnection
    */
   public function DB($connection = 'db')
   {
+    // trim "slave" off the connection name if forcing master
+    if($this->force_db_master && (substr($connection, -5) == 'slave'))
+    {
+      $connection = substr($connection, 0, -5);
+    }
     return isset($this->$connection) ? $this->$connection : false;
   }
 
