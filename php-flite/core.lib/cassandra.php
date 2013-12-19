@@ -546,6 +546,40 @@ class CassandraObject
     }
   }
 
+  public function CountColumns(
+    $key,
+    $columns = null,
+    $column_start = "",
+    $column_finish = "",
+    $column_count = 0
+  )
+  {
+    $this->Connect();
+
+    try
+    {
+      if(($column_start != "") || ($column_finish != "") || ($column_count > 0))
+      {
+        $columnslice = new ColumnSlice(
+          $column_start,
+          $column_finish,
+          $column_count,
+          false
+        );
+      }
+      else
+      {
+        $columnslice = null;
+      }
+
+      return $this->CFConnection->get_count($key, $columnslice, $columns);
+    }
+    catch (Exception $e)
+    {
+      return $this->HandleException($e, 'CountColumns');
+    }
+  }
+
   public function __call ($method, $args)
   {
     $this->Connect();
