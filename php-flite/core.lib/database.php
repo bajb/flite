@@ -13,6 +13,7 @@ class DatabaseObject implements IteratorAggregate
     protected $dbobject_row_exists = false;
     protected $changed_fields = array();
     protected $dbobject_data = array();
+    protected $delayedInsert = false;
 
     public function __construct($flitedb = 'db', $allow_slave = true, $slave_append = 'slave')
     {
@@ -190,7 +191,8 @@ class DatabaseObject implements IteratorAggregate
         else
         {
             //INSERT || UPDATE ON DUPLICATE
-            $sql = "INSERT INTO `$this->dbobject_table_name` (`" . implode('`,`', $keys) . "`) " .
+            $sql = "INSERT ". ($this->delayedInsert ? 'DELAYED ' : '') .
+            "INTO `$this->dbobject_table_name` (`" . implode('`,`', $keys) . "`) " .
             "VALUES ('" . implode("','", $values) . "') ON DUPLICATE KEY UPDATE $set";
         }
 
